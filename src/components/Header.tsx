@@ -8,8 +8,8 @@ import { useCart } from "@/components/cart-context";
 
 const NAV = [
   { label: "Boutique", href: "/boutique/" },
-  { label: "Rituels", href: "/#rituels" },
-  { label: "Ingrédients", href: "/#ingredients" },
+  { label: "Rituels", href: "/rituels/" },
+  { label: "Ingrédients", href: "/ingredients/" },
   { label: "À propos", href: "/a-propos/" },
   { label: "Contact", href: "/contact/" },
 ];
@@ -133,7 +133,7 @@ export default function Header() {
                 </motion.div>
               ))}
             </nav>
-            <p className="mt-auto pb-10 text-[10px] uppercase tracking-wide3 text-taupe">
+            <p className="mt-auto pb-10 text-[10px] uppercase tracking-wide3 text-taupe-deep">
               MANIKA — Hair Cosmetics
             </p>
           </motion.div>

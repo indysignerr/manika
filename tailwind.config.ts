@@ -9,7 +9,7 @@ const config: Config = {
         copper: { DEFAULT: "#82503C", deep: "#6B4230" },
         rose: { DEFAULT: "#B68D78", hover: "#C89678" },
         bronze: "#8A5F2A",
-        taupe: "#C8BEB4",
+        taupe: { DEFAULT: "#C8BEB4", deep: "#8A7E70" },
         ink: "#4A3428",
       },
       fontFamily: {

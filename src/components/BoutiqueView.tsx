@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { X } from "lucide-react";
+import { X, SlidersHorizontal } from "lucide-react";
 import { products, HAIR_TYPES, NEEDS, Product } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/Reveal";
@@ -25,6 +25,7 @@ export default function BoutiqueView() {
   const [needs, setNeeds] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [sort, setSort] = useState<SortId>("reco");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const toggle = (list: string[], set: (v: string[]) => void, value: string) =>
     set(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
@@ -101,9 +102,25 @@ export default function BoutiqueView() {
       </div>
 
       <div className="border-t border-taupe/40">
-        <div className="container-luxe grid gap-12 py-12 md:grid-cols-[240px_1fr]">
+        <div className="container-luxe grid gap-8 py-12 md:gap-12 md:grid-cols-[240px_1fr]">
+          {/* Bascule filtres — mobile uniquement */}
+          <button
+            onClick={() => setFiltersOpen(!filtersOpen)}
+            aria-expanded={filtersOpen}
+            className="flex items-center justify-between rounded-[2px] border border-taupe/60 px-5 py-3.5 text-[10px] uppercase tracking-wide2 text-copper md:hidden"
+          >
+            <span className="flex items-center gap-2.5">
+              <SlidersHorizontal size={14} strokeWidth={1.5} aria-hidden />
+              Filtres{activeChips.length > 0 && ` (${activeChips.length})`}
+            </span>
+            <span aria-hidden>{filtersOpen ? "−" : "+"}</span>
+          </button>
+
           {/* Filtres */}
-          <aside aria-label="Filtres" className="md:sticky md:top-40 md:self-start">
+          <aside
+            aria-label="Filtres"
+            className={`${filtersOpen ? "block" : "hidden"} md:block md:sticky md:top-40 md:self-start`}
+          >
             <p className="border-b border-taupe/50 pb-3 text-[10px] uppercase tracking-wide3 text-copper">
               Affiner
             </p>
@@ -184,7 +201,7 @@ export default function BoutiqueView() {
           <div>
             <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-[11px] uppercase tracking-wide2 text-taupe" aria-live="polite">
+                <p className="text-[11px] uppercase tracking-wide2 text-taupe-deep" aria-live="polite">
                   {filtered.length} produit{filtered.length > 1 ? "s" : ""}
                 </p>
                 {activeChips.map((chip) => (
@@ -240,8 +257,8 @@ export default function BoutiqueView() {
                           Le soin commence par le geste, le geste devient rituel.
                         </p>
                         <Link
-                          href="/#rituels"
-                          className="text-[10px] uppercase tracking-wide2 text-rose-hover transition-opacity hover:opacity-70"
+                          href="/rituels/"
+                          className="text-[10px] uppercase tracking-wide2 text-ivory/85 transition-opacity hover:opacity-70"
                           data-cursor
                         >
                           Découvrir les trois gestes →

@@ -77,7 +77,7 @@ export default function Ingredients() {
           <div className="floaty">
             <BottleVisual variant="serum" name="Élixir Racines" category="Sérum" className="h-[46svh] max-h-[420px]" />
           </div>
-          <p className="text-[9px] uppercase tracking-wide3 text-taupe">
+          <p className="text-[9px] uppercase tracking-wide3 text-taupe-deep">
             Le flacon reste — les actifs défilent
           </p>
         </div>
@@ -112,7 +112,7 @@ export default function Ingredients() {
                       {ing.detail}
                     </p>
                   </div>
-                  <span className="text-[10px] tracking-wide2 text-taupe">
+                  <span className="text-[10px] tracking-wide2 text-taupe-deep">
                     0{i + 1}<span className="opacity-50">/03</span>
                   </span>
                 </div>
@@ -124,9 +124,13 @@ export default function Ingredients() {
             <Link href="/produit/elixir-racines/" className="btn-primary" data-cursor>
               Découvrir l&apos;Élixir — 42,00 €
             </Link>
-            <span className="hidden text-[10px] uppercase tracking-wide2 text-taupe md:block">
-              98 % d&apos;origine naturelle
-            </span>
+            <Link
+              href="/ingredients/"
+              className="text-[10px] uppercase tracking-wide2 text-copper underline-offset-4 hover:underline"
+              data-cursor
+            >
+              Tous les actifs →
+            </Link>
           </div>
         </div>
       </div>

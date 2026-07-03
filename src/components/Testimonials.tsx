@@ -55,7 +55,7 @@ export default function Testimonials() {
               <blockquote className="mt-5 font-serif text-lg italic leading-relaxed text-copper">
                 {r.text}
               </blockquote>
-              <p className="mt-5 text-[10px] uppercase tracking-wide2 text-taupe">{r.author}</p>
+              <p className="mt-5 text-[10px] uppercase tracking-wide2 text-taupe-deep">{r.author}</p>
             </Reveal>
           ))}
         </div>

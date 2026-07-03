@@ -15,8 +15,8 @@ const COLS: { title: string; links: { label: string; href: string }[] }[] = [
     title: "Maison",
     links: [
       { label: "À propos", href: "/a-propos/" },
-      { label: "Ingrédients", href: "/#ingredients" },
-      { label: "Les rituels", href: "/#rituels" },
+      { label: "Ingrédients", href: "/ingredients/" },
+      { label: "Les rituels", href: "/rituels/" },
       { label: "Visiter l'atelier", href: "/contact/" },
       { label: "Contact", href: "/contact/" },
     ],

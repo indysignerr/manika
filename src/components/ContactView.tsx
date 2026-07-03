@@ -14,7 +14,7 @@ const INFOS = [
 const SUBJECTS = ["Conseil personnalisé", "Suivi de commande", "Presse & partenariats", "Visite de l'atelier", "Autre"];
 
 const inputCls =
-  "w-full border-b border-taupe/60 bg-transparent px-0 py-3 text-[14px] font-light text-ink placeholder:text-taupe focus:border-copper focus:outline-none transition-colors";
+  "w-full border-b border-taupe/60 bg-transparent px-0 py-3 text-[14px] font-light text-ink placeholder:text-taupe-deep focus:border-copper focus:outline-none transition-colors";
 
 export default function ContactView() {
   const [sent, setSent] = useState(false);
@@ -51,7 +51,7 @@ export default function ContactView() {
                   <Icon size={15} strokeWidth={1.4} className="text-bronze" aria-hidden />
                 </span>
                 <div>
-                  <dt className="text-[9px] uppercase tracking-wide3 text-taupe">{label}</dt>
+                  <dt className="text-[9px] uppercase tracking-wide3 text-taupe-deep">{label}</dt>
                   <dd className="mt-1 text-[13px] font-light text-copper">{value}</dd>
                 </div>
               </div>
@@ -60,9 +60,9 @@ export default function ContactView() {
 
           <div className="mt-10 flex gap-4 text-[10px] uppercase tracking-wide2 text-copper">
             <a href="#" className="transition-opacity hover:opacity-60">Instagram</a>
-            <span aria-hidden className="text-taupe">·</span>
+            <span aria-hidden className="text-taupe-deep">·</span>
             <a href="#" className="transition-opacity hover:opacity-60">Pinterest</a>
-            <span aria-hidden className="text-taupe">·</span>
+            <span aria-hidden className="text-taupe-deep">·</span>
             <a href="#" className="transition-opacity hover:opacity-60">TikTok</a>
           </div>
         </Reveal>

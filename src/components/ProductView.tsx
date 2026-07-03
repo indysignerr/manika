@@ -57,7 +57,7 @@ export default function ProductView({ product }: { product: Product }) {
             trigger: rootRef.current,
             start: "top top",
             end: "bottom bottom",
-            scrub: 0.8,
+            scrub: 0.5,
           },
         }
       );
@@ -106,7 +106,7 @@ export default function ProductView({ product }: { product: Product }) {
 
         {/* Détails */}
         <div>
-          <nav className="text-[10px] uppercase tracking-wide2 text-taupe" aria-label="Fil d'ariane">
+          <nav className="text-[10px] uppercase tracking-wide2 text-taupe-deep" aria-label="Fil d'ariane">
             Accueil / Boutique / <span className="text-rose">{product.name}</span>
           </nav>
 
@@ -115,7 +115,7 @@ export default function ProductView({ product }: { product: Product }) {
 
           <div className="mt-3 flex items-center gap-3">
             <span className="text-sm tracking-[0.3em] text-rose" aria-label="4,9 sur 5">★★★★★</span>
-            <span className="text-[11px] text-taupe">4,9 — 214 avis</span>
+            <span className="text-[11px] text-taupe-deep">4,9 — 214 avis</span>
           </div>
 
           <p className="mt-5 max-w-md text-[14px] font-light leading-relaxed text-ink/80">
@@ -124,7 +124,7 @@ export default function ProductView({ product }: { product: Product }) {
 
           <div className="mt-6 flex items-baseline gap-4">
             <p className="text-3xl font-extralight text-copper">{fmt(unit)}</p>
-            <p className="text-[11px] text-taupe">Livraison offerte dès 60 €</p>
+            <p className="text-[11px] text-taupe-deep">Livraison offerte dès 60 €</p>
           </div>
 
           {product.stock && (
@@ -200,13 +200,13 @@ export default function ProductView({ product }: { product: Product }) {
                 <button
                   onClick={() => setOpenAcc(openAcc === i ? -1 : i)}
                   aria-expanded={openAcc === i}
-                  className="flex w-full items-center justify-between py-4.5 text-left text-[11px] uppercase tracking-wide2 text-copper py-5"
+                  className="flex w-full items-center justify-between text-left text-[11px] uppercase tracking-wide2 text-copper py-5"
                 >
                   {item.title}
                   <ChevronDown
                     size={15}
                     strokeWidth={1.5}
-                    className={`transition-transform duration-400 ${openAcc === i ? "rotate-180" : ""}`}
+                    className={`transition-transform duration-500 ${openAcc === i ? "rotate-180" : ""}`}
                   />
                 </button>
                 <AnimatePresence initial={false}>

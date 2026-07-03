@@ -28,7 +28,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
         <button
           onClick={() => add(product.slug, defaultSize.label, product.price + defaultSize.delta)}
-          className="absolute inset-x-0 bottom-0 z-[2] translate-y-full bg-copper py-3 text-[10px] uppercase tracking-wide2 text-ivory transition-transform duration-400 hover:bg-copper-deep group-hover:translate-y-0 focus-visible:translate-y-0"
+          className="absolute inset-x-0 bottom-0 z-[2] translate-y-full bg-copper py-3 text-[10px] uppercase tracking-wide2 text-ivory transition-transform duration-500 hover:bg-copper-deep group-hover:translate-y-0 focus-visible:translate-y-0"
         >
           Ajout rapide — {fmt(product.price + defaultSize.delta)}
         </button>

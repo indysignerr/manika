@@ -80,13 +80,13 @@ export default function CartDrawer() {
                       </div>
                       <div className="flex flex-1 flex-col">
                         <p className="heading text-[12px] tracking-luxe">{p.name}</p>
-                        <p className="mt-0.5 text-[10px] uppercase tracking-wide2 text-taupe">{it.size}</p>
+                        <p className="mt-0.5 text-[10px] uppercase tracking-wide2 text-taupe-deep">{it.size}</p>
                         <div className="mt-auto flex items-center justify-between">
                           <div className="flex items-center rounded-[2px] border border-taupe/60 text-copper">
                             <button
                               onClick={() => setQty(i, it.qty - 1)}
                               aria-label="Réduire la quantité"
-                              className="px-2.5 py-1.5"
+                              className="px-3.5 py-2.5"
                             >
                               <Minus size={12} strokeWidth={1.5} />
                             </button>
@@ -94,7 +94,7 @@ export default function CartDrawer() {
                             <button
                               onClick={() => setQty(i, it.qty + 1)}
                               aria-label="Augmenter la quantité"
-                              className="px-2.5 py-1.5"
+                              className="px-3.5 py-2.5"
                             >
                               <Plus size={12} strokeWidth={1.5} />
                             </button>
@@ -114,7 +114,7 @@ export default function CartDrawer() {
                   <span>Sous-total</span>
                   <span>{fmt(subtotal)}</span>
                 </div>
-                <div className="mb-4 flex justify-between text-[11px] text-taupe">
+                <div className="mb-4 flex justify-between text-[11px] text-taupe-deep">
                   <span>Livraison</span>
                   <span>{subtotal >= FREE_SHIPPING ? "Offerte" : "Calculée à l'étape suivante"}</span>
                 </div>
@@ -122,7 +122,7 @@ export default function CartDrawer() {
                   <Lock size={13} strokeWidth={1.5} />
                   Passer commande
                 </button>
-                <p className="mt-3 text-center text-[10px] tracking-wide text-taupe">
+                <p className="mt-3 text-center text-[10px] tracking-wide text-taupe-deep">
                   Paiement sécurisé · Retours offerts sous 30 jours
                 </p>
               </div>

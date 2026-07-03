@@ -11,6 +11,8 @@
 
 html {
   background: var(--ivory);
+  scroll-behavior: smooth;
+  scroll-padding-top: 130px;
 }
 
 body {
@@ -43,6 +45,14 @@ body.custom-cursor,
 body.custom-cursor a,
 body.custom-cursor button {
   cursor: none;
+}
+
+/* Champs de saisie : on garde le curseur natif (caret + I-beam) */
+body.custom-cursor input,
+body.custom-cursor textarea,
+body.custom-cursor select,
+body.custom-cursor label {
+  cursor: auto;
 }
 
 @layer components {

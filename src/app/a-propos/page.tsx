@@ -101,7 +101,7 @@ export default function Page() {
               « La beauté ne se fabrique pas en laboratoire. Elle se cultive, se récolte et se
               transmet — comme tout ce qui pousse. »
             </blockquote>
-            <p className="mt-8 text-[10px] uppercase tracking-wide3 text-taupe">
+            <p className="mt-8 text-[10px] uppercase tracking-wide3 text-taupe-deep">
               Fondatrice, MANIKA — Provence
             </p>
           </Reveal>
@@ -114,7 +114,7 @@ export default function Page() {
           {STATS.map((s, i) => (
             <Reveal key={s.label} delay={i * 0.08}>
               <p className="font-display text-5xl font-extralight text-copper md:text-6xl">{s.value}</p>
-              <p className="mt-3 text-[10px] uppercase tracking-wide2 text-taupe">{s.label}</p>
+              <p className="mt-3 text-[10px] uppercase tracking-wide2 text-taupe-deep">{s.label}</p>
             </Reveal>
           ))}
         </div>

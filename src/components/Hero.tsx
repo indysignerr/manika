@@ -76,8 +76,8 @@ export default function Hero() {
       // Parallaxe souris par couches
       const layers = gsap.utils.toArray<HTMLElement>("[data-depth]");
       const setters = layers.map((el) => ({
-        x: gsap.quickTo(el, "x", { duration: 0.6, ease: "power2.out" }),
-        y: gsap.quickTo(el, "y", { duration: 0.6, ease: "power2.out" }),
+        x: gsap.quickTo(el, "x", { duration: 0.4, ease: "power2.out" }),
+        y: gsap.quickTo(el, "y", { duration: 0.4, ease: "power2.out" }),
         depth: parseFloat(el.dataset.depth || "0.5"),
       }));
       const onMove = (e: MouseEvent) => {
@@ -201,14 +201,14 @@ export default function Hero() {
               className="h-[42svh] max-h-[440px] drop-shadow-[0_30px_40px_rgba(107,66,48,0.18)] md:h-[54svh]"
             />
           </div>
-          <p className="mt-6 text-center text-[10px] uppercase tracking-wide3 text-taupe">
+          <p className="mt-6 text-center text-[10px] uppercase tracking-wide3 text-taupe-deep">
             Élixir Racines — 42,00 €
           </p>
         </div>
       </div>
 
-      <div className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3">
-        <span className="text-[9px] uppercase tracking-wide3 text-taupe">Défiler</span>
+      <div className="absolute bottom-7 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 md:flex">
+        <span className="text-[9px] uppercase tracking-wide3 text-taupe-deep">Défiler</span>
         <span className="h-10 w-px animate-pulse bg-copper/50" />
       </div>
     </section>

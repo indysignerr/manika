@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Jost, Marcellus } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -48,15 +47,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <SmoothScroll>
-          <CartProvider>
-            <CustomCursor />
-            <Header />
-            <main>{children}</main>
-            <Footer />
-            <CartDrawer />
-          </CartProvider>
-        </SmoothScroll>
+        <CartProvider>
+          <CustomCursor />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

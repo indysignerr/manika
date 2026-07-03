@@ -15,7 +15,7 @@ export default function Newsletter() {
     <section className="bg-copper py-24 text-ivory md:py-28">
       <div className="container-luxe max-w-2xl text-center">
         <Reveal>
-          <p className="text-[10px] uppercase tracking-wide3 text-rose-hover">Cercle privé</p>
+          <p className="text-[10px] uppercase tracking-wide3 text-ivory/75">Cercle privé</p>
           <h2 className="heading mt-3 text-3xl !text-ivory md:text-4xl">Recevoir nos rituels</h2>
           <p className="mx-auto mt-5 max-w-md text-[13px] font-light leading-relaxed text-ivory/75">
             Inspirations botaniques, nouveautés confidentielles et rendez-vous saisonniers — une
@@ -28,7 +28,7 @@ export default function Newsletter() {
             </p>
           ) : (
             <form onSubmit={onSubmit} className="mt-9">
-              <div className="mx-auto flex max-w-md gap-2">
+              <div className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row sm:gap-2">
                 <label htmlFor="nl-email" className="sr-only">
                   Adresse email
                 </label>
