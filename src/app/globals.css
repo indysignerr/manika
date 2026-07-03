@@ -11,7 +11,7 @@
 
 html {
   background: var(--ivory);
-  scroll-behavior: smooth;
+  /* Saut instantané sur les ancres : le smooth traverse les sections épinglées en flashant */
   scroll-padding-top: 130px;
 }
 

@@ -157,7 +157,7 @@ export default function Page() {
                   Visiter l&apos;atelier
                 </Link>
               </Magnetic>
-              <Link href="/#ingredients" className="btn-ghost" data-cursor>
+              <Link href="/ingredients/" className="btn-ghost" data-cursor>
                 Les actifs
               </Link>
             </div>

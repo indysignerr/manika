@@ -1,4 +1,5 @@
 import Preloader from "@/components/Preloader";
+import ScrollManager from "@/components/ScrollManager";
 import Hero from "@/components/Hero";
 import FeaturedCollection from "@/components/FeaturedCollection";
 import Story from "@/components/Story";
@@ -11,6 +12,7 @@ export default function Home() {
   return (
     <>
       <Preloader />
+      <ScrollManager />
       <Hero />
       <FeaturedCollection />
       <Story />

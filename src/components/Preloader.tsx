@@ -6,8 +6,17 @@ import { AnimatePresence, motion } from "framer-motion";
 export default function Preloader() {
   const [progress, setProgress] = useState(0);
   const [gone, setGone] = useState(false);
+  const [fast, setFast] = useState(false);
 
   useEffect(() => {
+    // Déjà vu dans cette session : on ne rejoue pas l'intro à chaque retour à l'accueil
+    if (sessionStorage.getItem("mk-preloaded") === "1") {
+      setFast(true);
+      setGone(true);
+      window.dispatchEvent(new Event("manika:ready"));
+      return;
+    }
+
     document.documentElement.style.overflow = "hidden";
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const DURATION = reduced ? 10 : 1900;
@@ -21,6 +30,7 @@ export default function Preloader() {
         raf = requestAnimationFrame(tick);
       } else {
         setTimeout(() => {
+          sessionStorage.setItem("mk-preloaded", "1");
           setGone(true);
           document.documentElement.style.overflow = "";
           window.dispatchEvent(new Event("manika:ready"));
@@ -39,7 +49,7 @@ export default function Preloader() {
       {!gone && (
         <motion.div
           exit={{ y: "-100%" }}
-          transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ duration: fast ? 0 : 0.9, ease: [0.76, 0, 0.24, 1] }}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-ivory"
           aria-hidden="true"
         >

@@ -56,6 +56,7 @@ export default function Ingredients() {
         start: "top top",
         end: "+=1800",
         pin: true,
+        anticipatePin: 1,
         scrub: true,
         onUpdate: (self) => {
           setActive(Math.min(2, Math.floor(self.progress * 3)));

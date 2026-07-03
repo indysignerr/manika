@@ -56,6 +56,7 @@ export default function Rituels() {
           start: "top top",
           end: () => "+=" + getDistance(),
           pin: true,
+          anticipatePin: 1,
           scrub: 0.35,
           invalidateOnRefresh: true,
         },
