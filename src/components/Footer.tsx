@@ -1,23 +1,41 @@
 import Link from "next/link";
 
-const COLS = [
+const COLS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Boutique",
-    links: ["Shampoings", "Masques", "Sérums", "Huiles", "Coffrets"],
+    links: [
+      { label: "Toute la collection", href: "/boutique/" },
+      { label: "Sérums", href: "/boutique/" },
+      { label: "Masques", href: "/boutique/" },
+      { label: "Huiles", href: "/boutique/" },
+      { label: "Shampoings", href: "/boutique/" },
+    ],
   },
   {
     title: "Maison",
-    links: ["À propos", "Ingrédients", "Journal", "Points de vente", "Contact"],
+    links: [
+      { label: "À propos", href: "/a-propos/" },
+      { label: "Ingrédients", href: "/#ingredients" },
+      { label: "Les rituels", href: "/#rituels" },
+      { label: "Visiter l'atelier", href: "/contact/" },
+      { label: "Contact", href: "/contact/" },
+    ],
   },
   {
     title: "Aide",
-    links: ["Livraison", "Retours", "Suivi de commande", "FAQ", "Espace client"],
+    links: [
+      { label: "Livraison", href: "/contact/" },
+      { label: "Retours", href: "/contact/" },
+      { label: "Suivi de commande", href: "/contact/" },
+      { label: "FAQ", href: "/contact/" },
+      { label: "Espace client", href: "/contact/" },
+    ],
   },
 ];
 
 export default function Footer() {
   return (
-    <footer id="contact" className="bg-copper-deep text-ivory">
+    <footer className="bg-copper-deep text-ivory">
       <div className="container-luxe grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <p className="font-display text-lg font-light tracking-[0.3em] text-ivory">MANIKA</p>
@@ -38,10 +56,13 @@ export default function Footer() {
             <p className="mb-5 text-[10px] uppercase tracking-wide3 text-rose">{col.title}</p>
             <ul className="space-y-2.5">
               {col.links.map((l) => (
-                <li key={l}>
-                  <a href="#" className="text-[12px] font-light text-ivory/80 transition-colors hover:text-ivory">
-                    {l}
-                  </a>
+                <li key={l.label}>
+                  <Link
+                    href={l.href}
+                    className="text-[12px] font-light text-ivory/80 transition-colors hover:text-ivory"
+                  >
+                    {l.label}
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -10,8 +10,8 @@ const NAV = [
   { label: "Boutique", href: "/boutique/" },
   { label: "Rituels", href: "/#rituels" },
   { label: "Ingrédients", href: "/#ingredients" },
-  { label: "À propos", href: "/#histoire" },
-  { label: "Contact", href: "/#contact" },
+  { label: "À propos", href: "/a-propos/" },
+  { label: "Contact", href: "/contact/" },
 ];
 
 export default function Header() {

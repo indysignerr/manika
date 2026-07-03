@@ -42,7 +42,7 @@ export default function Story() {
           </p>
           <div className="mt-9">
             <Magnetic>
-              <a href="#ingredients" className="btn-ghost" data-cursor>
+              <a href="/a-propos/" className="btn-ghost" data-cursor>
                 Notre manifeste
               </a>
             </Magnetic>
