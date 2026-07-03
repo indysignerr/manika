@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ivory: #f5f3ef;
+  --copper: #82503c;
+  --rose: #b68d78;
+  --bronze: #8a5f2a;
+}
+
+html {
+  background: var(--ivory);
+}
+
+body {
+  @apply bg-ivory font-display font-light text-ink antialiased;
+  overflow-x: hidden;
+}
+
+/* Grain atmosphérique global */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: #b68d78;
+  color: #f5f3ef;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 3px;
+}
+
+body.custom-cursor,
+body.custom-cursor a,
+body.custom-cursor button {
+  cursor: none;
+}
+
+@layer components {
+  .heading {
+    @apply font-display font-extralight uppercase tracking-luxe text-copper;
+  }
+  .kicker {
+    @apply text-[10px] font-normal uppercase tracking-wide3 text-rose md:text-[11px];
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] bg-rose px-8 py-4 text-[11px] font-normal uppercase tracking-wide2 text-ivory transition-colors duration-300 hover:bg-rose-hover;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-[2px] border border-copper px-6 py-3 text-[10px] font-normal uppercase tracking-wide2 text-copper transition-colors duration-300 hover:bg-copper hover:text-ivory;
+  }
+  .container-luxe {
+    @apply mx-auto w-full max-w-[1240px] px-6 md:px-10;
+  }
+}
+
+/* Particules d'or */
+@keyframes dust {
+  0% { transform: translateY(18px); opacity: 0; }
+  25% { opacity: 0.85; }
+  100% { transform: translateY(-90px); opacity: 0; }
+}
+.dust {
+  position: absolute;
+  border-radius: 9999px;
+  animation: dust linear infinite;
+  pointer-events: none;
+}
+
+/* Flottement du flacon */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(-14px) rotate(1.5deg); }
+}
+.floaty {
+  animation: floaty 6.5s ease-in-out infinite;
+}
+
+/* Marquee presse */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+.marquee {
+  animation: marquee 28s linear infinite;
+}
+
+/* Feuilles botaniques qui se dessinent */
+.leaf path {
+  stroke-dasharray: 90;
+  stroke-dashoffset: 90;
+  transition: stroke-dashoffset 1.3s ease 0.15s;
+}
+.ing-active .leaf path {
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
