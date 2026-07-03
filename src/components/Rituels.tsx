@@ -46,6 +46,9 @@ export default function Rituels() {
     }
     gsap.registerPlugin(ScrollTrigger);
 
+    // Scroll horizontal SANS pin GSAP : le pin est fait par `position: sticky`
+    // (CSS natif). GSAP ne fait donc aucune chirurgie DOM -> aucun crash
+    // removeChild lors de la navigation côté client Next.
     const ctx = gsap.context(() => {
       const getDistance = () => track.current!.scrollWidth - window.innerWidth;
       gsap.to(track.current, {
@@ -54,9 +57,7 @@ export default function Rituels() {
         scrollTrigger: {
           trigger: root.current,
           start: "top top",
-          end: () => "+=" + getDistance(),
-          pin: true,
-          anticipatePin: 1,
+          end: "bottom bottom",
           scrub: 0.35,
           invalidateOnRefresh: true,
         },
@@ -66,55 +67,69 @@ export default function Rituels() {
     return () => ctx.revert();
   }, []);
 
-  return (
-    <section ref={root} id="rituels" className="overflow-hidden" aria-label="Les trois rituels MANIKA">
-      <div
-        ref={track}
-        className={reduced ? "flex flex-col" : "flex h-[100svh] w-max"}
+  const panels = PANELS.map((panel) => {
+    const product = bySlug(panel.slug)!;
+    return (
+      <article
+        key={panel.num}
+        className={`flex w-screen shrink-0 items-center ${panel.bg} ${
+          reduced ? "min-h-[80svh] py-20" : "h-full"
+        }`}
       >
-        {PANELS.map((panel) => {
-          const product = bySlug(panel.slug)!;
-          return (
-            <article
-              key={panel.num}
-              className={`flex w-screen shrink-0 items-center ${panel.bg} ${
-                reduced ? "min-h-[80svh] py-20" : "h-full"
-              }`}
+        <div className="container-luxe grid items-center gap-10 md:grid-cols-[1.2fr_0.8fr]">
+          <div>
+            <span className={`block font-display text-[7rem] font-extralight leading-none md:text-[11rem] ${panel.numColor}`}>
+              {panel.num}
+            </span>
+            <h3 className="heading mt-2 text-4xl md:text-5xl">{panel.title}</h3>
+            <p className="mt-6 max-w-md text-[14px] font-light leading-relaxed text-ink/80">
+              {panel.text}
+            </p>
+            <Link
+              href={`/produit/${panel.slug}/`}
+              className="mt-8 inline-flex items-center gap-3 text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60"
+              data-cursor
             >
-              <div className="container-luxe grid items-center gap-10 md:grid-cols-[1.2fr_0.8fr]">
-                <div>
-                  <span className={`block font-display text-[7rem] font-extralight leading-none md:text-[11rem] ${panel.numColor}`}>
-                    {panel.num}
-                  </span>
-                  <h3 className="heading mt-2 text-4xl md:text-5xl">{panel.title}</h3>
-                  <p className="mt-6 max-w-md text-[14px] font-light leading-relaxed text-ink/80">
-                    {panel.text}
-                  </p>
-                  <Link
-                    href={`/produit/${panel.slug}/`}
-                    className="mt-8 inline-flex items-center gap-3 text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60"
-                    data-cursor
-                  >
-                    {product.name} — {fmt(product.price)}
-                    <span aria-hidden>→</span>
-                  </Link>
-                </div>
-                <Link
-                  href={`/produit/${panel.slug}/`}
-                  className="mx-auto hidden md:block"
-                  aria-label={product.name}
-                  data-cursor
-                >
-                  <BottleVisual
-                    variant={product.variant}
-                    name={product.name}
-                    className="h-[40svh] max-h-[380px] transition-transform duration-700 hover:-translate-y-3"
-                  />
-                </Link>
-              </div>
-            </article>
-          );
-        })}
+              {product.name} — {fmt(product.price)}
+              <span aria-hidden>→</span>
+            </Link>
+          </div>
+          <Link
+            href={`/produit/${panel.slug}/`}
+            className="mx-auto hidden md:block"
+            aria-label={product.name}
+            data-cursor
+          >
+            <BottleVisual
+              variant={product.variant}
+              name={product.name}
+              className="h-[40svh] max-h-[380px] transition-transform duration-700 hover:-translate-y-3"
+            />
+          </Link>
+        </div>
+      </article>
+    );
+  });
+
+  if (reduced) {
+    return (
+      <section id="rituels" aria-label="Les trois rituels MANIKA">
+        <div className="flex flex-col">{panels}</div>
+      </section>
+    );
+  }
+
+  return (
+    <section
+      ref={root}
+      id="rituels"
+      aria-label="Les trois rituels MANIKA"
+      style={{ height: `${PANELS.length * 100}vh` }}
+    >
+      <div className="sticky top-0 h-[100svh] overflow-hidden">
+        <div ref={track} className="flex h-full w-max">
+          {panels}
+        </div>
       </div>
     </section>
   );
