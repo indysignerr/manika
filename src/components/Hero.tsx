@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import BottleVisual from "@/components/BottleVisual";
@@ -29,9 +29,11 @@ const DUST = [
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
+  const [videoOn, setVideoOn] = useState(false);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduced) setVideoOn(true);
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
@@ -105,6 +107,32 @@ export default function Hero() {
       className="relative flex min-h-[100svh] items-center overflow-hidden pt-28"
       aria-label="MANIKA — L'or végétal pour vos cheveux"
     >
+      {/* Film de marque en fond (généré via Higgsfield — Veo 3.1) */}
+      {videoOn && (
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="/images/hero-poster.jpg"
+            className="h-full w-full object-cover opacity-[0.5]"
+          >
+            <source src="/videos/hero-manika.mp4" type="video/mp4" />
+          </video>
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(245,243,239,0.94) 0%, rgba(245,243,239,0.72) 42%, rgba(245,243,239,0.35) 100%)",
+            }}
+          />
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-ivory" />
+          <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-t from-transparent to-ivory" />
+        </div>
+      )}
+
       {/* Halo atmosphérique */}
       <div
         className="pointer-events-none absolute inset-0"
