@@ -28,7 +28,7 @@ export default function ContactView() {
     <div className="relative overflow-hidden pt-32 md:pt-36">
       <div className="pointer-events-none absolute -left-24 top-40 w-[420px] opacity-[0.06]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/motif.png" alt="" />
+        <img src="/images/logo-mark.png" alt="" />
       </div>
 
       <div className="container-luxe grid gap-16 pb-28 md:grid-cols-[0.9fr_1.1fr]">

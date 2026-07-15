@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "Mentions légales — MANIKA" };
+export const metadata: Metadata = { title: "Mentions légales — MANIKA.LAB" };
 
 export default function Page() {
   return (
@@ -14,7 +14,7 @@ export default function Page() {
         <section>
           <h2 className="heading mb-3 text-base">Éditeur du site</h2>
           <p>
-            MANIKA — Hair Cosmetics · [Forme juridique, capital] · [Adresse du siège] ·
+            MANIKA.LAB · [Forme juridique, capital] · [Adresse du siège] ·
             RCS [Ville n°] · contact@manika.fr
           </p>
         </section>
@@ -29,7 +29,7 @@ export default function Page() {
           <h2 className="heading mb-3 text-base">Propriété intellectuelle</h2>
           <p>
             L&apos;ensemble des contenus (textes, visuels, logo, motifs) est la propriété exclusive
-            de MANIKA. Toute reproduction sans autorisation écrite est interdite.
+            de MANIKA.LAB. Toute reproduction sans autorisation écrite est interdite.
           </p>
         </section>
         <section>

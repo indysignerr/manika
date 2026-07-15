@@ -18,8 +18,8 @@ export default function Newsletter() {
           <p className="text-[10px] uppercase tracking-wide3 text-ivory/75">Cercle privé</p>
           <h2 className="heading mt-3 text-3xl !text-ivory md:text-4xl">Recevoir nos rituels</h2>
           <p className="mx-auto mt-5 max-w-md text-[13px] font-light leading-relaxed text-ivory/75">
-            Inspirations botaniques, nouveautés confidentielles et rendez-vous saisonniers — une
-            fois par mois, rien de plus.
+            Conseils de coiffage, nouvelles teintes et offres réservées — une fois par mois, rien
+            de plus.
           </p>
 
           {sent ? (
@@ -51,7 +51,7 @@ export default function Newsletter() {
                   className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-rose"
                 />
                 <label htmlFor="nl-consent" className="text-[10px] leading-relaxed text-ivory/70">
-                  J&apos;accepte de recevoir les communications MANIKA et j&apos;ai lu la{" "}
+                  J&apos;accepte de recevoir les communications MANIKA.LAB et j&apos;ai lu la{" "}
                   <a href="/politique-de-confidentialite/" className="underline hover:text-ivory">
                     politique de confidentialité
                   </a>

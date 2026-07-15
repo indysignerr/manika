@@ -4,7 +4,7 @@ import { useCart } from "@/components/cart-context";
 import { bySlug, fmt } from "@/lib/products";
 import Magnetic from "@/components/Magnetic";
 
-const SLUGS = ["huile-precieuse", "baume-ambre", "elixir-racines"];
+const SLUGS = ["coloration-bio-vegan", "shampoing-keratine", "texture-shine"];
 
 export default function RituelBundle() {
   const { add } = useCart();

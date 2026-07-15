@@ -1,24 +1,24 @@
 import Reveal from "@/components/Reveal";
 
 const QUOTES = [
-  "« Une expérience sensorielle » — Journal Beauté",
-  "« Le rituel qui change tout » — Presse Mode",
-  "« L'apothicaire du cheveu » — Magazine Lifestyle",
-  "« La Provence en flacon » — Revue Bien-être",
+  "« La qualité salon à la maison » — Journal Beauté",
+  "« La coloration vegan qui change tout » — Presse Mode",
+  "« Le labo capillaire à suivre » — Magazine Lifestyle",
+  "« Une kératine bluffante » — Revue Coiffure",
 ];
 
 const REVIEWS = [
   {
-    text: "Une texture divine, un parfum enivrant. Mes cheveux n'ont jamais été aussi doux.",
+    text: "La coloration couvre parfaitement mes cheveux blancs et la fibre est restée intacte. Bluffant.",
     author: "Élise M. · Paris",
   },
   {
-    text: "Le sérum a transformé ma routine. Un vrai geste de soin, pas juste un produit.",
+    text: "Le shampoing kératine a sauvé mes longueurs après des années de décoloration. Densité retrouvée.",
     author: "Camille R. · Lyon",
   },
   {
-    text: "La composition est irréprochable, l'expérience est celle d'un spa à la maison.",
-    author: "Sarah B. · Bordeaux",
+    text: "Texture Shine donne un fini glossy sans effet gras. Mes clientes me demandent toutes la référence.",
+    author: "Sarah B. · coiffeuse, Bordeaux",
   },
 ];
 
@@ -45,7 +45,7 @@ export default function Testimonials() {
       <div className="container-luxe mt-20">
         <Reveal className="text-center">
           <p className="kicker">Elles en parlent</p>
-          <h2 className="heading mt-3 text-3xl md:text-4xl">Le rituel MANIKA</h2>
+          <h2 className="heading mt-3 text-3xl md:text-4xl">L&apos;effet MANIKA.LAB</h2>
         </Reveal>
 
         <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-12">

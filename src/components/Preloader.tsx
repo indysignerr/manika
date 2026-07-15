@@ -69,7 +69,7 @@ export default function Preloader() {
           </div>
           <div className="absolute bottom-8 left-8 text-[11px] tracking-wide2 text-rose">{progress} %</div>
           <div className="absolute bottom-8 right-8 text-[10px] uppercase tracking-wide3 text-taupe">
-            Récolte d&apos;automne
+            Professional hair care
           </div>
         </motion.div>
       )}

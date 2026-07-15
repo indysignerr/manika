@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "Politique de confidentialité — MANIKA" };
+export const metadata: Metadata = { title: "Politique de confidentialité — MANIKA.LAB" };
 
 export default function Page() {
   return (

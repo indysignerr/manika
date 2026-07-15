@@ -20,12 +20,12 @@ const marcellus = Marcellus({
 });
 
 export const metadata: Metadata = {
-  title: "MANIKA — Hair Cosmetics · Le rituel capillaire botanique",
+  title: "MANIKA.LAB — Cosmétique capillaire professionnelle",
   description:
-    "Cosmétiques capillaires naturels haut de gamme. Sérums, masques et huiles formulés en Provence — 98 % d'origine naturelle.",
+    "Coloration vegan, soins reconstructeurs à la kératine et coiffage de précision. La gamme capillaire professionnelle MANIKA.LAB, formulée en Italie.",
   openGraph: {
-    title: "MANIKA — Hair Cosmetics",
-    description: "Le rituel capillaire botanique. Formulé et conditionné en Provence.",
+    title: "MANIKA.LAB",
+    description: "L'expertise du salon, chez vous. Coloration, soin et coiffage professionnels.",
     locale: "fr_FR",
     type: "website",
   },
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "OnlineStore",
-  name: "MANIKA — Hair Cosmetics",
-  description: "Cosmétiques capillaires naturels haut de gamme, formulés en Provence.",
-  brand: { "@type": "Brand", name: "MANIKA" },
+  name: "MANIKA.LAB",
+  description: "Cosmétique capillaire professionnelle : coloration vegan, soins kératine, coiffage.",
+  brand: { "@type": "Brand", name: "MANIKA.LAB" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

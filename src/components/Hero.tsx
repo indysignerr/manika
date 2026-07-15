@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import BottleVisual from "@/components/BottleVisual";
+import { bySlug, fmt } from "@/lib/products";
+import ProductImage from "@/components/ProductImage";
 import Magnetic from "@/components/Magnetic";
 
 const Split = ({ text }: { text: string }) => (
@@ -30,6 +31,7 @@ const DUST = [
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
   const [videoOn, setVideoOn] = useState(false);
+  const featured = bySlug("shampoing-keratine")!;
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -105,7 +107,7 @@ export default function Hero() {
     <section
       ref={root}
       className="relative flex min-h-[100svh] items-center overflow-hidden pt-28"
-      aria-label="MANIKA — L'or végétal pour vos cheveux"
+      aria-label="MANIKA.LAB — L'expertise capillaire professionnelle"
     >
       {/* Film de marque en fond (généré via Higgsfield — Veo 3.1) */}
       {videoOn && (
@@ -142,10 +144,10 @@ export default function Hero() {
         }}
       />
 
-      {/* Filigrane botanique */}
-      <div data-depth="0.3" className="pointer-events-none absolute -right-24 -top-16 w-[520px] opacity-[0.09] md:w-[640px]">
+      {/* Filigrane monogramme M·L */}
+      <div data-depth="0.3" className="pointer-events-none absolute -right-16 top-10 w-[380px] opacity-[0.05] md:w-[460px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/motif.png" alt="" />
+        <img src="/images/logo-mark.png" alt="" />
       </div>
 
       {/* Particules d'or */}
@@ -167,18 +169,18 @@ export default function Hero() {
 
       <div className="hero-inner container-luxe relative grid items-center gap-10 md:grid-cols-[1.1fr_0.9fr]">
         <div data-depth="0.5">
-          <p className="hero-fade kicker mb-6 opacity-0">Édition récolte d&apos;automne</p>
+          <p className="hero-fade kicker mb-6 opacity-0">Cosmétique capillaire professionnelle</p>
           <h1 className="heading text-[13vw] leading-[1.04] md:text-7xl">
-            <Split text="L'OR" />
+            <Split text="L'EXPERTISE" />
             <br />
-            <Split text="VÉGÉTAL" />
+            <Split text="DU SALON" />
           </h1>
           <p className="hero-fade mt-4 font-serif text-2xl italic text-bronze opacity-0 md:text-3xl">
-            pour vos cheveux
+            chez vous
           </p>
           <p className="hero-fade mt-6 max-w-sm text-[14px] font-light leading-relaxed text-ink/80 opacity-0">
-            Un concentré botanique rare, récolté à la main en Provence. Des soins qui transforment
-            le geste quotidien en rituel.
+            Coloration vegan, soins reconstructeurs à la kératine, coiffage de précision.
+            La gamme professionnelle MANIKA.LAB, formulée en Italie.
           </p>
           <div className="hero-fade mt-9 flex flex-wrap items-center gap-4 opacity-0">
             <Magnetic>
@@ -186,23 +188,20 @@ export default function Hero() {
                 Découvrir
               </Link>
             </Magnetic>
-            <Link href="/#rituels" className="btn-ghost" data-cursor>
-              Les rituels
+            <Link href="/rituels/" className="btn-ghost" data-cursor>
+              Le protocole
             </Link>
           </div>
         </div>
 
         <div data-depth="0.9" className="hero-bottle relative mx-auto opacity-0">
           <div className="floaty">
-            <BottleVisual
-              variant="serum"
-              name="Élixir Racines"
-              category="Sérum"
-              className="h-[42svh] max-h-[440px] drop-shadow-[0_30px_40px_rgba(107,66,48,0.18)] md:h-[54svh]"
-            />
+            <div className="aspect-[4/5] w-[64vw] max-w-[380px] overflow-hidden rounded-[4px] shadow-[0_30px_60px_rgba(107,66,48,0.2)] md:w-[32vw]">
+              <ProductImage product={featured} eager />
+            </div>
           </div>
           <p className="mt-6 text-center text-[10px] uppercase tracking-wide3 text-taupe-deep">
-            Élixir Racines — 42,00 €
+            {featured.name} — {fmt(featured.price)}
           </p>
         </div>
       </div>

@@ -5,30 +5,30 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { bySlug, fmt } from "@/lib/products";
-import BottleVisual from "@/components/BottleVisual";
+import ProductImage from "@/components/ProductImage";
 
 const PANELS = [
   {
     num: "01",
-    title: "Nourrir",
-    text: "Bain d'huiles précieuses avant le shampoing. Trente minutes de pause, une fibre restaurée en profondeur.",
-    slug: "huile-precieuse",
+    title: "Colorer",
+    text: "La coloration crème vegan enrichie au Hair Plex. Une couleur éclatante qui prend soin de la fibre au lieu de l'agresser.",
+    slug: "coloration-bio-vegan",
     bg: "bg-ivory-2",
     numColor: "text-taupe",
   },
   {
     num: "02",
     title: "Réparer",
-    text: "Masque à la kératine végétale, posé dix minutes. La fibre altérée se referme, la douceur revient.",
-    slug: "baume-ambre",
+    text: "Le shampoing kératine & acide hyaluronique reconstruit la fibre après la couleur. Force, densité et brillance retrouvées.",
+    slug: "shampoing-keratine",
     bg: "bg-ivory-3",
     numColor: "text-rose",
   },
   {
     num: "03",
-    title: "Sublimer",
-    text: "Sérum à l'or végétal en touche finale. Une brillance miroir, sans jamais alourdir la matière.",
-    slug: "elixir-racines",
+    title: "Coiffer",
+    text: "La touche finale : texture, brillance et tenue souple. Le fini glossy des coiffages de salon, sans effet carton.",
+    slug: "texture-shine",
     bg: "bg-[#EFE3D6]",
     numColor: "text-bronze",
   },
@@ -46,9 +46,7 @@ export default function Rituels() {
     }
     gsap.registerPlugin(ScrollTrigger);
 
-    // Scroll horizontal SANS pin GSAP : le pin est fait par `position: sticky`
-    // (CSS natif). GSAP ne fait donc aucune chirurgie DOM -> aucun crash
-    // removeChild lors de la navigation côté client Next.
+    // Scroll horizontal SANS pin GSAP : le pin est fait par position: sticky.
     const ctx = gsap.context(() => {
       const getDistance = () => track.current!.scrollWidth - window.innerWidth;
       gsap.to(track.current, {
@@ -96,15 +94,13 @@ export default function Rituels() {
           </div>
           <Link
             href={`/produit/${panel.slug}/`}
-            className="mx-auto hidden md:block"
+            className="mx-auto hidden w-full max-w-[300px] md:block"
             aria-label={product.name}
             data-cursor
           >
-            <BottleVisual
-              variant={product.variant}
-              name={product.name}
-              className="h-[40svh] max-h-[380px] transition-transform duration-700 hover:-translate-y-3"
-            />
+            <div className="aspect-[4/5] overflow-hidden rounded-[4px] shadow-[0_24px_50px_rgba(107,66,48,0.16)] transition-transform duration-700 hover:-translate-y-2">
+              <ProductImage product={product} />
+            </div>
           </Link>
         </div>
       </article>
@@ -113,7 +109,7 @@ export default function Rituels() {
 
   if (reduced) {
     return (
-      <section id="rituels" aria-label="Les trois rituels MANIKA">
+      <section id="rituels" aria-label="Le protocole MANIKA.LAB">
         <div className="flex flex-col">{panels}</div>
       </section>
     );
@@ -123,7 +119,7 @@ export default function Rituels() {
     <section
       ref={root}
       id="rituels"
-      aria-label="Les trois rituels MANIKA"
+      aria-label="Le protocole MANIKA.LAB"
       style={{ height: `${PANELS.length * 100}vh` }}
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden">

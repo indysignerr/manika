@@ -4,25 +4,28 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import BottleVisual from "@/components/BottleVisual";
+import { bySlug, fmt } from "@/lib/products";
+import ProductImage from "@/components/ProductImage";
 
 const INGREDIENTS = [
   {
-    name: "Romarin de Provence",
-    role: "Stimule la microcirculation de la racine",
-    detail: "Distillé à moins de 40 km de l'atelier, récolté à la main au lever du jour.",
+    name: "Kératine hydrolysée",
+    role: "Reconstruit la fibre en profondeur",
+    detail: "Comble les brèches ouvertes par la couleur et la chaleur, redonne force et densité.",
   },
   {
-    name: "Ortie sauvage",
-    role: "Purifie sans agresser le cuir chevelu",
-    detail: "Cueillette sauvage certifiée, séchée à basse température pour préserver les actifs.",
+    name: "Acide hyaluronique",
+    role: "Hydrate au cœur du cheveu",
+    detail: "Retient l'eau dans la fibre, la gonfle et lisse les écailles pour une brillance miroir.",
   },
   {
-    name: "Argan bio du Maroc",
-    role: "Scelle la brillance, nourrit la longueur",
-    detail: "Première pression à froid, coopérative féminine partenaire depuis 2019.",
+    name: "Huile d'argan",
+    role: "Nourrit et scelle la brillance",
+    detail: "Pressée à froid, elle discipline la longueur sans jamais l'alourdir.",
   },
 ];
+
+const featured = bySlug("shampoing-keratine")!;
 
 const Leaf = ({ active }: { active: boolean }) => (
   <svg
@@ -52,9 +55,7 @@ export default function Ingredients() {
     }
     gsap.registerPlugin(ScrollTrigger);
 
-    // Pas de pin GSAP : le flacon reste fixe via `position: sticky` (CSS natif).
-    // ScrollTrigger ne sert qu'à mesurer la progression -> zéro chirurgie DOM,
-    // donc plus de crash removeChild à la navigation côté client.
+    // Pas de pin GSAP : le produit reste fixe via position: sticky.
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: root.current,
@@ -72,11 +73,13 @@ export default function Ingredients() {
   const content = (
     <div className="container-luxe grid items-center gap-12 md:grid-cols-[0.8fr_1.2fr]">
       <div className="hidden flex-col items-center gap-6 md:flex">
-        <div className="floaty">
-          <BottleVisual variant="serum" name="Élixir Racines" category="Sérum" className="h-[46svh] max-h-[420px]" />
+        <div className="w-full max-w-[320px] overflow-hidden rounded-[4px] shadow-[0_24px_50px_rgba(107,66,48,0.16)]">
+          <div className="aspect-[4/5]">
+            <ProductImage product={featured} />
+          </div>
         </div>
         <p className="text-[9px] uppercase tracking-wide3 text-taupe-deep">
-          Le flacon reste — les actifs défilent
+          Le produit reste — les actifs défilent
         </p>
       </div>
 
@@ -119,8 +122,8 @@ export default function Ingredients() {
         </div>
 
         <div className="mt-9 flex items-center gap-6">
-          <Link href="/produit/elixir-racines/" className="btn-primary" data-cursor>
-            Découvrir l&apos;Élixir — 42,00 €
+          <Link href={`/produit/${featured.slug}/`} className="btn-primary" data-cursor>
+            Découvrir le Shampoing — {fmt(featured.price)}
           </Link>
           <Link
             href="/ingredients/"

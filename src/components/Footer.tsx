@@ -5,10 +5,10 @@ const COLS: { title: string; links: { label: string; href: string }[] }[] = [
     title: "Boutique",
     links: [
       { label: "Toute la collection", href: "/boutique/" },
-      { label: "Sérums", href: "/boutique/" },
-      { label: "Masques", href: "/boutique/" },
-      { label: "Huiles", href: "/boutique/" },
-      { label: "Shampoings", href: "/boutique/" },
+      { label: "Coloration", href: "/boutique/" },
+      { label: "Soins", href: "/boutique/" },
+      { label: "Coiffage", href: "/boutique/" },
+      { label: "Coffrets", href: "/boutique/" },
     ],
   },
   {
@@ -16,8 +16,8 @@ const COLS: { title: string; links: { label: string; href: string }[] }[] = [
     links: [
       { label: "À propos", href: "/a-propos/" },
       { label: "Ingrédients", href: "/ingredients/" },
-      { label: "Les rituels", href: "/rituels/" },
-      { label: "Visiter l'atelier", href: "/contact/" },
+      { label: "Le protocole", href: "/rituels/" },
+      { label: "Nos engagements", href: "/a-propos/" },
       { label: "Contact", href: "/contact/" },
     ],
   },
@@ -38,11 +38,11 @@ export default function Footer() {
     <footer className="bg-copper-deep text-ivory">
       <div className="container-luxe grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <p className="font-display text-lg font-light tracking-[0.3em] text-ivory">MANIKA</p>
-          <p className="mt-1 text-[9px] uppercase tracking-wide3 text-rose">Hair Cosmetics</p>
+          <p className="font-display text-lg font-light tracking-[0.3em] text-ivory">MANIKA.LAB</p>
+          <p className="mt-1 text-[9px] uppercase tracking-wide3 text-rose">Professional Hair Care</p>
           <p className="mt-5 max-w-xs text-[12px] font-light leading-relaxed text-ivory/70">
-            Cosmétiques capillaires naturels, formulés et conditionnés en Provence. 98 % d&apos;origine
-            naturelle, 100 % de transparence.
+            Cosmétique capillaire professionnelle : coloration vegan, soins reconstructeurs et
+            coiffage de précision. Formulé en Italie, pensé pour les exigeantes.
           </p>
           <div className="mt-6 flex gap-4 text-[10px] uppercase tracking-wide2 text-ivory/70">
             <a href="#" className="transition-colors hover:text-ivory">Instagram</a>
@@ -73,7 +73,7 @@ export default function Footer() {
       <div className="border-t border-ivory/15">
         <div className="container-luxe flex flex-col items-center justify-between gap-4 py-6 text-[10px] tracking-wider text-ivory/60 md:flex-row">
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-            <span>© 2026 MANIKA</span>
+            <span>© 2026 MANIKA.LAB</span>
             <span aria-hidden>·</span>
             <a href="#" className="hover:text-ivory">CGV</a>
             <span aria-hidden>·</span>

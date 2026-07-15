@@ -9,7 +9,7 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { slug: string } }) {
   const p = bySlug(params.slug);
   return {
-    title: p ? `${p.name} — MANIKA Hair Cosmetics` : "MANIKA",
+    title: p ? `${p.name} — MANIKA.LAB` : "MANIKA.LAB",
     description: p?.desc,
   };
 }

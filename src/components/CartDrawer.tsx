@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X, Minus, Plus, Lock } from "lucide-react";
 import { useCart } from "@/components/cart-context";
 import { bySlug, fmt, FREE_SHIPPING } from "@/lib/products";
-import BottleVisual from "@/components/BottleVisual";
+import ProductImage from "@/components/ProductImage";
 
 export default function CartDrawer() {
   const { items, open, setOpen, setQty, subtotal } = useCart();
@@ -75,8 +75,8 @@ export default function CartDrawer() {
                   if (!p) return null;
                   return (
                     <div key={`${it.slug}-${it.size}`} className="flex gap-4 border-b border-taupe/40 py-5">
-                      <div className="flex h-24 w-20 shrink-0 items-center justify-center rounded-[3px] bg-ivory-2">
-                        <BottleVisual variant={p.variant} className="h-20" />
+                      <div className="h-24 w-20 shrink-0 overflow-hidden rounded-[3px] bg-ivory-2">
+                        <ProductImage product={p} />
                       </div>
                       <div className="flex flex-1 flex-col">
                         <p className="heading text-[12px] tracking-luxe">{p.name}</p>

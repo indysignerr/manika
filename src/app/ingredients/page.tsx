@@ -6,77 +6,77 @@ import Reveal from "@/components/Reveal";
 import Magnetic from "@/components/Magnetic";
 
 export const metadata: Metadata = {
-  title: "Les ingrédients — MANIKA Hair Cosmetics",
+  title: "Les ingrédients — MANIKA.LAB",
   description:
-    "Le glossaire complet des actifs MANIKA : origine, rôle et produits. Et la liste de ce qui n'entrera jamais dans nos formules.",
+    "Le glossaire des actifs MANIKA.LAB : kératine, acide hyaluronique, argan, monoï. Et la liste de ce qui n'entrera jamais dans nos formules.",
 };
 
 const ACTIFS = [
   {
-    name: "Romarin de Provence",
-    latin: "Rosmarinus officinalis",
-    origin: "Récolté à moins de 40 km de l'atelier",
-    role: "Stimule la microcirculation du cuir chevelu et fortifie la racine.",
-    products: ["elixir-racines", "rituel-volume"],
+    name: "Kératine hydrolysée",
+    latin: "Hydrolyzed Keratin",
+    origin: "Actif reconstructeur",
+    role: "Comble les brèches de la fibre et lui rend force et densité après la couleur.",
+    products: ["shampoing-keratine", "soin-monoi"],
   },
   {
-    name: "Ortie sauvage",
-    latin: "Urtica dioica",
-    origin: "Cueillette sauvage certifiée, Provence",
-    role: "Purifie et régule le sébum sans agresser le microbiome.",
-    products: ["elixir-racines", "rituel-volume"],
+    name: "Acide hyaluronique",
+    latin: "Sodium Hyaluronate",
+    origin: "Agent d'hydratation",
+    role: "Retient l'eau au cœur du cheveu, gonfle la fibre et lisse les écailles.",
+    products: ["shampoing-keratine", "coloration-bio-vegan"],
   },
   {
-    name: "Argan bio",
-    latin: "Argania spinosa",
-    origin: "Coopérative féminine partenaire, Maroc",
-    role: "Nourrit la longueur et scelle la brillance, première pression à froid.",
-    products: ["elixir-racines", "huile-precieuse"],
+    name: "Huile d'argan",
+    latin: "Argania Spinosa",
+    origin: "Pressée à froid, Maroc",
+    role: "Nourrit la longueur, discipline et scelle la brillance sans alourdir.",
+    products: ["soin-monoi", "texture-shine"],
   },
   {
-    name: "Camomille",
-    latin: "Chamomilla recutita",
-    origin: "Culture biologique, Drôme provençale",
-    role: "Apaise les cuirs chevelus sensibles et ravive les reflets.",
-    products: ["rituel-doux"],
+    name: "Monoï de Tahiti",
+    latin: "Cocos Nucifera",
+    origin: "Appellation d'origine, Polynésie",
+    role: "Adoucit corps et cheveux, protège du dessèchement après-soleil.",
+    products: ["soin-monoi"],
   },
   {
-    name: "Lin",
-    latin: "Linum usitatissimum",
-    origin: "Filière française tracée",
-    role: "Gaine la boucle et lui rend son ressort naturel, sans effet carton.",
-    products: ["rituel-boucles"],
+    name: "Jojoba",
+    latin: "Simmondsia Chinensis",
+    origin: "Cire végétale",
+    role: "Protège la fibre pendant la coloration et régule le sébum.",
+    products: ["coloration-bio-vegan"],
   },
   {
-    name: "Guimauve",
-    latin: "Althaea officinalis",
-    origin: "Racines séchées à basse température",
-    role: "Démêle et adoucit — le meilleur après-shampoing que la nature ait écrit.",
-    products: ["rituel-boucles"],
+    name: "Thé vert",
+    latin: "Camellia Sinensis",
+    origin: "Antioxydant végétal",
+    role: "Antioxydant, apaise le cuir chevelu et préserve l'éclat de la couleur.",
+    products: ["coloration-bio-vegan"],
   },
   {
-    name: "Rose de Damas",
-    latin: "Rosa damascena",
-    origin: "Distillation artisanale, vallée de Grasse",
-    role: "Fixe la lumière sur la fibre et parfume sans alcool ni synthèse.",
-    products: ["brume-eclat"],
+    name: "Aloe vera",
+    latin: "Aloe Barbadensis",
+    origin: "Gel apaisant",
+    role: "Hydrate et calme le cuir chevelu, même sensibilisé par la couleur.",
+    products: ["coloration-bio-vegan"],
   },
   {
-    name: "Karité brut",
-    latin: "Butyrospermum parkii",
-    origin: "Commerce équitable, Burkina Faso",
-    role: "Répare la fibre altérée par la couleur et la chaleur, en profondeur.",
-    products: ["baume-ambre", "creme-de-nuit"],
+    name: "Argile kaolin",
+    latin: "Kaolin",
+    origin: "Argile blanche",
+    role: "Matifie et texturise le coiffage sans effet gras ni résidu.",
+    products: ["cire-matifiante"],
   },
 ];
 
 const BANNIS = [
-  { name: "Sulfates SLS / SLES", why: "Décapent la fibre et le cuir chevelu" },
+  { name: "Ammoniaque", why: "Agresse la fibre et le cuir chevelu pendant la couleur" },
+  { name: "Sulfates SLES / SLS", why: "Décapent la fibre et ternissent la couleur" },
   { name: "Silicones", why: "Étouffent le cheveu sous un film occlusif" },
   { name: "Parabènes", why: "Conservateurs controversés — remplaçables" },
-  { name: "PEG", why: "Dérivés pétrochimiques, procédé polluant" },
-  { name: "Colorants synthétiques", why: "Aucun bénéfice pour la fibre" },
-  { name: "Parfums de synthèse", why: "Premiers allergènes de la cosmétique" },
+  { name: "Colorants de synthèse", why: "Aucun bénéfice pour la fibre" },
+  { name: "Allergènes déclarables", why: "Premiers responsables des réactions" },
 ];
 
 const Leaf = () => (
@@ -92,22 +92,21 @@ export default function Page() {
     <div className="pt-32 md:pt-36">
       {/* Héro */}
       <section className="relative overflow-hidden pb-16">
-        <div className="pointer-events-none absolute -left-24 -top-20 w-[420px] opacity-[0.06]">
+        <div className="pointer-events-none absolute -left-24 -top-20 w-[420px] opacity-[0.05]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/motif.png" alt="" />
+          <img src="/images/logo-mark.png" alt="" />
         </div>
         <div className="container-luxe">
           <Reveal>
             <p className="kicker">La composition</p>
             <h1 className="heading mt-4 max-w-2xl text-4xl leading-[1.1] md:text-6xl">
-              Le végétal,
+              Des actifs,
               <br />
               sans <em className="font-serif normal-case italic tracking-normal text-bronze">compromis</em>
             </h1>
             <p className="mt-8 max-w-lg text-[15px] font-light leading-relaxed text-ink/80">
-              Chaque actif est choisi pour une raison précise, tracé jusqu&apos;à sa parcelle, et
-              publié ici. Si un ingrédient n&apos;a pas de rôle démontré, il n&apos;entre pas dans
-              la formule — c&apos;est la règle de l&apos;atelier.
+              Chaque formule MANIKA.LAB est construite autour d&apos;actifs choisis pour une raison
+              précise et publiés ici. La qualité d&apos;un salon, la transparence en plus.
             </p>
           </Reveal>
         </div>
@@ -155,7 +154,7 @@ export default function Page() {
       <section className="bg-copper py-20 text-ivory md:py-24">
         <div className="container-luxe">
           <Reveal className="text-center">
-            <p className="text-[10px] uppercase tracking-wide3 text-ivory/75">La règle de l&apos;atelier</p>
+            <p className="text-[10px] uppercase tracking-wide3 text-ivory/75">La règle du labo</p>
             <h2 className="heading mt-3 text-3xl !text-ivory md:text-4xl">
               Jamais dans nos formules
             </h2>
@@ -182,7 +181,7 @@ export default function Page() {
       <section className="py-20 text-center md:py-24">
         <div className="container-luxe">
           <Reveal>
-            <h2 className="heading text-2xl md:text-3xl">La preuve par le flacon</h2>
+            <h2 className="heading text-2xl md:text-3xl">La preuve par l&apos;étiquette</h2>
             <p className="mx-auto mt-4 max-w-sm text-[13px] font-light text-ink/75">
               Chaque INCI complet est publié sur la fiche produit, sans abréviation ni astérisque
               caché.

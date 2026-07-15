@@ -29,7 +29,7 @@ export default function Header() {
   return (
     <div className="fixed inset-x-0 top-0 z-[85]">
       <div className="bg-copper py-2 text-center text-[9px] uppercase tracking-wide3 text-ivory md:text-[10px]">
-        Livraison offerte dès 60 € · Retours gratuits 30 jours · Fabriqué en Provence
+        Livraison offerte dès 60 € · Retours gratuits 30 jours · Qualité salon professionnelle
       </div>
 
       <header
@@ -59,12 +59,12 @@ export default function Header() {
             </nav>
           </div>
 
-          <Link href="/" aria-label="MANIKA — Accueil" data-cursor>
+          <Link href="/" aria-label="MANIKA.LAB — Accueil" data-cursor>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/wordmark.png"
-              alt="MANIKA — Hair Cosmetics"
-              className="h-9 w-auto md:h-10"
+              alt="MANIKA.LAB"
+              className="h-6 w-auto md:h-7"
             />
           </Link>
 
@@ -134,7 +134,7 @@ export default function Header() {
               ))}
             </nav>
             <p className="mt-auto pb-10 text-[10px] uppercase tracking-wide3 text-taupe-deep">
-              MANIKA — Hair Cosmetics
+              MANIKA.LAB
             </p>
           </motion.div>
         )}

@@ -64,19 +64,19 @@ export default function BoutiqueView() {
       <div className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-16 -top-24 w-[380px] opacity-[0.07]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/motif.png" alt="" />
+          <img src="/images/logo-mark.png" alt="" />
         </div>
         <div className="container-luxe pb-10">
           <Reveal>
-            <p className="kicker">La collection · Automne 2026</p>
+            <p className="kicker">La collection professionnelle</p>
             <h1 className="heading mt-4 max-w-xl text-4xl leading-[1.1] md:text-5xl">
-              Des soins qui
+              La qualité salon,
               <br />
-              font <em className="font-serif normal-case italic tracking-normal text-bronze">rituel</em>
+              en <em className="font-serif normal-case italic tracking-normal text-bronze">accès direct</em>
             </h1>
             <p className="mt-5 max-w-md text-[13px] font-light leading-relaxed text-ink/75">
-              Formules douces à base d&apos;actifs végétaux — sulfates, silicones et compromis
-              exclus. Chaque flacon est numéroté à l&apos;atelier.
+              Coloration vegan, soins reconstructeurs et coiffage de précision. Des formules
+              professionnelles formulées en Italie — sulfates, silicones et ammoniaque exclus.
             </p>
           </Reveal>
 
@@ -254,14 +254,14 @@ export default function BoutiqueView() {
                           «
                         </span>
                         <p className="font-serif text-lg italic leading-relaxed md:text-xl">
-                          Le soin commence par le geste, le geste devient rituel.
+                          Colorer, réparer, coiffer — le protocole d&apos;un salon, chez vous.
                         </p>
                         <Link
                           href="/rituels/"
                           className="text-[10px] uppercase tracking-wide2 text-ivory/85 transition-opacity hover:opacity-70"
                           data-cursor
                         >
-                          Découvrir les trois gestes →
+                          Découvrir le protocole →
                         </Link>
                       </div>
                     </Reveal>

@@ -16,13 +16,13 @@ export default function Story() {
           <div className="relative aspect-[4/5] overflow-hidden rounded-[3px] bg-gradient-to-br from-ivory-2 via-ivory-3 to-[#EFE3D6]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/motif.png"
-              alt="Motif botanique MANIKA"
+              src="/images/logo-mark.png"
+              alt="MANIKA.LAB"
               className="absolute left-1/2 top-1/2 w-3/5 -translate-x-1/2 -translate-y-1/2 opacity-90"
             />
             <div className="absolute inset-x-0 bottom-0 bg-copper-deep/80 px-6 py-4 backdrop-blur-sm">
               <p className="text-[10px] uppercase tracking-wide3 text-ivory/80">
-                Provence, France — atelier de formulation
+                Formulé en Italie — laboratoire partenaire
               </p>
             </div>
           </div>
@@ -31,14 +31,14 @@ export default function Story() {
         <Reveal delay={0.15}>
           <p className="kicker">Notre histoire</p>
           <h2 className="heading mt-4 text-3xl leading-[1.15] md:text-[2.6rem]">
-            La beauté puise
+            La science
             <br />
-            dans la <em className="font-serif normal-case italic tracking-normal text-bronze">racine</em>
+            au service du <em className="font-serif normal-case italic tracking-normal text-bronze">cheveu</em>
           </h2>
           <p className="mt-7 max-w-md text-[14px] font-light leading-relaxed text-ink/80">
-            Née d&apos;un rituel transmis de génération en génération, MANIKA compose des soins où
-            chaque ingrédient a sa raison d&apos;être. Actifs botaniques rares, formulation
-            artisanale, transparence radicale — rien de plus, rien de moins.
+            MANIKA.LAB conçoit des formules de niveau salon — coloration vegan, kératine
+            reconstructrice, coiffage de précision — fabriquées en Italie. Des actifs qui ont une
+            raison d&apos;être, une transparence totale, rien de superflu.
           </p>
           <div className="mt-9">
             <Magnetic>

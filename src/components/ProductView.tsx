@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown, Lock, Truck, Leaf, RotateCcw, Minus, Plus } from "lucide-react";
 import { Product, products, fmt } from "@/lib/products";
 import { useCart } from "@/components/cart-context";
-import BottleVisual from "@/components/BottleVisual";
+import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
 import Magnetic from "@/components/Magnetic";
 import Reveal from "@/components/Reveal";
@@ -18,7 +16,7 @@ const ACCORDION = (p: Product) => [
   { title: "Utilisation", body: p.usage },
   {
     title: "Livraison & retours",
-    body: "Expédition sous 24 h depuis la Provence. Livraison offerte dès 60 €. Retours gratuits sous 30 jours, même flacon entamé.",
+    body: "Expédition sous 24 h. Livraison offerte dès 60 €. Retours gratuits sous 30 jours, même produit entamé.",
   },
 ];
 
@@ -31,9 +29,6 @@ export default function ProductView({ product }: { product: Product }) {
   const [openAcc, setOpenAcc] = useState(0);
   const [showBar, setShowBar] = useState(false);
 
-  const spinRef = useRef<HTMLDivElement>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
-
   const size = product.sizes[sizeIndex];
   const unit = product.price + size.delta;
 
@@ -41,32 +36,7 @@ export default function ProductView({ product }: { product: Product }) {
     const onScroll = () => setShowBar(window.scrollY > 480);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return () => window.removeEventListener("scroll", onScroll);
-    }
-    gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        spinRef.current,
-        { rotationY: -14 },
-        {
-          rotationY: 346,
-          ease: "none",
-          scrollTrigger: {
-            trigger: rootRef.current,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 0.5,
-          },
-        }
-      );
-    }, rootRef);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      ctx.revert();
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const addToCart = () => {
@@ -76,30 +46,14 @@ export default function ProductView({ product }: { product: Product }) {
   const crossSell = products.filter((p) => p.slug !== product.slug).slice(0, 4);
 
   return (
-    <div ref={rootRef} className="pt-32 md:pt-36">
+    <div className="pt-32 md:pt-36">
       <div className="container-luxe grid gap-14 pb-20 md:grid-cols-2 md:gap-20">
-        {/* Galerie — flacon 360° */}
+        {/* Galerie photo */}
         <div className="md:sticky md:top-36 md:self-start">
-          <div
-            className="relative flex aspect-[4/5] items-center justify-center overflow-hidden rounded-[3px] bg-gradient-to-b from-ivory-2 to-ivory-3"
-            style={{ perspective: 900 }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/motif.png"
-              alt=""
-              className="absolute left-1/2 top-1/2 w-2/3 -translate-x-1/2 -translate-y-1/2 opacity-[0.07]"
-            />
-            <div ref={spinRef} style={{ transformStyle: "preserve-3d" }} className="floaty">
-              <BottleVisual
-                variant={product.variant}
-                name={product.name}
-                category={product.category}
-                className="h-[46svh] max-h-[420px] drop-shadow-[0_30px_40px_rgba(107,66,48,0.16)]"
-              />
-            </div>
-            <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-[2px] border border-taupe/60 bg-ivory/70 px-3 py-1.5 text-[9px] uppercase tracking-wide2 text-copper backdrop-blur-sm">
-              360° — piloté par votre scroll
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[3px] bg-ivory-2">
+            <ProductImage product={product} eager />
+            <span className="absolute bottom-4 left-1/2 w-max -translate-x-1/2 rounded-[2px] border border-taupe/60 bg-ivory/70 px-3 py-1.5 text-[9px] uppercase tracking-wide2 text-copper backdrop-blur-sm">
+              {product.tagline}
             </span>
           </div>
         </div>
@@ -110,7 +64,7 @@ export default function ProductView({ product }: { product: Product }) {
             Accueil / Boutique / <span className="text-rose">{product.name}</span>
           </nav>
 
-          <p className="kicker mt-6">{product.category} · Édition automne</p>
+          <p className="kicker mt-6">{product.category} · {product.tagline}</p>
           <h1 className="heading mt-3 text-4xl md:text-[2.8rem]">{product.name}</h1>
 
           <div className="mt-3 flex items-center gap-3">
@@ -127,31 +81,18 @@ export default function ProductView({ product }: { product: Product }) {
             <p className="text-[11px] text-taupe-deep">Livraison offerte dès 60 €</p>
           </div>
 
-          {product.stock && (
-            <div className="mt-6 max-w-md">
-              <div className="mb-2 flex justify-between text-[10px] uppercase tracking-wide2">
-                <span className="text-copper">Récolte d&apos;automne — édition limitée</span>
-                <span className="text-bronze">Plus que {product.stock} flacons</span>
-              </div>
-              <div className="h-[3px] rounded-full bg-ivory-3">
-                <div
-                  className="h-[3px] rounded-full bg-rose"
-                  style={{ width: `${Math.round((product.stock / 30) * 100)}%` }}
-                />
-              </div>
-            </div>
-          )}
-
           {product.sizes.length > 1 && (
             <fieldset className="mt-8">
-              <legend className="mb-3 text-[10px] uppercase tracking-wide3 text-copper">Taille</legend>
-              <div className="flex gap-2">
+              <legend className="mb-3 text-[10px] uppercase tracking-wide3 text-copper">
+                {product.category === "Coloration" && product.slug === "creme-oxydante" ? "Volume" : "Taille"}
+              </legend>
+              <div className="flex flex-wrap gap-2">
                 {product.sizes.map((s, i) => (
                   <button
                     key={s.label}
                     onClick={() => setSizeIndex(i)}
                     aria-pressed={i === sizeIndex}
-                    className={`rounded-[2px] border px-6 py-3 text-[11px] tracking-wider transition-colors ${
+                    className={`rounded-[2px] border px-5 py-3 text-[11px] tracking-wider transition-colors ${
                       i === sizeIndex
                         ? "border-copper bg-copper text-ivory"
                         : "border-taupe/60 text-copper hover:border-copper"
@@ -184,7 +125,7 @@ export default function ProductView({ product }: { product: Product }) {
           <div className="mt-8 grid max-w-md grid-cols-3 gap-3 text-center">
             {[
               { icon: Truck, label: "Expédié sous 24 h" },
-              { icon: Leaf, label: "98 % naturel" },
+              { icon: Leaf, label: "Vegan & cruelty-free" },
               { icon: RotateCcw, label: "Retours 30 jours" },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="rounded-[3px] bg-ivory-2 px-2 py-3.5">
@@ -232,8 +173,8 @@ export default function ProductView({ product }: { product: Product }) {
       <section className="bg-ivory-2 py-20">
         <div className="container-luxe">
           <Reveal>
-            <p className="kicker">Compléter le rituel</p>
-            <h2 className="heading mt-3 text-2xl md:text-3xl">Ils se marient bien</h2>
+            <p className="kicker">Compléter la routine</p>
+            <h2 className="heading mt-3 text-2xl md:text-3xl">Ils vont bien ensemble</h2>
           </Reveal>
           <div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-7">
             {crossSell.map((p, i) => (
