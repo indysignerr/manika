@@ -83,3 +83,28 @@ for (const [file, slug] of PRODUCTS) {
     .toFile(`public/images/products/${slug}.jpg`);
   console.log(`ok: products/${slug}.jpg  bg=rgb(${bg.r},${bg.g},${bg.b})`);
 }
+
+// ── DÉTOURAGE HÉRO ───────────────────────────────────────────────
+// Le fond crème est chaud (R>G>B) ; le tube argenté est neutre (R≈G≈B).
+// On rend transparents les pixels chauds et clairs (crème + ombre portée),
+// on conserve le tube et le bouchon noir.
+async function cutout(src, out) {
+  const { data, info } = await sharp(src).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const warm = r - b;
+    const bright = (r + g + b) / 3;
+    if (warm > 16 && r - g > 3 && bright > 138) {
+      data[i + 3] = 0; // crème
+    } else if (warm > 11 && r - g > 1 && bright > 120) {
+      data[i + 3] = Math.round(data[i + 3] * 0.2); // frange d'ombre
+    }
+  }
+  await sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
+    .trim()
+    .png()
+    .toFile(out);
+  console.log("ok:", out);
+}
+
+await cutout("assets/products/coloration.jpg", "public/images/products/coloration-cutout.png");

@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ShoppingBag } from "lucide-react";
 import { bySlug, fmt } from "@/lib/products";
-import ProductImage from "@/components/ProductImage";
+import { useCart } from "@/components/cart-context";
 import Magnetic from "@/components/Magnetic";
 
 const Split = ({ text }: { text: string }) => (
@@ -31,7 +32,10 @@ const DUST = [
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
   const [videoOn, setVideoOn] = useState(false);
-  const featured = bySlug("shampoing-keratine")!;
+  const { add } = useCart();
+  const featured = bySlug("coloration-bio-vegan")!;
+  const featuredSize = featured.sizes.find((s) => s.delta === 0) ?? featured.sizes[0];
+  const addFeatured = () => add(featured.slug, featuredSize.label, featured.price + featuredSize.delta);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -194,15 +198,24 @@ export default function Hero() {
           </div>
         </div>
 
-        <div data-depth="0.9" className="hero-bottle relative mx-auto opacity-0">
+        <div data-depth="0.9" className="hero-bottle relative mx-auto flex flex-col items-center opacity-0">
           <div className="floaty">
-            <div className="aspect-[4/5] w-[64vw] max-w-[380px] overflow-hidden rounded-[4px] shadow-[0_30px_60px_rgba(107,66,48,0.2)] md:w-[32vw]">
-              <ProductImage product={featured} eager />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/products/coloration-cutout.png"
+              alt={featured.name}
+              className="h-[42svh] max-h-[460px] w-auto object-contain drop-shadow-[0_28px_42px_rgba(107,66,48,0.3)] md:h-[56svh]"
+            />
           </div>
-          <p className="mt-6 text-center text-[10px] uppercase tracking-wide3 text-taupe-deep">
-            {featured.name} — {fmt(featured.price)}
+          <p className="mt-7 text-[10px] uppercase tracking-wide3 text-taupe-deep">
+            {featured.name} · {featured.tagline}
           </p>
+          <Magnetic>
+            <button onClick={addFeatured} className="btn-primary mt-3" data-cursor>
+              <ShoppingBag size={14} strokeWidth={1.5} />
+              Ajout rapide — {fmt(featured.price)}
+            </button>
+          </Magnetic>
         </div>
       </div>
 
