@@ -4,11 +4,11 @@ const COLS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Boutique",
     links: [
-      { label: "Toute la collection", href: "/boutique/" },
-      { label: "Coloration", href: "/boutique/" },
-      { label: "Soins", href: "/boutique/" },
-      { label: "Coiffage", href: "/boutique/" },
-      { label: "Coffrets", href: "/boutique/" },
+      { label: "Toute la boutique", href: "/boutique/" },
+      { label: "Femme · Coloration", href: "/boutique/femme-coloration/" },
+      { label: "Femme · Soin", href: "/boutique/femme-soin/" },
+      { label: "Femme · Coiffage", href: "/boutique/femme-coiffage/" },
+      { label: "Barber · Coiffage", href: "/boutique/barber-coiffage/" },
     ],
   },
   {
