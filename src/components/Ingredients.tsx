@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { bySlug } from "@/lib/products";
-import ProductImage from "@/components/ProductImage";
+
+const FEATURED_IMAGE = "/images/products/shampoing-keratine.jpg";
 
 const INGREDIENTS = [
   {
@@ -24,8 +24,6 @@ const INGREDIENTS = [
     detail: "Pressée à froid, elle discipline la longueur sans jamais l'alourdir.",
   },
 ];
-
-const featured = bySlug("shampoing-keratine")!;
 
 const Leaf = ({ active }: { active: boolean }) => (
   <svg
@@ -75,7 +73,8 @@ export default function Ingredients() {
       <div className="hidden flex-col items-center gap-6 md:flex">
         <div className="w-full max-w-[320px] overflow-hidden rounded-[4px] shadow-[0_24px_50px_rgba(107,66,48,0.16)]">
           <div className="aspect-[4/5]">
-            <ProductImage product={featured} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={FEATURED_IMAGE} alt="Soin kératine MANIKA.LAB" className="h-full w-full object-cover" />
           </div>
         </div>
         <p className="text-[9px] uppercase tracking-wide3 text-taupe-deep">

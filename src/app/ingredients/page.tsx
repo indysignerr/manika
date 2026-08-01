@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { X } from "lucide-react";
-import { bySlug } from "@/lib/products";
 import Reveal from "@/components/Reveal";
 import Magnetic from "@/components/Magnetic";
 
@@ -128,21 +127,6 @@ export default function Page() {
                   <p className="mt-1 font-serif text-[13px] italic text-bronze">{a.latin}</p>
                   <p className="mt-3 text-[12px] font-light leading-relaxed text-ink/80">{a.role}</p>
                   <p className="mt-3 text-[10px] uppercase tracking-wider text-taupe-deep">{a.origin}</p>
-                  <div className="mt-auto flex flex-wrap gap-1.5 pt-5">
-                    {a.products.map((slug) => {
-                      const p = bySlug(slug)!;
-                      return (
-                        <Link
-                          key={slug}
-                          href="/boutique/"
-                          className="rounded-[2px] border border-taupe/60 px-2.5 py-1.5 text-[9px] uppercase tracking-wider text-copper transition-colors hover:border-copper hover:bg-copper hover:text-ivory"
-                          data-cursor
-                        >
-                          {p.name}
-                        </Link>
-                      );
-                    })}
-                  </div>
                 </article>
               </Reveal>
             ))}

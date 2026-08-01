@@ -4,15 +4,13 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { bySlug } from "@/lib/products";
-import ProductImage from "@/components/ProductImage";
 
 const PANELS = [
   {
     num: "01",
     title: "Colorer",
     text: "La coloration crème vegan enrichie au Hair Plex. Une couleur éclatante qui prend soin de la fibre au lieu de l'agresser.",
-    slug: "coloration-bio-vegan",
+    image: "/images/products/coloration-bio-vegan.jpg",
     href: "/boutique/femme-coloration/",
     cta: "Voir la coloration",
     bg: "bg-ivory-2",
@@ -22,7 +20,7 @@ const PANELS = [
     num: "02",
     title: "Réparer",
     text: "Le shampoing kératine & acide hyaluronique reconstruit la fibre après la couleur. Force, densité et brillance retrouvées.",
-    slug: "shampoing-keratine",
+    image: "/images/products/shampoing-keratine.jpg",
     href: "/boutique/femme-soins/",
     cta: "Voir les soins",
     bg: "bg-ivory-3",
@@ -32,7 +30,7 @@ const PANELS = [
     num: "03",
     title: "Coiffer",
     text: "La touche finale : texture, brillance et tenue souple. Le fini glossy des coiffages de salon, sans effet carton.",
-    slug: "texture-shine",
+    image: "/images/products/texture-shine.jpg",
     href: "/boutique/femme-coiffage/",
     cta: "Voir le coiffage",
     bg: "bg-[#EFE3D6]",
@@ -71,49 +69,43 @@ export default function Rituels() {
     return () => ctx.revert();
   }, []);
 
-  const panels = PANELS.map((panel) => {
-    const product = bySlug(panel.slug);
-    return (
-      <article
-        key={panel.num}
-        className={`flex w-screen shrink-0 items-center ${panel.bg} ${
-          reduced ? "min-h-[80svh] py-20" : "h-full"
-        }`}
-      >
-        <div className="container-luxe grid items-center gap-10 md:grid-cols-[1.2fr_0.8fr]">
-          <div>
-            <span className={`block font-display text-[7rem] font-extralight leading-none md:text-[11rem] ${panel.numColor}`}>
-              {panel.num}
-            </span>
-            <h3 className="heading mt-2 text-4xl md:text-5xl">{panel.title}</h3>
-            <p className="mt-6 max-w-md text-[14px] font-light leading-relaxed text-ink/80">
-              {panel.text}
-            </p>
-            <Link
-              href={panel.href}
-              className="mt-8 inline-flex items-center gap-3 text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60"
-              data-cursor
-            >
-              {panel.cta}
-              <span aria-hidden>→</span>
-            </Link>
-          </div>
-          {product && (
-            <Link
-              href={panel.href}
-              className="mx-auto hidden w-full max-w-[300px] md:block"
-              aria-label={panel.cta}
-              data-cursor
-            >
-              <div className="aspect-[4/5] overflow-hidden rounded-[4px] shadow-[0_24px_50px_rgba(107,66,48,0.16)] transition-transform duration-700 hover:-translate-y-2">
-                <ProductImage product={product} />
-              </div>
-            </Link>
-          )}
+  const panels = PANELS.map((panel) => (
+    <article
+      key={panel.num}
+      className={`flex w-screen shrink-0 items-center ${panel.bg} ${
+        reduced ? "min-h-[80svh] py-20" : "h-full"
+      }`}
+    >
+      <div className="container-luxe grid items-center gap-10 md:grid-cols-[1.2fr_0.8fr]">
+        <div>
+          <span className={`block font-display text-[7rem] font-extralight leading-none md:text-[11rem] ${panel.numColor}`}>
+            {panel.num}
+          </span>
+          <h3 className="heading mt-2 text-4xl md:text-5xl">{panel.title}</h3>
+          <p className="mt-6 max-w-md text-[14px] font-light leading-relaxed text-ink/80">{panel.text}</p>
+          <Link
+            href={panel.href}
+            className="mt-8 inline-flex items-center gap-3 text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60"
+            data-cursor
+          >
+            {panel.cta}
+            <span aria-hidden>→</span>
+          </Link>
         </div>
-      </article>
-    );
-  });
+        <Link
+          href={panel.href}
+          className="mx-auto hidden w-full max-w-[300px] md:block"
+          aria-label={panel.cta}
+          data-cursor
+        >
+          <div className="aspect-[4/5] overflow-hidden rounded-[4px] shadow-[0_24px_50px_rgba(107,66,48,0.16)] transition-transform duration-700 hover:-translate-y-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={panel.image} alt={panel.title} className="h-full w-full object-cover" />
+          </div>
+        </Link>
+      </div>
+    </article>
+  ));
 
   if (reduced) {
     return (

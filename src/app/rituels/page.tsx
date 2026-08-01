@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { bySlug } from "@/lib/products";
-import ProductImage from "@/components/ProductImage";
 import Reveal from "@/components/Reveal";
 import RituelBundle from "@/components/RituelBundle";
 
@@ -16,6 +14,7 @@ const RITUELS = [
     num: "01",
     title: "Colorer",
     slug: "coloration-bio-vegan",
+    image: "/images/products/coloration-bio-vegan.jpg",
     href: "/boutique/femme-coloration/",
     cta: "Voir la coloration",
     duration: "Pose 35 min · en salon ou à domicile",
@@ -32,6 +31,7 @@ const RITUELS = [
     num: "02",
     title: "Réparer",
     slug: "shampoing-keratine",
+    image: "/images/products/shampoing-keratine.jpg",
     href: "/boutique/femme-soins/",
     cta: "Voir les soins",
     duration: "1 à 2× par semaine",
@@ -48,6 +48,7 @@ const RITUELS = [
     num: "03",
     title: "Coiffer",
     slug: "texture-shine",
+    image: "/images/products/texture-shine.jpg",
     href: "/boutique/femme-coiffage/",
     cta: "Voir le coiffage",
     duration: "Chaque jour · fixation légère",
@@ -103,7 +104,6 @@ export default function Page() {
 
       {/* Les trois gestes */}
       {RITUELS.map((r, idx) => {
-        const product = bySlug(r.slug)!;
         const reversed = idx % 2 === 1;
         return (
           <section key={r.num} id={`rituel-${r.num}`} className={`${r.bg} py-20 md:py-28`}>
@@ -115,7 +115,8 @@ export default function Page() {
                   data-cursor
                   className="relative block aspect-[4/5] overflow-hidden rounded-[3px] bg-ivory"
                 >
-                  <ProductImage product={product} />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={r.image} alt={r.title} className="h-full w-full object-cover" />
                   <span className="absolute bottom-4 left-1/2 w-max -translate-x-1/2 rounded-[2px] border border-taupe/60 bg-ivory/80 px-3 py-1.5 text-[9px] uppercase tracking-wide2 text-copper backdrop-blur-sm">
                     {r.duration}
                   </span>
@@ -167,20 +168,18 @@ export default function Page() {
           </Reveal>
           <Reveal delay={0.15}>
             <div className="grid grid-cols-3 gap-4">
-              {RITUELS.map((r) => {
-                const p = bySlug(r.slug)!;
-                return (
-                  <Link
-                    key={r.slug}
-                    href={r.href}
-                    aria-label={r.cta}
-                    data-cursor
-                    className="aspect-[4/5] overflow-hidden rounded-[3px] transition-transform duration-500 hover:-translate-y-1.5"
-                  >
-                    <ProductImage product={p} />
-                  </Link>
-                );
-              })}
+              {RITUELS.map((r) => (
+                <Link
+                  key={r.slug}
+                  href={r.href}
+                  aria-label={r.cta}
+                  data-cursor
+                  className="aspect-[4/5] overflow-hidden rounded-[3px] transition-transform duration-500 hover:-translate-y-1.5"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={r.image} alt={r.title} className="h-full w-full object-cover" />
+                </Link>
+              ))}
             </div>
           </Reveal>
         </div>
