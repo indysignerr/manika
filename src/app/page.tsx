@@ -2,6 +2,7 @@ import Preloader from "@/components/Preloader";
 import ScrollManager from "@/components/ScrollManager";
 import Hero from "@/components/Hero";
 import FeaturedCollection from "@/components/FeaturedCollection";
+import PromoVideo from "@/components/PromoVideo";
 import Story from "@/components/Story";
 import Ingredients from "@/components/Ingredients";
 import Rituels from "@/components/Rituels";
@@ -15,6 +16,7 @@ export default function Home() {
       <ScrollManager />
       <Hero />
       <FeaturedCollection />
+      <PromoVideo />
       <Story />
       <Ingredients />
       <Rituels />
