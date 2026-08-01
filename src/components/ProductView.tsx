@@ -3,34 +3,34 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Lock, Truck, Leaf, RotateCcw, Minus, Plus } from "lucide-react";
-import { Product, products, fmt } from "@/lib/products";
+import { Product, fmtPrice } from "@/lib/products";
 import { useCart } from "@/components/cart-context";
 import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
 import Magnetic from "@/components/Magnetic";
 import Reveal from "@/components/Reveal";
 
-const ACCORDION = (p: Product) => [
-  { title: "Description", body: p.desc },
-  { title: "Ingrédients", body: p.inci },
-  { title: "Utilisation", body: p.usage },
-  {
-    title: "Livraison & retours",
-    body: "Expédition sous 24 h. Livraison offerte dès 60 €. Retours gratuits sous 30 jours, même produit entamé.",
-  },
-];
+const ACCORDION = (p: Product) =>
+  [
+    { title: "Description", body: p.desc },
+    { title: "Ingrédients", body: p.inci },
+    { title: "Utilisation", body: p.usage },
+    {
+      title: "Livraison & retours",
+      body: "Expédition sous 24 h. Livraison offerte dès 60 €. Retours gratuits sous 30 jours, même produit entamé.",
+    },
+  ].filter((i) => i.body && i.body.trim().length > 0);
 
-export default function ProductView({ product }: { product: Product }) {
+export default function ProductView({ product, related = [] }: { product: Product; related?: Product[] }) {
   const { add } = useCart();
-  const [sizeIndex, setSizeIndex] = useState(
-    Math.max(0, product.sizes.findIndex((s) => s.delta === 0))
-  );
+  const [sizeIndex, setSizeIndex] = useState(Math.max(0, product.sizes.findIndex((s) => s.delta === 0)));
   const [qty, setQty] = useState(1);
   const [openAcc, setOpenAcc] = useState(0);
   const [showBar, setShowBar] = useState(false);
 
-  const size = product.sizes[sizeIndex];
-  const unit = product.price + size.delta;
+  const size = product.sizes[sizeIndex] ?? product.sizes[0];
+  const unit = product.price + (size?.delta ?? 0);
+  const multi = product.sizes.length > 1;
 
   useEffect(() => {
     const onScroll = () => setShowBar(window.scrollY > 480);
@@ -40,10 +40,18 @@ export default function ProductView({ product }: { product: Product }) {
   }, []);
 
   const addToCart = () => {
-    for (let i = 0; i < qty; i++) add(product.slug, size.label, unit);
+    for (let i = 0; i < qty; i++)
+      add({
+        slug: product.slug,
+        size: size.label,
+        unit,
+        name: product.name,
+        image: product.image,
+        variantId: size.variantId,
+      });
   };
 
-  const crossSell = products.filter((p) => p.slug !== product.slug).slice(0, 4);
+  const crossSell = related.filter((p) => p.slug !== product.slug).slice(0, 4);
 
   return (
     <div className="pt-32 md:pt-36">
@@ -53,7 +61,7 @@ export default function ProductView({ product }: { product: Product }) {
           <div className="relative aspect-[4/5] overflow-hidden rounded-[3px] bg-ivory-2">
             <ProductImage product={product} eager />
             <span className="absolute bottom-4 left-1/2 w-max -translate-x-1/2 rounded-[2px] border border-taupe/60 bg-ivory/70 px-3 py-1.5 text-[9px] uppercase tracking-wide2 text-copper backdrop-blur-sm">
-              {product.tagline}
+              {product.tagline || product.category}
             </span>
           </div>
         </div>
@@ -64,32 +72,30 @@ export default function ProductView({ product }: { product: Product }) {
             Accueil / Boutique / <span className="text-rose">{product.name}</span>
           </nav>
 
-          <p className="kicker mt-6">{product.category} · {product.tagline}</p>
-          <h1 className="heading mt-3 text-4xl md:text-[2.8rem]">{product.name}</h1>
+          <p className="kicker mt-6">{product.category}</p>
+          <h1 className="heading mt-3 text-3xl md:text-[2.4rem]">{product.name}</h1>
 
           <div className="mt-3 flex items-center gap-3">
             <span className="text-sm tracking-[0.3em] text-rose" aria-label="4,9 sur 5">★★★★★</span>
             <span className="text-[11px] text-taupe-deep">4,9 — 214 avis</span>
           </div>
 
-          <p className="mt-5 max-w-md text-[14px] font-light leading-relaxed text-ink/80">
-            {product.desc}
-          </p>
+          {product.desc && (
+            <p className="mt-5 max-w-md text-[14px] font-light leading-relaxed text-ink/80">{product.desc}</p>
+          )}
 
           <div className="mt-6 flex items-baseline gap-4">
-            <p className="text-3xl font-extralight text-copper">{fmt(unit)}</p>
+            <p className="text-3xl font-extralight text-copper">{fmtPrice(unit)}</p>
             <p className="text-[11px] text-taupe-deep">Livraison offerte dès 60 €</p>
           </div>
 
-          {product.sizes.length > 1 && (
+          {multi && (
             <fieldset className="mt-8">
-              <legend className="mb-3 text-[10px] uppercase tracking-wide3 text-copper">
-                {product.category === "Coloration" && product.slug === "creme-oxydante" ? "Volume" : "Taille"}
-              </legend>
+              <legend className="mb-3 text-[10px] uppercase tracking-wide3 text-copper">Options</legend>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((s, i) => (
                   <button
-                    key={s.label}
+                    key={s.label + i}
                     onClick={() => setSizeIndex(i)}
                     aria-pressed={i === sizeIndex}
                     className={`rounded-[2px] border px-5 py-3 text-[11px] tracking-wider transition-colors ${
@@ -117,7 +123,7 @@ export default function ProductView({ product }: { product: Product }) {
             </div>
             <Magnetic className="flex-1">
               <button onClick={addToCart} className="btn-primary w-full !py-[15px]" data-cursor>
-                Ajouter au panier — {fmt(unit * qty)}
+                Ajouter au panier{unit > 0 ? ` — ${fmtPrice(unit * qty)}` : ""}
               </button>
             </Magnetic>
           </div>
@@ -159,7 +165,9 @@ export default function ProductView({ product }: { product: Product }) {
                       transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="pb-5 text-[13px] font-light leading-relaxed text-ink/75">{item.body}</p>
+                      <p className="whitespace-pre-line pb-5 text-[13px] font-light leading-relaxed text-ink/75">
+                        {item.body}
+                      </p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -170,21 +178,23 @@ export default function ProductView({ product }: { product: Product }) {
       </div>
 
       {/* Cross-sell */}
-      <section className="bg-ivory-2 py-20">
-        <div className="container-luxe">
-          <Reveal>
-            <p className="kicker">Compléter la routine</p>
-            <h2 className="heading mt-3 text-2xl md:text-3xl">Ils vont bien ensemble</h2>
-          </Reveal>
-          <div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-7">
-            {crossSell.map((p, i) => (
-              <Reveal key={p.slug} delay={i * 0.07}>
-                <ProductCard product={p} />
-              </Reveal>
-            ))}
+      {crossSell.length > 0 && (
+        <section className="bg-ivory-2 py-20">
+          <div className="container-luxe">
+            <Reveal>
+              <p className="kicker">Compléter la routine</p>
+              <h2 className="heading mt-3 text-2xl md:text-3xl">Ils vont bien ensemble</h2>
+            </Reveal>
+            <div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-7">
+              {crossSell.map((p, i) => (
+                <Reveal key={p.slug} delay={i * 0.07}>
+                  <ProductCard product={p} />
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Barre sticky d'achat */}
       <div
@@ -194,10 +204,10 @@ export default function ProductView({ product }: { product: Product }) {
       >
         <div className="container-luxe flex items-center justify-between gap-4 py-3">
           <p className="truncate text-[11px] uppercase tracking-wide2 text-ivory">
-            {product.name} · {size.label}
+            {product.name}{multi ? ` · ${size.label}` : ""}
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-ivory">{fmt(unit)}</span>
+            <span className="text-sm text-ivory">{fmtPrice(unit)}</span>
             <button
               onClick={addToCart}
               className="rounded-[2px] bg-rose px-6 py-2.5 text-[10px] uppercase tracking-wide2 text-ivory transition-colors hover:bg-rose-hover"

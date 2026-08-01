@@ -37,7 +37,7 @@ export const collections: Collection[] = [
     productSlugs: ["coloration-bio-vegan", "creme-oxydante"],
   },
   {
-    slug: "femme-soin",
+    slug: "femme-soins",
     univers: "Femme",
     label: "Soin",
     tagline: "Shampoings, masques & monoï",

@@ -1,17 +1,18 @@
 import Link from "next/link";
-import { products } from "@/lib/products";
+import { catalogFeatured } from "@/lib/catalog";
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/Reveal";
 
-export default function FeaturedCollection() {
-  const featured = products.slice(0, 4);
+export default async function FeaturedCollection() {
+  const featured = await catalogFeatured(4);
+  if (featured.length === 0) return null;
 
   return (
     <section id="collection" className="py-24 md:py-32">
       <div className="container-luxe">
         <Reveal className="text-center">
           <p className="kicker">L&apos;essentiel</p>
-          <h2 className="heading mt-3 text-3xl md:text-4xl">Best-sellers</h2>
+          <h2 className="heading mt-3 text-3xl md:text-4xl">La sélection</h2>
           <span className="mx-auto mt-6 block h-px w-10 bg-bronze" />
         </Reveal>
 
@@ -25,7 +26,7 @@ export default function FeaturedCollection() {
 
         <Reveal className="mt-14 text-center">
           <Link href="/boutique/" className="btn-ghost" data-cursor>
-            Toute la collection
+            Toute la boutique
           </Link>
         </Reveal>
       </div>

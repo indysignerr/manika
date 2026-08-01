@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { X, SlidersHorizontal } from "lucide-react";
-import { HAIR_TYPES, NEEDS } from "@/lib/products";
-import { Collection, collectionsByUnivers, productsInCollection } from "@/lib/collections";
+import { HAIR_TYPES, NEEDS, type Product } from "@/lib/products";
+import { Collection, collectionsByUnivers } from "@/lib/collections";
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/Reveal";
 
@@ -19,8 +19,14 @@ const SORTS = [
 
 type SortId = (typeof SORTS)[number]["id"];
 
-export default function CollectionView({ collection }: { collection: Collection }) {
-  const base = useMemo(() => productsInCollection(collection.slug), [collection.slug]);
+export default function CollectionView({
+  collection,
+  products,
+}: {
+  collection: Collection;
+  products: Product[];
+}) {
+  const base = products;
   const siblings = collectionsByUnivers(collection.univers);
 
   const [hair, setHair] = useState<string[]>([]);

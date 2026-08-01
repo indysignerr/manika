@@ -134,6 +134,16 @@ export async function getProductByHandle(handle: string): Promise<ShopifyProduct
   return data.product;
 }
 
+/** Nombre de produits par collection (une requête). */
+export async function getCollectionsCounts(): Promise<Record<string, number>> {
+  const data = await shopifyFetch<{
+    collections: { nodes: { handle: string; products: { nodes: { id: string }[] } }[] };
+  }>(/* GraphQL */ `{ collections(first: 40) { nodes { handle products(first: 200) { nodes { id } } } } }`);
+  const out: Record<string, number> = {};
+  for (const c of data.collections.nodes) out[c.handle] = c.products.nodes.length;
+  return out;
+}
+
 /* ────────────────────────────────────────────────────────────────────────
    PANIER & CHECKOUT — côté navigateur (jeton public), redirection sécurisée
    ──────────────────────────────────────────────────────────────────────── */
@@ -172,32 +182,50 @@ export async function redirectToShopifyCheckout(lines: CartLine[]): Promise<void
 
 import type { Product } from "@/lib/products";
 
+const CATEGORY_LABEL: Record<string, string> = {
+  COLORATION: "Coloration",
+  SOINS: "Soin",
+  SOIN: "Soin",
+  COIFFAGE: "Coiffage",
+  CONSOMMABLES: "Consommable",
+};
+
+const catLabel = (productType: string) => {
+  if (!productType) return "Produit";
+  return CATEGORY_LABEL[productType.toUpperCase()] ?? (productType.charAt(0) + productType.slice(1).toLowerCase());
+};
+
 /**
  * Convertit un produit Shopify vers le type `Product` du site.
+ * Chaque taille porte son `variantId` (gid) pour construire le panier/checkout.
  *
- * TODO (au branchement) : `tagline`, `usage`, `inci`, `hair`, `need` viendront
- * de METAFIELDS Shopify (recommandé) ou des tags. Ici on met des valeurs de
- * repli pour ne rien casser. On conserve le variant.id de chaque taille pour
- * pouvoir construire les lignes de panier (à ajouter dans le type Product :
- * `sizes[].variantId`).
+ * TODO (finition) : `tagline`, `usage`, `inci`, `hair`, `need` viendront de
+ * METAFIELDS Shopify ou des tags. Ici valeurs de repli — rien ne casse.
  */
 export function toSiteProduct(sp: ShopifyProduct): Product {
   const base = Number(sp.priceRange.minVariantPrice.amount);
+  const variants = sp.variants.nodes;
+  const soloVariant = variants.length === 1;
   return {
     slug: sp.handle,
     name: sp.title,
-    tagline: sp.productType || "",
-    category: sp.productType || "Produit",
+    tagline: catLabel(sp.productType),
+    category: catLabel(sp.productType),
     price: base,
-    sizes: sp.variants.nodes.map((v) => ({
-      label: v.title,
-      delta: Number(v.price.amount) - base,
-    })),
+    // Un seul variant (« Default Title ») → pas de sélecteur de taille.
+    sizes: soloVariant
+      ? [{ label: variants[0].title.replace(/default title/i, "Unité"), delta: 0, variantId: variants[0].id }]
+      : variants.map((v) => ({
+          label: v.title,
+          delta: Number(v.price.amount) - base,
+          variantId: v.id,
+        })),
     desc: sp.description,
     usage: "",
     inci: "",
     image: sp.featuredImage?.url ?? "/images/logo-mark.png",
     hair: [],
     need: [],
+    available: variants.some((v) => v.availableForSale),
   };
 }

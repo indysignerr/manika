@@ -134,7 +134,7 @@ export default function Page() {
                       return (
                         <Link
                           key={slug}
-                          href={`/produit/${slug}/`}
+                          href="/boutique/"
                           className="rounded-[2px] border border-taupe/60 px-2.5 py-1.5 text-[9px] uppercase tracking-wider text-copper transition-colors hover:border-copper hover:bg-copper hover:text-ivory"
                           data-cursor
                         >

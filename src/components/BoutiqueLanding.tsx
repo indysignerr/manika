@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { UNIVERS, collectionsByUnivers, productsInCollection } from "@/lib/collections";
+import { UNIVERS, collectionsByUnivers } from "@/lib/collections";
 import Reveal from "@/components/Reveal";
 
-export default function BoutiqueLanding() {
+export default function BoutiqueLanding({ counts }: { counts: Record<string, number> }) {
   return (
     <div className="pt-32 md:pt-36">
       {/* En-tête */}
@@ -38,7 +38,7 @@ export default function BoutiqueLanding() {
 
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
               {collectionsByUnivers(u).map((c, i) => {
-                const count = productsInCollection(c.slug).length;
+                const count = counts[c.slug] ?? 0;
                 const soon = count === 0;
                 return (
                   <Reveal key={c.slug} delay={(i % 3) * 0.07}>

@@ -1,21 +1,24 @@
 import { notFound } from "next/navigation";
-import { products, bySlug } from "@/lib/products";
+import type { Metadata } from "next";
+import { catalogAllHandles, catalogProduct, catalogFeatured } from "@/lib/catalog";
 import ProductView from "@/components/ProductView";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const handles = await catalogAllHandles();
+  return handles.map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const p = bySlug(params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const p = await catalogProduct(params.slug);
   return {
     title: p ? `${p.name} — MANIKA.LAB` : "MANIKA.LAB",
-    description: p?.desc,
+    description: p?.desc?.slice(0, 160),
   };
 }
 
-export default function Page({ params }: { params: { slug: string } }) {
-  const product = bySlug(params.slug);
+export default async function Page({ params }: { params: { slug: string } }) {
+  const product = await catalogProduct(params.slug);
   if (!product) notFound();
-  return <ProductView product={product} />;
+  const related = (await catalogFeatured(5)).filter((p) => p.slug !== product.slug).slice(0, 4);
+  return <ProductView product={product} related={related} />;
 }

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { collections, collectionBySlug } from "@/lib/collections";
+import { catalogCollection } from "@/lib/catalog";
 import CollectionView from "@/components/CollectionView";
 
 export function generateStaticParams() {
@@ -15,8 +16,9 @@ export function generateMetadata({ params }: { params: { collection: string } })
   };
 }
 
-export default function Page({ params }: { params: { collection: string } }) {
+export default async function Page({ params }: { params: { collection: string } }) {
   const collection = collectionBySlug(params.collection);
   if (!collection) notFound();
-  return <CollectionView collection={collection} />;
+  const products = await catalogCollection(collection.slug);
+  return <CollectionView collection={collection} products={products} />;
 }

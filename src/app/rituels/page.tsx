@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { bySlug, fmt } from "@/lib/products";
+import { bySlug } from "@/lib/products";
 import ProductImage from "@/components/ProductImage";
 import Reveal from "@/components/Reveal";
 import RituelBundle from "@/components/RituelBundle";
@@ -16,6 +16,8 @@ const RITUELS = [
     num: "01",
     title: "Colorer",
     slug: "coloration-bio-vegan",
+    href: "/boutique/femme-coloration/",
+    cta: "Voir la coloration",
     duration: "Pose 35 min · en salon ou à domicile",
     desc: "La coloration crème vegan au complexe Hair Plex. Jojoba, thé vert, aloe vera et acide hyaluronique protègent la fibre pendant que la couleur se révèle. Sans ammoniaque.",
     steps: [
@@ -30,6 +32,8 @@ const RITUELS = [
     num: "02",
     title: "Réparer",
     slug: "shampoing-keratine",
+    href: "/boutique/femme-soins/",
+    cta: "Voir les soins",
     duration: "1 à 2× par semaine",
     desc: "Le shampoing reconstructeur à la kératine et à l'acide hyaluronique comble les brèches de la fibre après la couleur. Sans SLES, sans colorants, sans allergènes.",
     steps: [
@@ -44,6 +48,8 @@ const RITUELS = [
     num: "03",
     title: "Coiffer",
     slug: "texture-shine",
+    href: "/boutique/femme-coiffage/",
+    cta: "Voir le coiffage",
     duration: "Chaque jour · fixation légère",
     desc: "La pâte de coiffage brillance sépare, texturise et illumine la matière. Le fini glossy des coiffages de défilé, sans rigidité ni effet carton.",
     steps: [
@@ -104,8 +110,8 @@ export default function Page() {
             <div className="container-luxe grid items-center gap-12 md:grid-cols-2 md:gap-16">
               <Reveal className={reversed ? "md:order-2" : ""}>
                 <Link
-                  href={`/produit/${r.slug}/`}
-                  aria-label={product.name}
+                  href={r.href}
+                  aria-label={r.cta}
                   data-cursor
                   className="relative block aspect-[4/5] overflow-hidden rounded-[3px] bg-ivory"
                 >
@@ -135,8 +141,8 @@ export default function Page() {
                 </ol>
 
                 <div className="mt-8 flex flex-wrap items-center gap-5">
-                  <Link href={`/produit/${r.slug}/`} className="btn-primary" data-cursor>
-                    {product.name} — {fmt(product.price)}
+                  <Link href={r.href} className="btn-primary" data-cursor>
+                    {r.cta}
                   </Link>
                 </div>
               </Reveal>
@@ -166,8 +172,8 @@ export default function Page() {
                 return (
                   <Link
                     key={r.slug}
-                    href={`/produit/${r.slug}/`}
-                    aria-label={p.name}
+                    href={r.href}
+                    aria-label={r.cta}
                     data-cursor
                     className="aspect-[4/5] overflow-hidden rounded-[3px] transition-transform duration-500 hover:-translate-y-1.5"
                   >

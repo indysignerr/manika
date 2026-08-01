@@ -1,15 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Minus, Plus, Lock } from "lucide-react";
 import { useCart } from "@/components/cart-context";
-import { bySlug, fmt, FREE_SHIPPING } from "@/lib/products";
-import ProductImage from "@/components/ProductImage";
+import { fmtPrice, fmt, FREE_SHIPPING } from "@/lib/products";
+import { isShopifyConfigured, redirectToShopifyCheckout } from "@/lib/shopify";
 
 export default function CartDrawer() {
   const { items, open, setOpen, setQty, subtotal } = useCart();
+  const [loading, setLoading] = useState(false);
   const progress = Math.min(1, subtotal / FREE_SHIPPING);
   const remaining = FREE_SHIPPING - subtotal;
+
+  const canCheckout = isShopifyConfigured() && items.length > 0 && items.every((i) => i.variantId);
+
+  const checkout = async () => {
+    if (!canCheckout) return;
+    setLoading(true);
+    try {
+      await redirectToShopifyCheckout(items.map((i) => ({ merchandiseId: i.variantId as string, quantity: i.qty })));
+    } catch (e) {
+      console.error(e);
+      setLoading(false);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -45,21 +60,23 @@ export default function CartDrawer() {
               </button>
             </div>
 
-            <div className="border-b border-taupe/50 px-6 py-4">
-              <p className="mb-2 text-[11px] tracking-wide text-copper">
-                {remaining > 0 ? (
-                  <>Plus que <strong className="font-medium">{fmt(remaining)}</strong> pour la livraison offerte</>
-                ) : (
-                  <>Livraison offerte ✦</>
-                )}
-              </p>
-              <div className="h-[3px] rounded-full bg-ivory-3">
-                <div
-                  className="h-[3px] rounded-full bg-rose transition-all duration-700"
-                  style={{ width: `${(progress * 100).toFixed(0)}%` }}
-                />
+            {subtotal > 0 && (
+              <div className="border-b border-taupe/50 px-6 py-4">
+                <p className="mb-2 text-[11px] tracking-wide text-copper">
+                  {remaining > 0 ? (
+                    <>Plus que <strong className="font-medium">{fmt(remaining)}</strong> pour la livraison offerte</>
+                  ) : (
+                    <>Livraison offerte ✦</>
+                  )}
+                </p>
+                <div className="h-[3px] rounded-full bg-ivory-3">
+                  <div
+                    className="h-[3px] rounded-full bg-rose transition-all duration-700"
+                    style={{ width: `${(progress * 100).toFixed(0)}%` }}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="flex-1 overflow-y-auto px-6">
               {items.length === 0 ? (
@@ -70,41 +87,30 @@ export default function CartDrawer() {
                   </button>
                 </div>
               ) : (
-                items.map((it, i) => {
-                  const p = bySlug(it.slug);
-                  if (!p) return null;
-                  return (
-                    <div key={`${it.slug}-${it.size}`} className="flex gap-4 border-b border-taupe/40 py-5">
-                      <div className="h-24 w-20 shrink-0 overflow-hidden rounded-[3px] bg-ivory-2">
-                        <ProductImage product={p} />
-                      </div>
-                      <div className="flex flex-1 flex-col">
-                        <p className="heading text-[12px] tracking-luxe">{p.name}</p>
-                        <p className="mt-0.5 text-[10px] uppercase tracking-wide2 text-taupe-deep">{it.size}</p>
-                        <div className="mt-auto flex items-center justify-between">
-                          <div className="flex items-center rounded-[2px] border border-taupe/60 text-copper">
-                            <button
-                              onClick={() => setQty(i, it.qty - 1)}
-                              aria-label="Réduire la quantité"
-                              className="px-3.5 py-2.5"
-                            >
-                              <Minus size={12} strokeWidth={1.5} />
-                            </button>
-                            <span className="w-6 text-center text-xs">{it.qty}</span>
-                            <button
-                              onClick={() => setQty(i, it.qty + 1)}
-                              aria-label="Augmenter la quantité"
-                              className="px-3.5 py-2.5"
-                            >
-                              <Plus size={12} strokeWidth={1.5} />
-                            </button>
-                          </div>
-                          <p className="text-sm text-copper">{fmt(it.unit * it.qty)}</p>
+                items.map((it, i) => (
+                  <div key={`${it.slug}-${it.size}`} className="flex gap-4 border-b border-taupe/40 py-5">
+                    <div className="h-24 w-20 shrink-0 overflow-hidden rounded-[3px] bg-ivory-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
+                    </div>
+                    <div className="flex flex-1 flex-col">
+                      <p className="heading text-[12px] tracking-luxe">{it.name}</p>
+                      <p className="mt-0.5 text-[10px] uppercase tracking-wide2 text-taupe-deep">{it.size}</p>
+                      <div className="mt-auto flex items-center justify-between">
+                        <div className="flex items-center rounded-[2px] border border-taupe/60 text-copper">
+                          <button onClick={() => setQty(i, it.qty - 1)} aria-label="Réduire la quantité" className="px-3.5 py-2.5">
+                            <Minus size={12} strokeWidth={1.5} />
+                          </button>
+                          <span className="w-6 text-center text-xs">{it.qty}</span>
+                          <button onClick={() => setQty(i, it.qty + 1)} aria-label="Augmenter la quantité" className="px-3.5 py-2.5">
+                            <Plus size={12} strokeWidth={1.5} />
+                          </button>
                         </div>
+                        <p className="text-sm text-copper">{fmtPrice(it.unit * it.qty)}</p>
                       </div>
                     </div>
-                  );
-                })
+                  </div>
+                ))
               )}
             </div>
 
@@ -112,19 +118,26 @@ export default function CartDrawer() {
               <div className="border-t border-taupe/50 px-6 py-5">
                 <div className="mb-1 flex justify-between text-sm text-copper">
                   <span>Sous-total</span>
-                  <span>{fmt(subtotal)}</span>
+                  <span>{fmtPrice(subtotal)}</span>
                 </div>
                 <div className="mb-4 flex justify-between text-[11px] text-taupe-deep">
                   <span>Livraison</span>
                   <span>{subtotal >= FREE_SHIPPING ? "Offerte" : "Calculée à l'étape suivante"}</span>
                 </div>
-                <button className="btn-primary w-full" data-cursor>
+                <button onClick={checkout} disabled={!canCheckout || loading} className="btn-primary w-full disabled:opacity-60" data-cursor>
                   <Lock size={13} strokeWidth={1.5} />
-                  Passer commande
+                  {loading ? "Redirection…" : "Passer commande"}
                 </button>
-                <p className="mt-3 text-center text-[10px] tracking-wide text-taupe-deep">
-                  Paiement sécurisé · Retours offerts sous 30 jours
-                </p>
+                {!isShopifyConfigured() && (
+                  <p className="mt-3 text-center text-[10px] tracking-wide text-taupe-deep">
+                    Paiement bientôt disponible
+                  </p>
+                )}
+                {isShopifyConfigured() && (
+                  <p className="mt-3 text-center text-[10px] tracking-wide text-taupe-deep">
+                    Paiement sécurisé Shopify · Retours 30 jours
+                  </p>
+                )}
               </div>
             )}
           </motion.aside>

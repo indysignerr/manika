@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { bySlug, fmt } from "@/lib/products";
+import { bySlug } from "@/lib/products";
 import ProductImage from "@/components/ProductImage";
 
 const INGREDIENTS = [
@@ -122,8 +122,8 @@ export default function Ingredients() {
         </div>
 
         <div className="mt-9 flex items-center gap-6">
-          <Link href={`/produit/${featured.slug}/`} className="btn-primary" data-cursor>
-            Découvrir le Shampoing — {fmt(featured.price)}
+          <Link href="/boutique/femme-soins/" className="btn-primary" data-cursor>
+            Découvrir les soins
           </Link>
           <Link
             href="/ingredients/"

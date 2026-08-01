@@ -2,13 +2,23 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 
-export type CartItem = { slug: string; size: string; qty: number; unit: number };
+export type CartItem = {
+  slug: string;
+  size: string;
+  qty: number;
+  unit: number;
+  name: string;
+  image: string;
+  variantId?: string; // gid Shopify — pour le checkout
+};
+
+export type AddInput = Omit<CartItem, "qty">;
 
 type CartCtx = {
   items: CartItem[];
   open: boolean;
   setOpen: (v: boolean) => void;
-  add: (slug: string, size: string, unit: number) => void;
+  add: (item: AddInput) => void;
   setQty: (index: number, qty: number) => void;
   subtotal: number;
   count: number;
@@ -26,15 +36,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [open, setOpen] = useState(false);
 
-  const add = (slug: string, size: string, unit: number) => {
+  const add = (item: AddInput) => {
     setItems((prev) => {
-      const i = prev.findIndex((it) => it.slug === slug && it.size === size);
+      const i = prev.findIndex((it) => it.slug === item.slug && it.size === item.size);
       if (i >= 0) {
         const next = [...prev];
         next[i] = { ...next[i], qty: next[i].qty + 1 };
         return next;
       }
-      return [...prev, { slug, size, qty: 1, unit }];
+      return [...prev, { ...item, qty: 1 }];
     });
     setOpen(true);
   };

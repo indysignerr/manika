@@ -5,8 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ShoppingBag } from "lucide-react";
-import { bySlug, fmt } from "@/lib/products";
-import { useCart } from "@/components/cart-context";
 import Magnetic from "@/components/Magnetic";
 
 const Split = ({ text }: { text: string }) => (
@@ -32,10 +30,6 @@ const DUST = [
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
   const [videoOn, setVideoOn] = useState(false);
-  const { add } = useCart();
-  const featured = bySlug("coloration-bio-vegan")!;
-  const featuredSize = featured.sizes.find((s) => s.delta === 0) ?? featured.sizes[0];
-  const addFeatured = () => add(featured.slug, featuredSize.label, featured.price + featuredSize.delta);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -203,18 +197,18 @@ export default function Hero() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/products/coloration-cutout.png"
-              alt={featured.name}
+              alt="Coloration Bio-Vegan MANIKA.LAB"
               className="h-[42svh] max-h-[460px] w-auto object-contain drop-shadow-[0_28px_42px_rgba(107,66,48,0.3)] md:h-[56svh]"
             />
           </div>
           <p className="mt-7 text-[10px] uppercase tracking-wide3 text-taupe-deep">
-            {featured.name} · {featured.tagline}
+            Coloration · Bio-Vegan
           </p>
           <Magnetic>
-            <button onClick={addFeatured} className="btn-primary mt-3" data-cursor>
+            <Link href="/boutique/femme-coloration/" className="btn-primary mt-3" data-cursor>
               <ShoppingBag size={14} strokeWidth={1.5} />
-              Ajout rapide — {fmt(featured.price)}
-            </button>
+              Voir la coloration
+            </Link>
           </Magnetic>
         </div>
       </div>

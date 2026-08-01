@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { bySlug, fmt } from "@/lib/products";
+import { bySlug } from "@/lib/products";
 import ProductImage from "@/components/ProductImage";
 
 const PANELS = [
@@ -13,6 +13,8 @@ const PANELS = [
     title: "Colorer",
     text: "La coloration crème vegan enrichie au Hair Plex. Une couleur éclatante qui prend soin de la fibre au lieu de l'agresser.",
     slug: "coloration-bio-vegan",
+    href: "/boutique/femme-coloration/",
+    cta: "Voir la coloration",
     bg: "bg-ivory-2",
     numColor: "text-taupe",
   },
@@ -21,6 +23,8 @@ const PANELS = [
     title: "Réparer",
     text: "Le shampoing kératine & acide hyaluronique reconstruit la fibre après la couleur. Force, densité et brillance retrouvées.",
     slug: "shampoing-keratine",
+    href: "/boutique/femme-soins/",
+    cta: "Voir les soins",
     bg: "bg-ivory-3",
     numColor: "text-rose",
   },
@@ -29,6 +33,8 @@ const PANELS = [
     title: "Coiffer",
     text: "La touche finale : texture, brillance et tenue souple. Le fini glossy des coiffages de salon, sans effet carton.",
     slug: "texture-shine",
+    href: "/boutique/femme-coiffage/",
+    cta: "Voir le coiffage",
     bg: "bg-[#EFE3D6]",
     numColor: "text-bronze",
   },
@@ -66,7 +72,7 @@ export default function Rituels() {
   }, []);
 
   const panels = PANELS.map((panel) => {
-    const product = bySlug(panel.slug)!;
+    const product = bySlug(panel.slug);
     return (
       <article
         key={panel.num}
@@ -84,24 +90,26 @@ export default function Rituels() {
               {panel.text}
             </p>
             <Link
-              href={`/produit/${panel.slug}/`}
+              href={panel.href}
               className="mt-8 inline-flex items-center gap-3 text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60"
               data-cursor
             >
-              {product.name} — {fmt(product.price)}
+              {panel.cta}
               <span aria-hidden>→</span>
             </Link>
           </div>
-          <Link
-            href={`/produit/${panel.slug}/`}
-            className="mx-auto hidden w-full max-w-[300px] md:block"
-            aria-label={product.name}
-            data-cursor
-          >
-            <div className="aspect-[4/5] overflow-hidden rounded-[4px] shadow-[0_24px_50px_rgba(107,66,48,0.16)] transition-transform duration-700 hover:-translate-y-2">
-              <ProductImage product={product} />
-            </div>
-          </Link>
+          {product && (
+            <Link
+              href={panel.href}
+              className="mx-auto hidden w-full max-w-[300px] md:block"
+              aria-label={panel.cta}
+              data-cursor
+            >
+              <div className="aspect-[4/5] overflow-hidden rounded-[4px] shadow-[0_24px_50px_rgba(107,66,48,0.16)] transition-transform duration-700 hover:-translate-y-2">
+                <ProductImage product={product} />
+              </div>
+            </Link>
+          )}
         </div>
       </article>
     );
