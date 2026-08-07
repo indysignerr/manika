@@ -18,7 +18,10 @@ export default function SisterBrands() {
           {/* MANIKA.LAB — l'extérieur */}
           <Reveal>
             <div className="flex h-full flex-col rounded-[3px] border border-taupe/50 bg-ivory p-8 md:p-10">
-              <p className="font-display text-lg font-light tracking-[0.28em] text-copper">MANIKA.LAB</p>
+              <div className="flex h-12 items-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/wordmark.png" alt="MANIKA.LAB" className="h-7 w-auto" />
+              </div>
               <p className="kicker mt-6">L&apos;extérieur</p>
               <p className="mt-4 text-[14px] font-light leading-relaxed text-ink/80">
                 Une cosmétique capillaire de niveau professionnel — coloration vegan, soin et
@@ -37,8 +40,10 @@ export default function SisterBrands() {
           {/* NAYUMA — l'intérieur */}
           <Reveal delay={0.1}>
             <div className="flex h-full flex-col rounded-[3px] border border-taupe/50 bg-ivory p-8 md:p-10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/nayuma-logo.png" alt="NAYUMA — Tea & Mood" className="h-11 w-auto" />
+              <div className="flex h-12 items-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/nayuma-logo.png" alt="NAYUMA — Tea & Mood" className="h-10 w-auto" />
+              </div>
               <p className="kicker mt-6">L&apos;intérieur</p>
               <p className="mt-4 text-[14px] font-light leading-relaxed text-ink/80">
                 Des infusions botaniques à boire chaque jour, pour nourrir le cheveu et accompagner
