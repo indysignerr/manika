@@ -37,10 +37,8 @@ export default function SisterBrands() {
           {/* NAYUMA — l'intérieur */}
           <Reveal delay={0.1}>
             <div className="flex h-full flex-col rounded-[3px] border border-taupe/50 bg-ivory p-8 md:p-10">
-              <p className="font-serif text-xl italic text-bronze">
-                NAYUMA{" "}
-                <span className="text-[10px] not-italic uppercase tracking-wide2 text-taupe-deep">· Tea &amp; Mood</span>
-              </p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/nayuma-logo.png" alt="NAYUMA — Tea & Mood" className="h-11 w-auto" />
               <p className="kicker mt-6">L&apos;intérieur</p>
               <p className="mt-4 text-[14px] font-light leading-relaxed text-ink/80">
                 Des infusions botaniques à boire chaque jour, pour nourrir le cheveu et accompagner
