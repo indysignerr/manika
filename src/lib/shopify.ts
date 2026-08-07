@@ -177,6 +177,27 @@ export async function redirectToShopifyCheckout(lines: CartLine[]): Promise<void
 }
 
 /* ────────────────────────────────────────────────────────────────────────
+   COMPTE CLIENT — « S'identifier » (headless → pages hébergées par Shopify)
+   ──────────────────────────────────────────────────────────────────────── */
+
+/**
+ * URL de connexion / compte client, hébergée par Shopify.
+ *
+ * Le site étant en static export (aucun serveur pour tenir une session),
+ * on délègue l'authentification à Shopify — exactement comme le checkout.
+ * `/account` route vers la connexion quand le visiteur n'est pas identifié,
+ * que la boutique utilise les comptes classiques OU les nouveaux comptes client.
+ *
+ * ⚠️ Nécessite « Comptes client » activés dans Shopify admin
+ *    (Paramètres → Comptes client). Renvoie null si le domaine n'est pas
+ *    configuré (fallback géré côté UI).
+ */
+export function shopifyAccountUrl(): string | null {
+  if (!DOMAIN) return null;
+  return `https://${DOMAIN}/account`;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
    MAPPER — Shopify → forme `Product` du site (pour réutiliser l'UI actuelle)
    ──────────────────────────────────────────────────────────────────────── */
 

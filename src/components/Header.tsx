@@ -6,6 +6,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Search, User, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/components/cart-context";
 import { UNIVERS, collectionsByUnivers } from "@/lib/collections";
+import { shopifyAccountUrl } from "@/lib/shopify";
+
+const accountUrl = shopifyAccountUrl() ?? "/contact/";
 
 const NAV = [
   { label: "Boutique", href: "/boutique/" },
@@ -116,9 +119,14 @@ export default function Header() {
             <button aria-label="Rechercher" className="hidden p-1 transition-opacity hover:opacity-60 md:block">
               <Search size={17} strokeWidth={1.5} />
             </button>
-            <button aria-label="Mon compte" className="hidden p-1 transition-opacity hover:opacity-60 md:block">
+            <a
+              href={accountUrl}
+              aria-label="S'identifier — mon compte"
+              title="S'identifier · Mon compte"
+              className="hidden p-1 transition-opacity hover:opacity-60 md:block"
+            >
               <User size={17} strokeWidth={1.5} />
-            </button>
+            </a>
             <button
               onClick={() => setOpen(true)}
               aria-label={`Ouvrir le panier — ${count} article${count > 1 ? "s" : ""}`}
@@ -186,6 +194,13 @@ export default function Header() {
                   </Link>
                 </motion.div>
               ))}
+              <a
+                href={accountUrl}
+                onClick={() => setMenu(false)}
+                className="mt-4 inline-flex items-center gap-2.5 border-t border-taupe/40 pt-6 text-[13px] uppercase tracking-wide2 text-copper"
+              >
+                <User size={16} strokeWidth={1.5} /> S&apos;identifier
+              </a>
               <a
                 href="https://nayumatea.com"
                 target="_blank"
