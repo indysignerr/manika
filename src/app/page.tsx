@@ -4,8 +4,7 @@ import Hero from "@/components/Hero";
 import FeaturedCollection from "@/components/FeaturedCollection";
 import PromoVideo from "@/components/PromoVideo";
 import Story from "@/components/Story";
-import Ingredients from "@/components/Ingredients";
-import Rituels from "@/components/Rituels";
+import SisterBrands from "@/components/SisterBrands";
 import Testimonials from "@/components/Testimonials";
 import Newsletter from "@/components/Newsletter";
 
@@ -18,8 +17,7 @@ export default function Home() {
       <FeaturedCollection />
       <PromoVideo />
       <Story />
-      <Ingredients />
-      <Rituels />
+      <SisterBrands />
       <Testimonials />
       <Newsletter />
     </>
