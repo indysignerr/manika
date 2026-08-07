@@ -60,7 +60,7 @@ export default function Rituels() {
           trigger: root.current,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.35,
+          scrub: true,
           invalidateOnRefresh: true,
         },
       });
@@ -120,7 +120,7 @@ export default function Rituels() {
       ref={root}
       id="rituels"
       aria-label="Le protocole MANIKA.LAB"
-      style={{ height: `${PANELS.length * 100}vh` }}
+      style={{ height: `${PANELS.length * 75}vh` }}
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div ref={track} className="flex h-full w-max">
