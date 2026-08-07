@@ -54,8 +54,8 @@ export default function Header() {
               <div className="group relative">
                 <Link href="/boutique/" className={linkCls}>Boutique</Link>
                 <div className="invisible absolute left-0 top-full z-[90] pt-5 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                  <div className="w-[440px] rounded-[4px] border border-taupe/40 bg-ivory/95 p-7 shadow-[0_24px_50px_rgba(107,66,48,0.14)] backdrop-blur-md">
-                    <div className="grid grid-cols-2 gap-8">
+                  <div className="w-[560px] rounded-[4px] border border-taupe/40 bg-ivory/95 p-7 shadow-[0_24px_50px_rgba(107,66,48,0.14)] backdrop-blur-md">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                       {UNIVERS.map((u) => (
                         <div key={u}>
                           <p className="mb-3 text-[10px] uppercase tracking-wide3 text-bronze">{u}</p>
@@ -97,12 +97,21 @@ export default function Header() {
           </Link>
 
           <div className="flex items-center justify-end gap-4 text-copper md:gap-5">
-            <nav className="hidden gap-7 md:flex" aria-label="Navigation secondaire">
+            <nav className="hidden items-center gap-7 md:flex" aria-label="Navigation secondaire">
               {NAV.slice(3).map((n) => (
                 <Link key={n.label} href={n.href} className={linkCls}>
                   {n.label}
                 </Link>
               ))}
+              <a
+                href="https://nayumatea.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Découvrez aussi NAYUMA — thé & rituel capillaire"
+                className="inline-flex items-center gap-1 text-[11px] uppercase tracking-wide2 text-bronze transition-opacity hover:opacity-60"
+              >
+                NAYUMA <span aria-hidden>↗</span>
+              </a>
             </nav>
             <button aria-label="Rechercher" className="hidden p-1 transition-opacity hover:opacity-60 md:block">
               <Search size={17} strokeWidth={1.5} />
@@ -177,6 +186,15 @@ export default function Header() {
                   </Link>
                 </motion.div>
               ))}
+              <a
+                href="https://nayumatea.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMenu(false)}
+                className="mt-2 inline-flex items-center gap-1.5 text-[12px] uppercase tracking-wide2 text-bronze"
+              >
+                Découvrez NAYUMA — thé &amp; rituel capillaire <span aria-hidden>↗</span>
+              </a>
             </nav>
             <p className="mt-auto pb-10 pt-8 text-[10px] uppercase tracking-wide3 text-taupe-deep">MANIKA.LAB</p>
           </motion.div>

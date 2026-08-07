@@ -6,7 +6,7 @@ const COLS: { title: string; links: { label: string; href: string }[] }[] = [
     links: [
       { label: "Toute la boutique", href: "/boutique/" },
       { label: "Femme · Coloration", href: "/boutique/femme-coloration/" },
-      { label: "Femme · Soin", href: "/boutique/femme-soin/" },
+      { label: "Femme · Soin", href: "/boutique/femme-soins/" },
       { label: "Femme · Coiffage", href: "/boutique/femme-coiffage/" },
       { label: "Barber · Coiffage", href: "/boutique/barber-coiffage/" },
     ],
@@ -49,6 +49,17 @@ export default function Footer() {
             <a href="#" className="transition-colors hover:text-ivory">Pinterest</a>
             <a href="#" className="transition-colors hover:text-ivory">TikTok</a>
           </div>
+          <p className="mt-8 max-w-xs text-[11px] font-light leading-relaxed text-ivory/60">
+            Maison sœur ·{" "}
+            <a
+              href="https://nayumatea.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-rose underline-offset-2 transition-colors hover:text-ivory hover:underline"
+            >
+              Découvrez NAYUMA — thé &amp; rituel capillaire ↗
+            </a>
+          </p>
         </div>
 
         {COLS.map((col) => (

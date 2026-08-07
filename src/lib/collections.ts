@@ -1,6 +1,6 @@
 import { products, Product } from "@/lib/products";
 
-export type Univers = "Barber" | "Femme";
+export type Univers = "Barber" | "Femme" | "Mobilier" | "Outils électriques";
 
 export type Collection = {
   slug: string; // = handle de la collection Shopify
@@ -12,7 +12,7 @@ export type Collection = {
   productSlugs: string[];
 };
 
-export const UNIVERS: Univers[] = ["Barber", "Femme"];
+export const UNIVERS: Univers[] = ["Barber", "Femme", "Mobilier", "Outils électriques"];
 
 export const collections: Collection[] = [
   {
@@ -55,6 +55,48 @@ export const collections: Collection[] = [
     univers: "Femme",
     label: "Consommables",
     tagline: "Accessoires & petit matériel",
+    productSlugs: [],
+  },
+  {
+    slug: "mobilier-fauteuils",
+    univers: "Mobilier",
+    label: "Fauteuils & sièges",
+    tagline: "Fauteuils de coupe & sièges",
+    productSlugs: [],
+  },
+  {
+    slug: "mobilier-bacs",
+    univers: "Mobilier",
+    label: "Bacs à shampoing",
+    tagline: "Bacs & unités de lavage",
+    productSlugs: [],
+  },
+  {
+    slug: "mobilier-meubles",
+    univers: "Mobilier",
+    label: "Meubles & rangements",
+    tagline: "Meubles, rangements & miroirs",
+    productSlugs: [],
+  },
+  {
+    slug: "outils-seche-cheveux",
+    univers: "Outils électriques",
+    label: "Sèche-cheveux",
+    tagline: "Sèche-cheveux & casques",
+    productSlugs: [],
+  },
+  {
+    slug: "outils-tondeuses",
+    univers: "Outils électriques",
+    label: "Tondeuses",
+    tagline: "Tondeuses & trimmers",
+    productSlugs: [],
+  },
+  {
+    slug: "outils-lisseurs",
+    univers: "Outils électriques",
+    label: "Lisseurs & fers",
+    tagline: "Lisseurs, fers & ondulateurs",
     productSlugs: [],
   },
 ];
