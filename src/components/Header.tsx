@@ -7,18 +7,20 @@ import { Search, User, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/components/cart-context";
 import { UNIVERS, collectionsByUnivers } from "@/lib/collections";
 import { shopifyAccountUrl } from "@/lib/shopify";
+import { PRO } from "@/lib/pro";
 
 const accountUrl = shopifyAccountUrl() ?? "/contact/";
 
 const NAV = [
   { label: "Boutique", href: "/boutique/" },
-  { label: "Rituels", href: "/rituels/" },
+  { label: "Masterclass", href: "/masterclass/" },
   { label: "Ingrédients", href: "/ingredients/" },
   { label: "À propos", href: "/a-propos/" },
   { label: "Contact", href: "/contact/" },
 ];
 
-const linkCls = "text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60";
+const linkCls =
+  "whitespace-nowrap text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60";
 
 export default function Header() {
   const { count, setOpen } = useCart();
@@ -35,7 +37,8 @@ export default function Header() {
   return (
     <div className="fixed inset-x-0 top-0 z-[85]">
       <div className="bg-copper py-2 text-center text-[9px] uppercase tracking-wide3 text-ivory md:text-[10px]">
-        Livraison offerte dès 60 € · Retours gratuits 30 jours · Qualité salon professionnelle
+        Tarifs professionnels HT · Sans minimum de commande · Invendus repris à{" "}
+        {PRO.repriseInvendusJours} jours
       </div>
 
       <header
@@ -100,22 +103,30 @@ export default function Header() {
           </Link>
 
           <div className="flex items-center justify-end gap-4 text-copper md:gap-5">
-            <nav className="hidden items-center gap-7 md:flex" aria-label="Navigation secondaire">
+            <nav className="hidden items-center gap-5 md:flex lg:gap-6" aria-label="Navigation secondaire">
               {NAV.slice(3).map((n) => (
                 <Link key={n.label} href={n.href} className={linkCls}>
                   {n.label}
                 </Link>
               ))}
+              {/* Marque sœur — masquée sous xl pour ne pas écraser le CTA pro. */}
               <a
                 href="https://nayumatea.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Découvrez aussi NAYUMA — thé & rituel capillaire"
-                className="inline-flex items-center gap-1 text-[11px] uppercase tracking-wide2 text-bronze transition-opacity hover:opacity-60"
+                className="hidden items-center gap-1 whitespace-nowrap text-[11px] uppercase tracking-wide2 text-bronze transition-opacity hover:opacity-60 xl:inline-flex"
               >
                 NAYUMA <span aria-hidden>↗</span>
               </a>
             </nav>
+            <Link
+              href="/devenir-client-pro/"
+              className="hidden whitespace-nowrap rounded-[2px] bg-rose px-4 py-2.5 text-[10px] uppercase tracking-wide2 text-ivory transition-colors hover:bg-rose-hover lg:inline-flex"
+              data-cursor
+            >
+              Compte pro
+            </Link>
             <button aria-label="Rechercher" className="hidden p-1 transition-opacity hover:opacity-60 md:block">
               <Search size={17} strokeWidth={1.5} />
             </button>
@@ -157,6 +168,15 @@ export default function Header() {
               </button>
             </div>
             <nav className="mt-8 flex flex-col gap-7" aria-label="Menu mobile">
+              <motion.div initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+                <Link
+                  href="/devenir-client-pro/"
+                  onClick={() => setMenu(false)}
+                  className="btn-primary w-full"
+                >
+                  Devenir client pro
+                </Link>
+              </motion.div>
               <motion.div initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
                 <Link href="/boutique/" onClick={() => setMenu(false)} className="heading text-2xl">
                   Boutique

@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ShoppingBag } from "lucide-react";
 import Magnetic from "@/components/Magnetic";
+import { BORONAT } from "@/lib/boronat";
 
 const Split = ({ text }: { text: string }) => (
   <span className="inline-block overflow-hidden pb-1 align-bottom">
@@ -105,7 +106,7 @@ export default function Hero() {
     <section
       ref={root}
       className="relative flex min-h-[100svh] items-center overflow-hidden pt-28"
-      aria-label="MANIKA.LAB — L'expertise capillaire professionnelle"
+      aria-label="MANIKA.LAB — La gamme capillaire professionnelle des salons"
     >
       {/* Film de marque en fond (généré via Higgsfield — Veo 3.1) */}
       {videoOn && (
@@ -167,27 +168,29 @@ export default function Hero() {
 
       <div className="hero-inner container-luxe relative grid items-center gap-10 md:grid-cols-[1.1fr_0.9fr]">
         <div data-depth="0.5">
-          <p className="hero-fade kicker mb-6 opacity-0">Cosmétique capillaire professionnelle</p>
+          <p className="hero-fade kicker mb-6 opacity-0">
+            Distribution professionnelle · Salons &amp; barbers
+          </p>
           <h1 className="heading text-[13vw] leading-[1.04] md:text-7xl">
-            <Split text="L'EXPERTISE" />
+            <Split text="LA GAMME" />
             <br />
-            <Split text="DU SALON" />
+            <Split text="DES SALONS" />
           </h1>
           <p className="hero-fade mt-4 font-serif text-2xl italic text-bronze opacity-0 md:text-3xl">
-            chez vous
+            signée {BORONAT.name}
           </p>
-          <p className="hero-fade mt-6 max-w-sm text-[14px] font-light leading-relaxed text-ink/80 opacity-0">
-            Coloration vegan, soins reconstructeurs à la kératine, coiffage de précision.
-            La gamme professionnelle MANIKA.LAB, formulée en Italie.
+          <p className="hero-fade mt-6 max-w-md text-[14px] font-light leading-relaxed text-ink/80 opacity-0">
+            Coloration bio vegan sans ammoniaque, soin, coiffage — et tout l&apos;équipement du
+            salon. Tarifs professionnels HT, sans minimum de commande.
           </p>
           <div className="hero-fade mt-9 flex flex-wrap items-center gap-4 opacity-0">
             <Magnetic>
-              <Link href="/boutique/" className="btn-primary" data-cursor>
-                Découvrir
+              <Link href="/devenir-client-pro/" className="btn-primary" data-cursor>
+                Devenir client pro
               </Link>
             </Magnetic>
-            <Link href="/rituels/" className="btn-ghost" data-cursor>
-              Le protocole
+            <Link href="/masterclass/" className="btn-ghost" data-cursor>
+              La masterclass
             </Link>
           </div>
         </div>

@@ -8,9 +8,9 @@ export default function SisterBrands() {
         <Reveal className="mx-auto max-w-3xl text-center">
           <p className="kicker">Deux maisons, un même objectif</p>
           <h2 className="heading mt-5 text-3xl leading-[1.25] md:text-[2.5rem]">
-            MANIKA.LAB prend soin de vos cheveux de l&apos;extérieur.{" "}
+            MANIKA.LAB prend soin du cheveu de l&apos;extérieur.{" "}
             <em className="font-serif normal-case italic tracking-normal text-bronze">NAYUMA</em>{" "}
-            les nourrit de l&apos;intérieur.
+            le nourrit de l&apos;intérieur.
           </h2>
         </Reveal>
 
@@ -24,8 +24,8 @@ export default function SisterBrands() {
               </div>
               <p className="kicker mt-6">L&apos;extérieur</p>
               <p className="mt-4 text-[14px] font-light leading-relaxed text-ink/80">
-                Une cosmétique capillaire de niveau professionnel — coloration vegan, soin et
-                coiffage, pour prendre soin du cheveu de l&apos;extérieur.
+                Coloration vegan, soin et coiffage de niveau professionnel — en cabine comme sur
+                votre étagère de revente.
               </p>
               <Link
                 href="/boutique/"
@@ -46,8 +46,8 @@ export default function SisterBrands() {
               </div>
               <p className="kicker mt-6">L&apos;intérieur</p>
               <p className="mt-4 text-[14px] font-light leading-relaxed text-ink/80">
-                Des infusions botaniques à boire chaque jour, pour nourrir le cheveu et accompagner
-                le bien-être de l&apos;intérieur.
+                Des infusions botaniques qui se revendent en caisse : achat d&apos;impulsion, forte
+                marge, presque aucune place sur le comptoir.
               </p>
               <a
                 href="https://nayumatea.com"

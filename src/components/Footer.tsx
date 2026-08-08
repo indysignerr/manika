@@ -12,13 +12,13 @@ const COLS: { title: string; links: { label: string; href: string }[] }[] = [
     ],
   },
   {
-    title: "Maison",
+    title: "Professionnels",
     links: [
-      { label: "À propos", href: "/a-propos/" },
+      { label: "Devenir client pro", href: "/devenir-client-pro/" },
+      { label: "La masterclass", href: "/masterclass/" },
+      { label: "Jean-Yves Boronat", href: "/jean-yves-boronat/" },
       { label: "Ingrédients", href: "/ingredients/" },
-      { label: "Le protocole", href: "/rituels/" },
-      { label: "Nos engagements", href: "/a-propos/" },
-      { label: "Contact", href: "/contact/" },
+      { label: "À propos", href: "/a-propos/" },
     ],
   },
   {
@@ -39,10 +39,12 @@ export default function Footer() {
       <div className="container-luxe grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <p className="font-display text-lg font-light tracking-[0.3em] text-ivory">MANIKA.LAB</p>
-          <p className="mt-1 text-[9px] uppercase tracking-wide3 text-rose">Professional Hair Care</p>
+          <p className="mt-1 text-[9px] uppercase tracking-wide3 text-rose">
+            Fournisseur des salons de coiffure
+          </p>
           <p className="mt-5 max-w-xs text-[12px] font-light leading-relaxed text-ivory/70">
-            Cosmétique capillaire professionnelle : coloration vegan, soins reconstructeurs et
-            coiffage de précision. Formulé en Italie, pensé pour les exigeantes.
+            Coloration bio vegan, soin, coiffage, mobilier et équipement. Distribution directe aux
+            salons et barbershops — tarifs professionnels HT, sans intermédiaire.
           </p>
           <div className="mt-6 flex gap-4 text-[10px] uppercase tracking-wide2 text-ivory/70">
             <a href="#" className="transition-colors hover:text-ivory">Instagram</a>

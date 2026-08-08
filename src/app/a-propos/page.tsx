@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import Magnetic from "@/components/Magnetic";
+import { PRO } from "@/lib/pro";
 
 export const metadata: Metadata = {
   title: "À propos — MANIKA.LAB",
   description:
-    "MANIKA.LAB met la qualité du salon en flacon : coloration vegan, kératine reconstructrice et coiffage de précision, formulés en Italie.",
+    "MANIKA.LAB fournit les salons de coiffure : coloration bio vegan, kératine reconstructrice et coiffage de précision, formulés en Italie.",
 };
 
 const VALUES = [
@@ -23,7 +24,7 @@ const VALUES = [
   {
     num: "03",
     title: "Éprouvé en salon",
-    text: "Chaque produit est testé par des coiffeurs avant son lancement. La qualité du salon, transposée chez vous.",
+    text: "Chaque produit est testé en salon avant son lancement — par des coiffeurs, sur des clientes, en conditions réelles.",
   },
 ];
 
@@ -60,9 +61,10 @@ export default function Page() {
               du <em className="font-serif normal-case italic tracking-normal text-bronze">cheveu</em>
             </h1>
             <p className="mt-8 max-w-lg text-[15px] font-light leading-relaxed text-ink/80">
-              MANIKA.LAB est né d&apos;une conviction simple : la qualité d&apos;un salon ne devrait
-              pas s&apos;arrêter à la porte du salon. Nous formulons en Italie des produits de niveau
-              professionnel — et nous les rendons accessibles.
+              MANIKA.LAB est né d&apos;une conviction simple : un salon ne devrait pas avoir à
+              choisir entre une gamme bio et une gamme qui tient en cabine. Nous formulons en Italie
+              des produits de niveau professionnel — et nous les distribuons directement aux salons,
+              sans intermédiaire.
             </p>
           </Reveal>
         </div>
@@ -98,8 +100,8 @@ export default function Page() {
           <Reveal>
             <p className="kicker">Manifeste</p>
             <blockquote className="mt-8 font-serif text-2xl italic leading-relaxed text-copper md:text-[2rem]">
-              « La qualité d&apos;un salon ne devrait pas être un privilège. On l&apos;a mise en
-              flacon, sans en retirer une once d&apos;exigence. »
+              « Un coiffeur ne change pas de gamme pour une promesse. Il change parce que le produit
+              tient en cabine, que la cliente revient, et que la marge suit. »
             </blockquote>
             <p className="mt-8 text-[10px] uppercase tracking-wide3 text-taupe-deep">
               L&apos;équipe MANIKA.LAB
@@ -168,14 +170,15 @@ export default function Page() {
       <section className="bg-ivory-2 py-24 text-center">
         <div className="container-luxe">
           <Reveal>
-            <h2 className="heading text-3xl md:text-4xl">Prêt à changer de routine ?</h2>
-            <p className="mx-auto mt-4 max-w-sm text-[13px] font-light text-ink/75">
-              Colorer, réparer, coiffer — la qualité salon, en trois gestes et six produits.
+            <h2 className="heading text-3xl md:text-4xl">Référencer la gamme dans votre salon</h2>
+            <p className="mx-auto mt-4 max-w-md text-[13px] font-light text-ink/75">
+              Kit de démarrage {PRO.kitReferences} références, invendus repris à{" "}
+              {PRO.repriseInvendusJours} jours. Aucun risque de stock.
             </p>
             <div className="mt-9">
               <Magnetic>
-                <Link href="/boutique/" className="btn-primary" data-cursor>
-                  Découvrir la collection
+                <Link href="/devenir-client-pro/" className="btn-primary" data-cursor>
+                  Devenir client pro
                 </Link>
               </Magnetic>
             </div>

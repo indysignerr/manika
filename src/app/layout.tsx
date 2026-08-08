@@ -20,12 +20,13 @@ const marcellus = Marcellus({
 });
 
 export const metadata: Metadata = {
-  title: "MANIKA.LAB — Cosmétique capillaire professionnelle",
+  title: "MANIKA.LAB — Fournisseur des salons de coiffure",
   description:
-    "Coloration vegan, soins reconstructeurs à la kératine et coiffage de précision. La gamme capillaire professionnelle MANIKA.LAB, formulée en Italie.",
+    "Coloration bio vegan sans ammoniaque, soin, coiffage, mobilier et équipement de salon. Tarifs professionnels HT, sans minimum de commande. Compte pro sur SIRET.",
   openGraph: {
-    title: "MANIKA.LAB",
-    description: "L'expertise du salon, chez vous. Coloration, soin et coiffage professionnels.",
+    title: "MANIKA.LAB — Fournisseur des salons de coiffure",
+    description:
+      "La gamme professionnelle bio des salons. Kit de démarrage sans risque, invendus repris à 90 jours.",
     locale: "fr_FR",
     type: "website",
   },
@@ -35,8 +36,11 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "OnlineStore",
   name: "MANIKA.LAB",
-  description: "Cosmétique capillaire professionnelle : coloration vegan, soins kératine, coiffage.",
+  description:
+    "Fournisseur des salons de coiffure : coloration bio vegan, soin, coiffage, mobilier et équipement professionnel.",
   brand: { "@type": "Brand", name: "MANIKA.LAB" },
+  // Cible commerciale — signale aux moteurs que la boutique s'adresse aux professionnels.
+  audience: { "@type": "BusinessAudience", audienceType: "Salons de coiffure et barbershops" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
