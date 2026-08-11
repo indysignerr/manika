@@ -6,7 +6,8 @@
     "dev": "next dev -p 1104",
     "build": "next build",
     "start": "next start -p 1104",
-    "prepare-assets": "node scripts/prepare-assets.mjs"
+    "prepare-assets": "node scripts/prepare-assets.mjs",
+    "build:check": "NEXT_DIST_DIR=.next-build next build"
   },
   "dependencies": {
     "framer-motion": "^11.11.9",

@@ -63,7 +63,16 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
   // par son libellé — indispensable pour les familles hors charte (Beige…).
   const [fHauteur, setFHauteur] = useState<string | null>(null);
   const [fReflet, setFReflet] = useState<string | null>(null);
-  const [qty, setQty] = useState<Record<string, number>>({});
+  /**
+   * Une teinte se commande en packs : on choisit UNE taille de pack (3, 12 ou 36)
+   * et un nombre de packs. On peut donc prendre 2 packs de 3 (= 6 tubes), mais
+   * jamais une unité isolée, ni mélanger deux tailles sur la même teinte.
+   */
+  const [sel, setSel] = useState<Record<string, { pack: number; packs: number }>>({});
+  const unites = (id: string) => {
+    const s = sel[id];
+    return s ? s.pack * s.packs : 0;
+  };
 
   const visibles = lignes.filter(({ teinte }) => {
     if (fHauteur !== null && String(teinte.hauteur) !== fHauteur) return false;
@@ -71,29 +80,54 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
     return true;
   });
 
-  const totalUnites = Object.values(qty).reduce((s, n) => s + n, 0);
-  const totalPrix = lignes.reduce((s, l) => s + (qty[l.v.variantId] ?? 0) * l.v.prix, 0);
-  const nbTeintes = Object.values(qty).filter((n) => n > 0).length;
+  const totalUnites = Object.keys(sel).reduce((s, id) => s + unites(id), 0);
+  const totalPacks = Object.values(sel).reduce((s, x) => s + x.packs, 0);
+  const totalPrix = lignes.reduce((s, l) => s + unites(l.v.variantId) * l.v.prix, 0);
+  const nbTeintes = Object.keys(sel).length;
 
-  const set = (id: string, n: number) => setQty((q) => ({ ...q, [id]: n }));
+  /** Sélectionne une taille de pack, ou la désélectionne si déjà active. */
+  const choisirPack = (id: string, pack: number) =>
+    setSel((s) => {
+      if (s[id]?.pack === pack) {
+        const { [id]: _retire, ...reste } = s;
+        return reste;
+      }
+      return { ...s, [id]: { pack, packs: 1 } };
+    });
+
+  /** Ajuste le nombre de packs ; retomber sous 1 retire la teinte. */
+  const ajusterPacks = (id: string, delta: number) =>
+    setSel((s) => {
+      const cur = s[id];
+      if (!cur) return s;
+      const packs = cur.packs + delta;
+      if (packs < 1) {
+        const { [id]: _retire, ...reste } = s;
+        return reste;
+      }
+      return { ...s, [id]: { ...cur, packs: Math.min(99, packs) } };
+    });
 
   const ajouter = () => {
     addMany(
       lignes
-        .filter((l) => (qty[l.v.variantId] ?? 0) > 0)
-        .map((l) => ({
-          slug,
-          // Libellé court : le titre brut répéterait la famille déjà lisible
-          // dans le nom de ligne (« Doré : Blond moyen doré »).
-          size: l.teinte.code || l.teinte.nom,
-          qty: qty[l.v.variantId],
-          unit: l.v.prix,
-          name: `${nomGamme} · ${l.teinte.code || l.teinte.nom}`,
-          image: l.v.image || "/images/logo-mark.png",
-          variantId: l.v.variantId,
-        }))
+        .filter((l) => sel[l.v.variantId])
+        .map((l) => {
+          const s = sel[l.v.variantId];
+          return {
+            slug,
+            // Le conditionnement fait partie de l'identité de la ligne :
+            // 2 packs de 3 et 1 pack de 12 ne se facturent pas pareil.
+            size: `${l.teinte.code || l.teinte.nom} · ${s.packs} × ${s.pack}`,
+            qty: s.pack * s.packs,
+            unit: l.v.prix,
+            name: `${nomGamme} · ${l.teinte.code || l.teinte.nom}`,
+            image: l.v.image || "/images/logo-mark.png",
+            variantId: l.v.variantId,
+          };
+        })
     );
-    setQty({});
+    setSel({});
   };
 
   const chip = (actif: boolean) =>
@@ -109,8 +143,8 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
         Le nuancier
       </h2>
       <p className="mt-3 text-[13px] font-light text-taupe-deep">
-        {lignes.length} teintes, à commander par {paliers.join(", ")}. Choisissez vos
-        conditionnements, puis ajoutez tout au panier en une fois.
+        {lignes.length} teintes. Choisissez un pack de {paliers.join(", ")} par teinte — et
+        autant de packs que nécessaire — puis ajoutez tout au panier en une fois.
       </p>
 
       {/* Filtres */}
@@ -162,7 +196,8 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
       ) : (
         <ul className="mt-8 grid gap-x-6 gap-y-1 sm:grid-cols-2 xl:grid-cols-3">
           {visibles.map(({ v, teinte }) => {
-            const n = qty[v.variantId] ?? 0;
+            const s = sel[v.variantId];
+            const n = unites(v.variantId);
             return (
               <li
                 key={v.variantId}
@@ -199,8 +234,8 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
                   </p>
                 </div>
 
-                {/* La coloration ne se vend que par conditionnement : 3, 12 ou 36.
-                    Pas de champ libre — les quantités intermédiaires n'existent pas. */}
+                {/* Taille de pack (3, 12 ou 36) puis nombre de packs.
+                    Pas de champ libre : l'unité isolée ne se vend pas. */}
                 <div
                   role="group"
                   aria-label={`Conditionnement pour la teinte ${teinte.code || teinte.nom}`}
@@ -209,11 +244,12 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
                   {paliers.map((p) => (
                     <button
                       key={p}
-                      onClick={() => set(v.variantId, n === p ? 0 : p)}
+                      onClick={() => choisirPack(v.variantId, p)}
                       disabled={!v.disponible}
-                      aria-pressed={n === p}
+                      aria-pressed={s?.pack === p}
+                      aria-label={`Pack de ${p} — ${teinte.code || teinte.nom}`}
                       className={`h-8 w-9 rounded-[2px] border text-[12px] transition-colors disabled:opacity-30 ${
-                        n === p
+                        s?.pack === p
                           ? "border-copper bg-copper text-ivory"
                           : "border-taupe/60 text-copper hover:border-copper"
                       }`}
@@ -221,6 +257,34 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
                       {p}
                     </button>
                   ))}
+
+                  {s ? (
+                    <span className="ml-1.5 flex items-center gap-1">
+                      <button
+                        onClick={() => ajusterPacks(v.variantId, -1)}
+                        aria-label={`Retirer un pack de ${s.pack}`}
+                        className="h-8 w-7 rounded-[2px] border border-taupe/60 text-copper transition-colors hover:border-copper"
+                      >
+                        −
+                      </button>
+                      <span
+                        aria-live="polite"
+                        className="w-14 text-center text-[12px] tabular-nums text-copper"
+                      >
+                        ×{s.packs} = {n}
+                      </span>
+                      <button
+                        onClick={() => ajusterPacks(v.variantId, 1)}
+                        aria-label={`Ajouter un pack de ${s.pack}`}
+                        className="h-8 w-7 rounded-[2px] border border-taupe/60 text-copper transition-colors hover:border-copper"
+                      >
+                        +
+                      </button>
+                    </span>
+                  ) : (
+                    /* Réserve la place pour éviter que la ligne ne saute. */
+                    <span aria-hidden className="ml-1.5 w-[118px]" />
+                  )}
                 </div>
               </li>
             );
@@ -245,8 +309,8 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
             </p>
             <p aria-live="polite" className="mt-1 text-[11px] font-light text-taupe-deep">
               {totalUnites === 0
-                ? `Chaque teinte se commande par ${paliers.join(", ")} tubes`
-                : `Conditionnement par ${paliers.join(" / ")}`}
+                ? `Vente par packs de ${paliers.join(", ")} — pas d'unité isolée`
+                : `${totalPacks} pack${totalPacks > 1 ? "s" : ""}`}
             </p>
           </div>
 

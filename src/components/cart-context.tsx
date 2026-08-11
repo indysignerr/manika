@@ -35,12 +35,14 @@ export const useCart = () => {
 };
 
 /**
- * Deux lignes sont la même dès qu'elles pointent la même variante Shopify.
- * On compare d'abord le variantId — il est unique par teinte, là où deux
- * libellés pourraient se ressembler.
+ * Deux lignes fusionnent si elles désignent la même variante ET le même
+ * conditionnement. Le variantId prime sur le slug (il est unique par teinte),
+ * mais `size` reste discriminant : 2 packs de 3 et 1 pack de 12 portent la
+ * même variante Shopify sans se facturer pareil — ils restent deux lignes.
  */
 const memeLigne = (a: { slug: string; size: string; variantId?: string }, b: typeof a) =>
-  a.variantId && b.variantId ? a.variantId === b.variantId : a.slug === b.slug && a.size === b.size;
+  (a.variantId && b.variantId ? a.variantId === b.variantId : a.slug === b.slug) &&
+  a.size === b.size;
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
