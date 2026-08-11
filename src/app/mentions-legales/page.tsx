@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MAISON, ligneEditeur } from "@/lib/legal";
 
 export const metadata: Metadata = { title: "Mentions légales — MANIKA.LAB" };
 
@@ -13,16 +14,21 @@ export default function Page() {
       <div className="mt-10 space-y-8 text-[14px] font-light leading-relaxed text-ink/80">
         <section>
           <h2 className="heading mb-3 text-base">Éditeur du site</h2>
-          <p>
-            MANIKA.LAB · [Forme juridique, capital] · [Adresse du siège] ·
-            RCS [Ville n°] · contact@manika.fr
+          <p>{ligneEditeur()}</p>
+          <p className="mt-2">
+            Téléphone :{" "}
+            <a href={`tel:${MAISON.telephoneLien}`} className="hover:text-copper">
+              {MAISON.telephone}
+            </a>
           </p>
+          {MAISON.directeurPublication && (
+            <p className="mt-2">Directeur de la publication : {MAISON.directeurPublication}</p>
+          )}
         </section>
         <section>
           <h2 className="heading mb-3 text-base">Hébergement</h2>
           <p>
-            Cloudflare, Inc. — 101 Townsend St, San Francisco, CA 94107, États-Unis —
-            cloudflare.com
+            {MAISON.hebergeur.nom} — {MAISON.hebergeur.adresse} — {MAISON.hebergeur.site}
           </p>
         </section>
         <section>

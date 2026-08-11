@@ -87,7 +87,7 @@ export default function Footer() {
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
             <span>© 2026 MANIKA.LAB</span>
             <span aria-hidden>·</span>
-            <a href="#" className="hover:text-ivory">CGV</a>
+            <Link href="/cgv/" className="hover:text-ivory">CGV</Link>
             <span aria-hidden>·</span>
             <Link href="/mentions-legales/" className="hover:text-ivory">Mentions légales</Link>
             <span aria-hidden>·</span>

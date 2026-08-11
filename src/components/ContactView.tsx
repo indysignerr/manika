@@ -3,12 +3,18 @@
 import { FormEvent, useState } from "react";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import Reveal from "@/components/Reveal";
+import { MAISON } from "@/lib/legal";
 
+/**
+ * Coordonnées lues depuis src/lib/legal.ts.
+ * L'adresse n'est affichée que si elle est renseignée : mieux vaut pas
+ * d'adresse qu'une adresse inventée sur une cible professionnelle.
+ */
 const INFOS = [
-  { icon: Mail, label: "Email", value: "bonjour@manika.fr" },
-  { icon: Phone, label: "Téléphone", value: "+33 4 00 00 00 00" },
-  { icon: MapPin, label: "Atelier", value: "Chemin du Moulin, 84000 Provence" },
-  { icon: Clock, label: "Réponse", value: "Sous 24 h ouvrées" },
+  { icon: Mail, label: "Email", value: MAISON.email, href: `mailto:${MAISON.email}` },
+  { icon: Phone, label: "Téléphone", value: MAISON.telephone, href: `tel:${MAISON.telephoneLien}` },
+  ...(MAISON.adresse ? [{ icon: MapPin, label: "Adresse", value: MAISON.adresse, href: null }] : []),
+  { icon: Clock, label: "Réponse", value: `Sous ${MAISON.delaiReponse}`, href: null },
 ];
 
 const SUBJECTS = ["Conseil personnalisé", "Suivi de commande", "Presse & partenariats", "Visite de l'atelier", "Autre"];
@@ -45,14 +51,22 @@ export default function ContactView() {
           </p>
 
           <dl className="mt-10 space-y-6">
-            {INFOS.map(({ icon: Icon, label, value }) => (
+            {INFOS.map(({ icon: Icon, label, value, href }) => (
               <div key={label} className="flex items-start gap-4">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ivory-2">
                   <Icon size={15} strokeWidth={1.4} className="text-bronze" aria-hidden />
                 </span>
                 <div>
                   <dt className="text-[9px] uppercase tracking-wide3 text-taupe-deep">{label}</dt>
-                  <dd className="mt-1 text-[13px] font-light text-copper">{value}</dd>
+                  <dd className="mt-1 text-[13px] font-light text-copper">
+                    {href ? (
+                      <a href={href} className="transition-opacity hover:opacity-60">
+                        {value}
+                      </a>
+                    ) : (
+                      value
+                    )}
+                  </dd>
                 </div>
               </div>
             ))}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { User, ShoppingBag, Menu, X } from "lucide-react";
+import { Search, User, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/components/cart-context";
 import { UNIVERS, collectionsByUnivers } from "@/lib/collections";
 import { shopifyAccountUrl } from "@/lib/shopify";
@@ -112,6 +112,14 @@ export default function Header() {
               data-cursor
             >
               Compte pro
+            </Link>
+            <Link
+              href="/recherche/"
+              aria-label="Rechercher un produit"
+              title="Rechercher"
+              className="p-1 transition-opacity hover:opacity-60"
+            >
+              <Search size={17} strokeWidth={1.5} />
             </Link>
             <a
               href={accountUrl}
