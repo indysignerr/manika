@@ -6,7 +6,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ShoppingBag } from "lucide-react";
 import Magnetic from "@/components/Magnetic";
-import { BORONAT } from "@/lib/boronat";
 
 const Split = ({ text }: { text: string }) => (
   <span className="inline-block overflow-hidden pb-1 align-bottom">
@@ -172,16 +171,16 @@ export default function Hero() {
             Distribution professionnelle · Salons &amp; barbers
           </p>
           <h1 className="heading text-[13vw] leading-[1.04] md:text-7xl">
-            <Split text="LA GAMME" />
+            <Split text="TECHNICIENS" />
             <br />
-            <Split text="DES SALONS" />
+            <Split text="DE LA" />
           </h1>
           <p className="hero-fade mt-4 font-serif text-2xl italic text-bronze opacity-0 md:text-3xl">
-            signée {BORONAT.name}
+            couleur
           </p>
           <p className="hero-fade mt-6 max-w-md text-[14px] font-light leading-relaxed text-ink/80 opacity-0">
-            Coloration bio vegan sans ammoniaque, soin, coiffage — et tout l&apos;équipement du
-            salon. Tarifs professionnels HT, sans minimum de commande.
+            Trois gammes de coloration — végétale, bio vegan, sans ammoniaque — et tout ce qui va
+            avec. Tarifs professionnels HT, sans minimum de commande.
           </p>
           <div className="hero-fade mt-9 flex flex-wrap items-center gap-4 opacity-0">
             <Magnetic>
@@ -189,8 +188,8 @@ export default function Hero() {
                 Devenir client pro
               </Link>
             </Magnetic>
-            <Link href="/masterclass/" className="btn-ghost" data-cursor>
-              La masterclass
+            <Link href="/boutique/femme-coloration/" className="btn-ghost" data-cursor>
+              Voir les colorations
             </Link>
           </div>
         </div>

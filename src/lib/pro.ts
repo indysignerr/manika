@@ -8,6 +8,10 @@
  *    correspondant n'est tout simplement PAS affiché sur le site. Dès que la
  *    valeur est connue, on la renseigne ici et l'argument apparaît partout
  *    (barre de réassurance, page Devenir client pro, CGV) — une seule ligne.
+ *
+ * ⚠️ 10/08/2026 — la REPRISE DES INVENDUS a été retirée à la demande de la
+ *    cliente. Ne pas la réintroduire : l'offre d'essai passe désormais par les
+ *    échantillons à prix coûtant, déduits de la première commande.
  */
 
 export const PRO = {
@@ -20,15 +24,30 @@ export const PRO = {
   /** Délai d'expédition, formulé tel quel (ex. « 48 h ouvrées »). null → masqué. */
   delaiExpedition: null as string | null,
 
-  /** Reprise des invendus du kit de démarrage, en jours. Validé dans le plan de lancement. */
-  repriseInvendusJours: 90,
-
-  /** Nombre de références du kit de démarrage. Validé dans le plan de lancement. */
-  kitReferences: 6,
-
   /** Les prix catalogue sont-ils saisis côté Shopify ? Tant que false, on n'annonce aucun tarif. */
   prixRenseignes: false,
 } as const;
+
+/**
+ * L'offre d'essai — remplace le kit « invendus repris ».
+ * 6 échantillons au choix + 1 oxydant, vendus à prix coûtant et déduits de la
+ * première commande.
+ */
+export const ESSAI = {
+  nbEchantillons: 6,
+  /** Volumes d'oxydant proposés avec le lot d'essai. */
+  volumesOxydant: ["10 Vol", "20 Vol", "30 Vol"],
+  /** Prix du lot d'essai. null → on annonce « à prix coûtant » sans montant. */
+  prixTTC: null as number | null,
+  /** Le montant est-il déduit de la première commande ? */
+  deduitPremiereCommande: true,
+} as const;
+
+/** Formulation courte de l'offre d'essai, réutilisée sur plusieurs pages. */
+export const essaiResume = (): string =>
+  `${ESSAI.nbEchantillons} échantillons au choix + 1 oxydant (${ESSAI.volumesOxydant.join(
+    ", "
+  )})`;
 
 export type ProArgument = { label: string; detail: string };
 
@@ -52,8 +71,10 @@ export function proArguments(): ProArgument[] {
   }
 
   out.push({
-    label: `Invendus repris à ${PRO.repriseInvendusJours} jours`,
-    detail: `Le kit de ${PRO.kitReferences} références ne vous fait courir aucun risque de stock.`,
+    label: "Essayez à prix coûtant",
+    detail: `${essaiResume()}${
+      ESSAI.deduitPremiereCommande ? ", déduits de votre première commande." : "."
+    }`,
   });
 
   if (PRO.francoDePortHT !== null) {

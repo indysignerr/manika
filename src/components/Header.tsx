@@ -7,17 +7,16 @@ import { Search, User, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/components/cart-context";
 import { UNIVERS, collectionsByUnivers } from "@/lib/collections";
 import { shopifyAccountUrl } from "@/lib/shopify";
-import { PRO } from "@/lib/pro";
 
 const accountUrl = shopifyAccountUrl() ?? "/contact/";
 
-const NAV = [
-  { label: "Boutique", href: "/boutique/" },
-  { label: "Masterclass", href: "/masterclass/" },
-  { label: "Ingrédients", href: "/ingredients/" },
+// Boutique porte le méga-menu et est rendue à part : elle n'est pas dans NAV.
+const NAV_LEFT = [{ label: "Ingrédients", href: "/ingredients/" }];
+const NAV_RIGHT = [
   { label: "À propos", href: "/a-propos/" },
   { label: "Contact", href: "/contact/" },
 ];
+const NAV_MOBILE = [...NAV_LEFT, ...NAV_RIGHT];
 
 const linkCls =
   "whitespace-nowrap text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60";
@@ -37,8 +36,7 @@ export default function Header() {
   return (
     <div className="fixed inset-x-0 top-0 z-[85]">
       <div className="bg-copper py-2 text-center text-[9px] uppercase tracking-wide3 text-ivory md:text-[10px]">
-        Tarifs professionnels HT · Sans minimum de commande · Invendus repris à{" "}
-        {PRO.repriseInvendusJours} jours
+        Tarifs professionnels HT · Sans minimum de commande · Échantillons à prix coûtant
       </div>
 
       <header
@@ -89,7 +87,7 @@ export default function Header() {
                   </div>
                 </div>
               </div>
-              {NAV.slice(1, 3).map((n) => (
+              {NAV_LEFT.map((n) => (
                 <Link key={n.label} href={n.href} className={linkCls}>
                   {n.label}
                 </Link>
@@ -104,7 +102,7 @@ export default function Header() {
 
           <div className="flex items-center justify-end gap-4 text-copper md:gap-5">
             <nav className="hidden items-center gap-5 md:flex lg:gap-6" aria-label="Navigation secondaire">
-              {NAV.slice(3).map((n) => (
+              {NAV_RIGHT.map((n) => (
                 <Link key={n.label} href={n.href} className={linkCls}>
                   {n.label}
                 </Link>
@@ -202,7 +200,7 @@ export default function Header() {
                   ))}
                 </div>
               </motion.div>
-              {NAV.slice(1).map((n, i) => (
+              {NAV_MOBILE.map((n, i) => (
                 <motion.div
                   key={n.label}
                   initial={{ y: 24, opacity: 0 }}

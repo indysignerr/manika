@@ -20,13 +20,13 @@ const marcellus = Marcellus({
 });
 
 export const metadata: Metadata = {
-  title: "MANIKA.LAB — Fournisseur des salons de coiffure",
+  title: "MANIKA.LAB — Coloration professionnelle pour salons",
   description:
-    "Coloration bio vegan sans ammoniaque, soin, coiffage, mobilier et équipement de salon. Tarifs professionnels HT, sans minimum de commande. Compte pro sur SIRET.",
+    "Trois gammes de coloration professionnelle : végétale, bio vegan et sans ammoniaque, avec oxydants et consommables. Tarifs HT, sans minimum de commande, compte pro sur SIRET.",
   openGraph: {
-    title: "MANIKA.LAB — Fournisseur des salons de coiffure",
+    title: "MANIKA.LAB — Coloration professionnelle pour salons",
     description:
-      "La gamme professionnelle bio des salons. Kit de démarrage sans risque, invendus repris à 90 jours.",
+      "Végétale, bio vegan, sans ammoniaque : testez la couleur avec un lot d'échantillons à prix coûtant, déduit de votre première commande.",
     locale: "fr_FR",
     type: "website",
   },
@@ -37,7 +37,7 @@ const jsonLd = {
   "@type": "OnlineStore",
   name: "MANIKA.LAB",
   description:
-    "Fournisseur des salons de coiffure : coloration bio vegan, soin, coiffage, mobilier et équipement professionnel.",
+    "Fournisseur des salons de coiffure, spécialiste de la coloration professionnelle : végétale, bio vegan et sans ammoniaque.",
   brand: { "@type": "Brand", name: "MANIKA.LAB" },
   // Cible commerciale — signale aux moteurs que la boutique s'adresse aux professionnels.
   audience: { "@type": "BusinessAudience", audienceType: "Salons de coiffure et barbershops" },

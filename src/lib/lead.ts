@@ -6,7 +6,7 @@
  * un SIRET mal saisi qui part dans la base, c'est un lead perdu.
  */
 
-export type LeadVariant = "pro" | "masterclass";
+export type LeadVariant = "pro" | "contact" | "newsletter";
 
 /**
  * Un SIRET valide fait 14 chiffres et satisfait la clé de Luhn.

@@ -15,10 +15,9 @@ const COLS: { title: string; links: { label: string; href: string }[] }[] = [
     title: "Professionnels",
     links: [
       { label: "Devenir client pro", href: "/devenir-client-pro/" },
-      { label: "La masterclass", href: "/masterclass/" },
-      { label: "Jean-Yves Boronat", href: "/jean-yves-boronat/" },
       { label: "Ingrédients", href: "/ingredients/" },
       { label: "À propos", href: "/a-propos/" },
+      { label: "Contact", href: "/contact/" },
     ],
   },
   {
@@ -40,11 +39,11 @@ export default function Footer() {
         <div>
           <p className="font-display text-lg font-light tracking-[0.3em] text-ivory">MANIKA.LAB</p>
           <p className="mt-1 text-[9px] uppercase tracking-wide3 text-rose">
-            Fournisseur des salons de coiffure
+            Techniciens de la couleur
           </p>
           <p className="mt-5 max-w-xs text-[12px] font-light leading-relaxed text-ivory/70">
-            Coloration bio vegan, soin, coiffage, mobilier et équipement. Distribution directe aux
-            salons et barbershops — tarifs professionnels HT, sans intermédiaire.
+            Coloration végétale, bio vegan et sans ammoniaque, avec les consommables et les soins
+            qui vont avec. Distribution directe aux salons et barbershops, en tarifs HT.
           </p>
           <div className="mt-6 flex gap-4 text-[10px] uppercase tracking-wide2 text-ivory/70">
             <a href="#" className="transition-colors hover:text-ivory">Instagram</a>

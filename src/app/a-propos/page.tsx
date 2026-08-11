@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import Magnetic from "@/components/Magnetic";
-import { PRO } from "@/lib/pro";
+import { essaiResume } from "@/lib/pro";
 
 export const metadata: Metadata = {
   title: "À propos — MANIKA.LAB",
@@ -172,8 +172,8 @@ export default function Page() {
           <Reveal>
             <h2 className="heading text-3xl md:text-4xl">Référencer la gamme dans votre salon</h2>
             <p className="mx-auto mt-4 max-w-md text-[13px] font-light text-ink/75">
-              Kit de démarrage {PRO.kitReferences} références, invendus repris à{" "}
-              {PRO.repriseInvendusJours} jours. Aucun risque de stock.
+              Commencez par un lot d&apos;essai à prix coûtant — {essaiResume()} — déduit de votre
+              première commande.
             </p>
             <div className="mt-9">
               <Magnetic>

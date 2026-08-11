@@ -1,6 +1,11 @@
 import { products, Product } from "@/lib/products";
 
-export type Univers = "Barber" | "Femme" | "Mobilier" | "Outils électriques";
+/**
+ * Recentrage du 10/08/2026 : la maison se concentre sur la coloration et les
+ * produits qui gravitent autour. Les univers Mobilier et Outils électriques
+ * ont été retirés à cette date.
+ */
+export type Univers = "Femme" | "Barber";
 
 export type Collection = {
   slug: string; // = handle de la collection Shopify
@@ -12,15 +17,55 @@ export type Collection = {
   productSlugs: string[];
 };
 
-export const UNIVERS: Univers[] = ["Barber", "Femme", "Mobilier", "Outils électriques"];
+export const UNIVERS: Univers[] = ["Femme", "Barber"];
 
+/**
+ * ⚠️ L'ORDRE DE CE TABLEAU EST L'ORDRE AFFICHÉ partout (méga-menu, vitrine,
+ *    pages catégorie). Il est imposé par la cliente : pour chaque univers,
+ *    Coloration → Consommables → Soins → Coiffage. Ne pas trier ailleurs.
+ *
+ * ⚠️ `barber-coloration` et `barber-soins` n'existent PAS encore côté Shopify.
+ *    Tant qu'elles ne sont pas créées avec exactement ces handles, les deux
+ *    rayons s'affichent vides. Voir GUIDE-SHOPIFY.md.
+ */
 export const collections: Collection[] = [
+  // ── Femme ──
   {
-    slug: "barber-coiffage",
-    univers: "Barber",
+    slug: "femme-coloration",
+    univers: "Femme",
+    label: "Coloration",
+    tagline: "Végétale, bio vegan & sans ammoniaque",
+    productSlugs: [],
+  },
+  {
+    slug: "femme-consommables",
+    univers: "Femme",
+    label: "Consommables",
+    tagline: "Gants, bols, pinceaux & papier",
+    productSlugs: [],
+  },
+  {
+    slug: "femme-soins",
+    univers: "Femme",
+    label: "Soins",
+    tagline: "Shampoings, masques & après-coloration",
+    productSlugs: [],
+  },
+  {
+    slug: "femme-coiffage",
+    univers: "Femme",
     label: "Coiffage",
-    tagline: "Cires, pâtes & sprays de finition",
-    productSlugs: ["cire-matifiante", "texture-shine"],
+    tagline: "Texture, brillance & fixation",
+    productSlugs: [],
+  },
+
+  // ── Barber ──
+  {
+    slug: "barber-coloration",
+    univers: "Barber",
+    label: "Coloration",
+    tagline: "Coloration homme & barbe",
+    productSlugs: [],
   },
   {
     slug: "barber-consommables",
@@ -30,73 +75,17 @@ export const collections: Collection[] = [
     productSlugs: [],
   },
   {
-    slug: "femme-coloration",
-    univers: "Femme",
-    label: "Coloration",
-    tagline: "Colorations vegan & oxydants",
-    productSlugs: ["coloration-bio-vegan", "creme-oxydante"],
+    slug: "barber-soins",
+    univers: "Barber",
+    label: "Soins",
+    tagline: "Shampoings, soins barbe & rasage",
+    productSlugs: [],
   },
   {
-    slug: "femme-soins",
-    univers: "Femme",
-    label: "Soin",
-    tagline: "Shampoings, masques & monoï",
-    productSlugs: ["shampoing-keratine", "soin-monoi"],
-  },
-  {
-    slug: "femme-coiffage",
-    univers: "Femme",
+    slug: "barber-coiffage",
+    univers: "Barber",
     label: "Coiffage",
-    tagline: "Texture, brillance & fixation",
-    productSlugs: ["texture-shine"],
-  },
-  {
-    slug: "femme-consommables",
-    univers: "Femme",
-    label: "Consommables",
-    tagline: "Accessoires & petit matériel",
-    productSlugs: [],
-  },
-  {
-    slug: "mobilier-fauteuils",
-    univers: "Mobilier",
-    label: "Fauteuils & sièges",
-    tagline: "Fauteuils de coupe & sièges",
-    productSlugs: [],
-  },
-  {
-    slug: "mobilier-bacs",
-    univers: "Mobilier",
-    label: "Bacs à shampoing",
-    tagline: "Bacs & unités de lavage",
-    productSlugs: [],
-  },
-  {
-    slug: "mobilier-meubles",
-    univers: "Mobilier",
-    label: "Meubles & rangements",
-    tagline: "Meubles, rangements & miroirs",
-    productSlugs: [],
-  },
-  {
-    slug: "outils-seche-cheveux",
-    univers: "Outils électriques",
-    label: "Sèche-cheveux",
-    tagline: "Sèche-cheveux & casques",
-    productSlugs: [],
-  },
-  {
-    slug: "outils-tondeuses",
-    univers: "Outils électriques",
-    label: "Tondeuses",
-    tagline: "Tondeuses & trimmers",
-    productSlugs: [],
-  },
-  {
-    slug: "outils-lisseurs",
-    univers: "Outils électriques",
-    label: "Lisseurs & fers",
-    tagline: "Lisseurs, fers & ondulateurs",
+    tagline: "Cires, pâtes & sprays de finition",
     productSlugs: [],
   },
 ];

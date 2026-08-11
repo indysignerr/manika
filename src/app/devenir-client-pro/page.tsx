@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import LeadForm from "@/components/LeadForm";
-import { PRO, proArguments } from "@/lib/pro";
-import { BORONAT } from "@/lib/boronat";
+import { ESSAI, essaiResume, proArguments } from "@/lib/pro";
 
 export const metadata: Metadata = {
   title: "Devenir client pro — MANIKA.LAB",
   description:
-    "Ouvrez votre compte professionnel MANIKA.LAB : tarifs HT réservés aux salons, kit de démarrage de 6 références, invendus repris à 90 jours. Sans minimum de commande.",
+    "Ouvrez votre compte professionnel MANIKA.LAB : tarifs HT réservés aux salons, sans minimum de commande. Testez la coloration avec un lot d'échantillons à prix coûtant, déduit de votre première commande.",
 };
 
 const ETAPES = [
@@ -24,13 +23,13 @@ const ETAPES = [
   },
   {
     num: "03",
-    title: "Vous recevez le kit de démarrage",
-    text: `${PRO.kitReferences} références, un présentoir, des testeurs et l'argumentaire d'une page pour votre équipe.`,
+    title: "Vous testez à prix coûtant",
+    text: `${essaiResume()} — vous ne payez que ce que le lot nous coûte.`,
   },
   {
     num: "04",
-    title: "Vous ne gardez que ce qui tourne",
-    text: `Les invendus sont repris à ${PRO.repriseInvendusJours} jours. Le risque de stock est pour nous, pas pour vous.`,
+    title: "Le lot vous est remboursé",
+    text: "Le montant de l'essai est déduit de votre première commande. Tester ne vous coûte rien.",
   },
 ];
 
@@ -54,9 +53,9 @@ export default function Page() {
               sans <em className="font-serif normal-case italic tracking-normal text-bronze">risque</em>
             </h1>
             <p className="mt-8 max-w-xl text-[15px] font-light leading-relaxed text-ink/80">
-              Ajouter une marque sur votre étagère de revente ne demande aucun changement de
-              pratique et rapporte immédiatement de la marge. Nous supprimons la seule vraie
-              objection : l&apos;invendu.
+              Changer de coloration, c&apos;est prendre un risque sur vos clientes. Alors testez
+              d&apos;abord : le lot d&apos;essai est vendu à prix coûtant, et son montant est déduit
+              de votre première commande.
             </p>
           </Reveal>
         </div>
@@ -69,12 +68,13 @@ export default function Page() {
             <div className="rounded-[3px] border border-bronze/40 bg-ivory-2 p-8 md:p-12">
               <p className="kicker">L&apos;offre de lancement</p>
               <p className="mt-5 max-w-2xl font-serif text-2xl italic leading-relaxed text-copper md:text-[1.9rem]">
-                « Kit de démarrage sans risque : {PRO.kitReferences} références, invendus repris à{" "}
-                {PRO.repriseInvendusJours} jours. »
+                « {ESSAI.nbEchantillons} échantillons au choix, un oxydant, à prix coûtant — déduits
+                de votre première commande. »
               </p>
               <p className="mt-7 max-w-xl text-[14px] font-light leading-relaxed text-ink/80">
-                Un salon ne vend pas ce qu&apos;il ne sait pas expliquer. Le kit arrive donc avec un
-                présentoir, des testeurs et un argumentaire d&apos;une page pour l&apos;équipe.
+                Vous choisissez les {ESSAI.nbEchantillons} teintes que vous voulez essayer et le
+                volume d&apos;oxydant qui va avec ({ESSAI.volumesOxydant.join(", ")}). Posez-les sur
+                vos vraies clientes avant de décider quoi que ce soit.
               </p>
               <a href="#formulaire" className="btn-primary mt-9" data-cursor>
                 Ouvrir mon compte pro
@@ -136,11 +136,11 @@ export default function Page() {
               Réservé aux salons de coiffure, barbershops et écoles. Validation sous 24 h ouvrées.
             </p>
             <p className="mt-8 max-w-sm text-[13px] font-light leading-relaxed text-taupe-deep">
-              Une question avant de vous lancer ? Assistez d&apos;abord à{" "}
-              <Link href="/masterclass/" className="text-copper underline-offset-2 hover:underline">
-                la masterclass de {BORONAT.name}
+              Une question avant de vous lancer ?{" "}
+              <Link href="/contact/" className="text-copper underline-offset-2 hover:underline">
+                Écrivez-nous
               </Link>{" "}
-              — elle est gratuite et sans engagement.
+              — on répond en technicien, pas en commercial.
             </p>
           </Reveal>
 

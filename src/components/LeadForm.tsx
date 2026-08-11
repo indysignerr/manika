@@ -88,9 +88,7 @@ export default function LeadForm({ variant, cta, messageLabel, messagePlaceholde
       >
         <p className="font-serif text-2xl italic text-copper">Demande enregistrée.</p>
         <p className="mt-4 max-w-xs text-[13px] font-light leading-relaxed text-ink/75">
-          {variant === "masterclass"
-            ? "Vous recevrez le lien de connexion et le rappel de session par email."
-            : "Nous vérifions votre SIRET et activons votre compte professionnel sous 24 h ouvrées."}
+          Nous vérifions votre SIRET et activons votre compte professionnel sous 24 h ouvrées.
         </p>
       </div>
     );

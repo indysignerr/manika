@@ -1,5 +1,5 @@
 /**
- * POST /lead — réception des demandes professionnelles (compte pro + masterclass).
+ * POST /lead — réception des demandes (compte pro, contact, newsletter).
  *
  * Cloudflare Pages Function. Le site étant en static export, c'est le seul
  * endroit où un lead peut être traité côté serveur.
@@ -78,12 +78,28 @@ function validSiret(raw = "") {
   return sum % 10 === 0;
 }
 
+const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v || "").trim());
+
+/**
+ * Les exigences dépendent du type de demande : un compte pro doit prouver son
+ * SIRET, une inscription newsletter n'a qu'un email.
+ */
 function validate(p) {
   const e = [];
+  if (!validEmail(p.email)) e.push("Email invalide.");
+
+  if (p.variant === "newsletter") return e;
+
+  if (p.variant === "contact") {
+    if (!p.contact?.trim()) e.push("Nom manquant.");
+    if (!p.message?.trim()) e.push("Message vide.");
+    return e;
+  }
+
+  // "pro" : qualification professionnelle complète.
   if (!p.salon?.trim()) e.push("Nom du salon manquant.");
   if (!validSiret(p.siret)) e.push("SIRET invalide.");
   if (!p.contact?.trim()) e.push("Nom du contact manquant.");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(p.email || "").trim())) e.push("Email invalide.");
   if (!p.telephone?.trim()) e.push("Téléphone manquant.");
   if (!p.ville?.trim()) e.push("Ville manquante.");
   return e;
@@ -91,22 +107,28 @@ function validate(p) {
 
 /* ── destinations ── */
 
+const LIBELLE = {
+  pro: "Ouverture compte pro",
+  contact: "Message de contact",
+  newsletter: "Inscription newsletter",
+};
+
 async function sendEmail(env, p) {
-  const sujet =
-    p.variant === "masterclass"
-      ? `Masterclass — ${p.salon} (${p.ville})`
-      : `Demande compte pro — ${p.salon} (${p.ville})`;
+  const type = LIBELLE[p.variant] || "Demande";
+  const sujet = p.salon ? `${type} — ${p.salon} (${p.ville})` : `${type} — ${p.email}`;
 
   const rows = [
-    ["Type", p.variant === "masterclass" ? "Inscription masterclass" : "Ouverture compte pro"],
+    ["Type", type],
     ["Salon", p.salon],
     ["SIRET", p.siret],
     ["Contact", p.contact],
     ["Email", p.email],
     ["Téléphone", p.telephone],
     ["Ville", p.ville],
-    ["Message", p.message || "—"],
-  ];
+    ["Sujet", p.sujet],
+    ["Message", p.message],
+    // Les champs absents du variant courant sont retirés juste après.
+  ].filter(([, v]) => v !== undefined && v !== null && String(v).trim() !== "");
 
   const html =
     `<h2 style="font-family:system-ui">${escapeHtml(sujet)}</h2>` +
@@ -157,14 +179,15 @@ async function sendKlaviyo(env, p) {
                 type: "profile",
                 attributes: {
                   email: p.email,
-                  organization: p.salon,
-                  location: { city: p.ville },
+                  // Champs absents selon le variant (newsletter = email seul).
+                  ...(p.salon ? { organization: p.salon } : {}),
+                  ...(p.ville ? { location: { city: p.ville } } : {}),
                   properties: {
-                    siret: p.siret,
-                    contact: p.contact,
-                    telephone: p.telephone,
                     origine: p.variant,
-                    message: p.message || "",
+                    ...(p.siret ? { siret: p.siret } : {}),
+                    ...(p.contact ? { contact: p.contact } : {}),
+                    ...(p.telephone ? { telephone: p.telephone } : {}),
+                    ...(p.message ? { message: p.message } : {}),
                   },
                   subscriptions: { email: { marketing: { consent: "SUBSCRIBED" } } },
                 },

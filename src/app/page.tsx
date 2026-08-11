@@ -6,7 +6,6 @@ import FeaturedCollection from "@/components/FeaturedCollection";
 import PromoVideo from "@/components/PromoVideo";
 import Story from "@/components/Story";
 import SisterBrands from "@/components/SisterBrands";
-import Testimonials from "@/components/Testimonials";
 import Newsletter from "@/components/Newsletter";
 
 export default function Home() {
@@ -20,7 +19,6 @@ export default function Home() {
       <PromoVideo />
       <Story />
       <SisterBrands />
-      <Testimonials />
       <Newsletter />
     </>
   );
