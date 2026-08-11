@@ -3,20 +3,25 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search, User, ShoppingBag, Menu, X } from "lucide-react";
+import { User, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/components/cart-context";
 import { UNIVERS, collectionsByUnivers } from "@/lib/collections";
 import { shopifyAccountUrl } from "@/lib/shopify";
 
 const accountUrl = shopifyAccountUrl() ?? "/contact/";
 
-// Boutique porte le méga-menu et est rendue à part : elle n'est pas dans NAV.
-const NAV_LEFT = [{ label: "Ingrédients", href: "/ingredients/" }];
-const NAV_RIGHT = [
+/**
+ * Répartition volontairement déséquilibrée en nombre mais équilibrée en poids :
+ * la navigation éditoriale tient à gauche, la droite ne porte que l'action
+ * (compte pro, connexion, panier). Le lien NAYUMA vit dans le pied de page et
+ * le menu mobile — une marque tierce n'a pas sa place dans la nav principale.
+ */
+const NAV_LEFT = [
+  { label: "Ingrédients", href: "/ingredients/" },
   { label: "À propos", href: "/a-propos/" },
   { label: "Contact", href: "/contact/" },
 ];
-const NAV_MOBILE = [...NAV_LEFT, ...NAV_RIGHT];
+const NAV_MOBILE = NAV_LEFT;
 
 const linkCls =
   "whitespace-nowrap text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60";
@@ -100,34 +105,14 @@ export default function Header() {
             <img src="/images/wordmark.png" alt="MANIKA.LAB" className="h-6 w-auto md:h-7" />
           </Link>
 
-          <div className="flex items-center justify-end gap-4 text-copper md:gap-5">
-            <nav className="hidden items-center gap-5 md:flex lg:gap-6" aria-label="Navigation secondaire">
-              {NAV_RIGHT.map((n) => (
-                <Link key={n.label} href={n.href} className={linkCls}>
-                  {n.label}
-                </Link>
-              ))}
-              {/* Marque sœur — masquée sous xl pour ne pas écraser le CTA pro. */}
-              <a
-                href="https://nayumatea.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Découvrez aussi NAYUMA — thé & rituel capillaire"
-                className="hidden items-center gap-1 whitespace-nowrap text-[11px] uppercase tracking-wide2 text-bronze transition-opacity hover:opacity-60 xl:inline-flex"
-              >
-                NAYUMA <span aria-hidden>↗</span>
-              </a>
-            </nav>
+          <div className="flex items-center justify-end gap-5 text-copper">
             <Link
               href="/devenir-client-pro/"
-              className="hidden whitespace-nowrap rounded-[2px] bg-rose px-4 py-2.5 text-[10px] uppercase tracking-wide2 text-ivory transition-colors hover:bg-rose-hover lg:inline-flex"
+              className="hidden whitespace-nowrap rounded-[2px] border border-copper px-5 py-2.5 text-[10px] uppercase tracking-wide2 text-copper transition-colors hover:bg-copper hover:text-ivory lg:inline-flex"
               data-cursor
             >
               Compte pro
             </Link>
-            <button aria-label="Rechercher" className="hidden p-1 transition-opacity hover:opacity-60 md:block">
-              <Search size={17} strokeWidth={1.5} />
-            </button>
             <a
               href={accountUrl}
               aria-label="S'identifier — mon compte"

@@ -38,7 +38,7 @@ export default function Hero() {
 
     const ctx = gsap.context(() => {
       if (reduced) {
-        gsap.set(".char, .hero-fade", { opacity: 1, yPercent: 0, y: 0 });
+        gsap.set(".char, .hero-fade, .hero-serif", { opacity: 1, yPercent: 0, y: 0 });
         return;
       }
 
@@ -48,6 +48,13 @@ export default function Hero() {
         { yPercent: 120 },
         { yPercent: 0, stagger: 0.035, duration: 1.1, ease: "power4.out" }
       )
+        // Le mot en serif arrive juste derrière les capitales, sans les doubler.
+        .fromTo(
+          ".hero-serif",
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1, ease: "power3.out" },
+          "-=0.55"
+        )
         .fromTo(
           ".hero-fade",
           { y: 28, opacity: 0 },
@@ -170,14 +177,21 @@ export default function Hero() {
           <p className="hero-fade kicker mb-6 opacity-0">
             Distribution professionnelle · Salons &amp; barbers
           </p>
-          <h1 className="heading text-[13vw] leading-[1.04] md:text-7xl">
+          {/* « couleur » appartient au titre : le sortir en légende sous la
+              ligne laissait « DE LA » orpheline et cassait la phrase. */}
+          {/* Taille en vw : le texte suit le viewport, mais le padding du
+              conteneur reste fixe (24 px). 11vw laisse la marge nécessaire
+              jusqu'à 320 px de large. */}
+          <h1 className="heading text-[11vw] leading-[1.02] md:text-7xl">
             <Split text="TECHNICIENS" />
             <br />
-            <Split text="DE LA" />
+            <span className="inline-flex flex-wrap items-baseline gap-x-3 md:gap-x-5">
+              <Split text="DE LA" />
+              <em className="hero-serif font-serif text-[13vw] normal-case italic leading-[0.9] tracking-normal text-bronze opacity-0 md:text-[5.1rem]">
+                couleur
+              </em>
+            </span>
           </h1>
-          <p className="hero-fade mt-4 font-serif text-2xl italic text-bronze opacity-0 md:text-3xl">
-            couleur
-          </p>
           <p className="hero-fade mt-6 max-w-md text-[14px] font-light leading-relaxed text-ink/80 opacity-0">
             Trois gammes de coloration — végétale, bio vegan, sans ammoniaque — et tout ce qui va
             avec. Tarifs professionnels HT, sans minimum de commande.
