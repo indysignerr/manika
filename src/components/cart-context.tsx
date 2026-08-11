@@ -19,6 +19,8 @@ type CartCtx = {
   open: boolean;
   setOpen: (v: boolean) => void;
   add: (item: AddInput) => void;
+  /** Ajout groupé — grille de réassort : N teintes, N quantités, un seul rendu. */
+  addMany: (entries: (AddInput & { qty: number })[]) => void;
   setQty: (index: number, qty: number) => void;
   subtotal: number;
   count: number;
@@ -32,19 +34,47 @@ export const useCart = () => {
   return c;
 };
 
+/**
+ * Deux lignes sont la même dès qu'elles pointent la même variante Shopify.
+ * On compare d'abord le variantId — il est unique par teinte, là où deux
+ * libellés pourraient se ressembler.
+ */
+const memeLigne = (a: { slug: string; size: string; variantId?: string }, b: typeof a) =>
+  a.variantId && b.variantId ? a.variantId === b.variantId : a.slug === b.slug && a.size === b.size;
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [open, setOpen] = useState(false);
 
   const add = (item: AddInput) => {
     setItems((prev) => {
-      const i = prev.findIndex((it) => it.slug === item.slug && it.size === item.size);
+      const i = prev.findIndex((it) => memeLigne(it, item));
       if (i >= 0) {
         const next = [...prev];
         next[i] = { ...next[i], qty: next[i].qty + 1 };
         return next;
       }
       return [...prev, { ...item, qty: 1 }];
+    });
+    setOpen(true);
+  };
+
+  /**
+   * Ajoute plusieurs lignes d'un coup. Fusionne avec l'existant sur
+   * (slug, size), et cumule aussi les doublons présents dans `entries`.
+   */
+  const addMany = (entries: (AddInput & { qty: number })[]) => {
+    const utiles = entries.filter((e) => e.qty > 0);
+    if (!utiles.length) return;
+
+    setItems((prev) => {
+      const next = [...prev];
+      for (const e of utiles) {
+        const i = next.findIndex((it) => memeLigne(it, e));
+        if (i >= 0) next[i] = { ...next[i], qty: next[i].qty + e.qty };
+        else next.push({ ...e });
+      }
+      return next;
     });
     setOpen(true);
   };
@@ -59,7 +89,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const count = items.reduce((s, it) => s + it.qty, 0);
 
   return (
-    <Ctx.Provider value={{ items, open, setOpen, add, setQty, subtotal, count }}>
+    <Ctx.Provider value={{ items, open, setOpen, add, addMany, setQty, subtotal, count }}>
       {children}
     </Ctx.Provider>
   );

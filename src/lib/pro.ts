@@ -14,6 +14,20 @@
  *    échantillons à prix coûtant, déduits de la première commande.
  */
 
+/**
+ * Conditionnements dégressifs — s'appliquent à TOUS les produits (décision
+ * cliente du 11/08), pas seulement à la coloration.
+ *
+ * ⚠️ Ce sont des QUANTITÉS, pas des variantes Shopify. Les passer en variantes
+ *    multiplierait le catalogue par 3 et ferait sauter la limite de 100
+ *    variantes par produit dès qu'une gamme dépasse ~33 teintes.
+ *    Le dégressif se joue sur le prix, à quantité atteinte.
+ *
+ * ⚠️ Les remises par palier ne sont PAS encore arrêtées (prix en cours de
+ *    validation avec la cliente) → on affiche les paliers, jamais un tarif.
+ */
+export const PALIERS = [3, 12, 36] as const;
+
 export const PRO = {
   /** Montant HT à partir duquel le port est offert. null → argument masqué. */
   francoDePortHT: null as number | null,

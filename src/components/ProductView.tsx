@@ -9,16 +9,27 @@ import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
 import Magnetic from "@/components/Magnetic";
 import Reveal from "@/components/Reveal";
+import NuancierGrid from "@/components/NuancierGrid";
+import { PALIERS } from "@/lib/pro";
+import { parseTeinte } from "@/lib/nuancier";
 
+/**
+ * Au-delà de ce nombre de variantes, le sélecteur en pastilles devient
+ * illisible : on bascule sur la grille de nuancier (filtres + saisie de
+ * quantité par teinte + ajout groupé).
+ */
+const SEUIL_NUANCIER = 8;
+
+/**
+ * Structure imposée par la cliente (point du 10/08) :
+ * Description · Conseil aux pros · Ingrédients — et PAS de bloc
+ * « Livraison & retours », retiré à sa demande.
+ */
 const ACCORDION = (p: Product) =>
   [
     { title: "Description", body: p.desc },
+    { title: "Conseil aux pros", body: p.usage },
     { title: "Ingrédients", body: p.inci },
-    { title: "Utilisation", body: p.usage },
-    {
-      title: "Livraison & retours",
-      body: "Expédition sous 24 h. Livraison offerte dès 60 €. Retours gratuits sous 30 jours, même produit entamé.",
-    },
   ].filter((i) => i.body && i.body.trim().length > 0);
 
 export default function ProductView({ product, related = [] }: { product: Product; related?: Product[] }) {
@@ -30,7 +41,15 @@ export default function ProductView({ product, related = [] }: { product: Produc
 
   const size = product.sizes[sizeIndex] ?? product.sizes[0];
   const unit = product.price + (size?.delta ?? 0);
-  const multi = product.sizes.length > 1;
+
+  // Une gamme de coloration : assez de variantes ET des libellés qui se lisent
+  // comme des teintes. Sinon (contenances, volumes d'oxydant…), sélecteur normal.
+  const estNuancier =
+    product.sizes.length >= SEUIL_NUANCIER &&
+    product.sizes.filter((s) => parseTeinte(s.label).hauteur !== null).length >=
+      product.sizes.length * 0.7;
+
+  const multi = product.sizes.length > 1 && !estNuancier;
 
   useEffect(() => {
     const onScroll = () => setShowBar(window.scrollY > 480);
@@ -86,7 +105,9 @@ export default function ProductView({ product, related = [] }: { product: Produc
 
           <div className="mt-6 flex items-baseline gap-4">
             <p className="text-3xl font-extralight text-copper">{fmtPrice(unit)}</p>
-            <p className="text-[11px] text-taupe-deep">Livraison offerte dès 60 €</p>
+            <p className="text-[11px] text-taupe-deep">
+              Tarif professionnel HT · dégressif par {PALIERS.join(" / ")}
+            </p>
           </div>
 
           {multi && (
@@ -111,22 +132,29 @@ export default function ProductView({ product, related = [] }: { product: Produc
             </fieldset>
           )}
 
-          <div className="mt-8 flex max-w-md gap-3">
-            <div className="flex items-center rounded-[2px] border border-taupe/60 text-copper">
-              <button onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Réduire la quantité" className="px-3.5 py-3">
-                <Minus size={13} strokeWidth={1.5} />
-              </button>
-              <span className="w-7 text-center text-sm" aria-live="polite">{qty}</span>
-              <button onClick={() => setQty(qty + 1)} aria-label="Augmenter la quantité" className="px-3.5 py-3">
-                <Plus size={13} strokeWidth={1.5} />
-              </button>
+          {estNuancier ? (
+            <p className="mt-8 max-w-md text-[13px] font-light leading-relaxed text-taupe-deep">
+              {product.sizes.length} teintes disponibles — composez votre commande dans le nuancier
+              ci-dessous.
+            </p>
+          ) : (
+            <div className="mt-8 flex max-w-md gap-3">
+              <div className="flex items-center rounded-[2px] border border-taupe/60 text-copper">
+                <button onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Réduire la quantité" className="px-3.5 py-3">
+                  <Minus size={13} strokeWidth={1.5} />
+                </button>
+                <span className="w-7 text-center text-sm" aria-live="polite">{qty}</span>
+                <button onClick={() => setQty(qty + 1)} aria-label="Augmenter la quantité" className="px-3.5 py-3">
+                  <Plus size={13} strokeWidth={1.5} />
+                </button>
+              </div>
+              <Magnetic className="flex-1">
+                <button onClick={addToCart} className="btn-primary w-full !py-[15px]" data-cursor>
+                  Ajouter au panier{unit > 0 ? ` — ${fmtPrice(unit * qty)}` : ""}
+                </button>
+              </Magnetic>
             </div>
-            <Magnetic className="flex-1">
-              <button onClick={addToCart} className="btn-primary w-full !py-[15px]" data-cursor>
-                Ajouter au panier{unit > 0 ? ` — ${fmtPrice(unit * qty)}` : ""}
-              </button>
-            </Magnetic>
-          </div>
+          )}
 
           <div className="mt-8 grid max-w-md grid-cols-3 gap-3 text-center">
             {[
@@ -176,6 +204,25 @@ export default function ProductView({ product, related = [] }: { product: Produc
           </div>
         </div>
       </div>
+
+      {/* Nuancier — grille de commande multi-teintes */}
+      {estNuancier && (
+        <section className="border-t border-taupe/40 bg-ivory-2 py-16 md:py-20">
+          <div className="container-luxe">
+            <NuancierGrid
+              slug={product.slug}
+              nomGamme={product.name}
+              variantes={product.sizes.map((s, i) => ({
+                variantId: s.variantId ?? `${product.slug}-${i}`,
+                titre: s.label,
+                prix: product.price + s.delta,
+                disponible: s.available !== false,
+                image: s.image ?? null,
+              }))}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Cross-sell */}
       {crossSell.length > 0 && (

@@ -59,10 +59,12 @@ export type ShopifyMoney = { amount: string; currencyCode: string };
 
 export type ShopifyVariant = {
   id: string; // gid://shopify/ProductVariant/... — sert au panier/checkout
-  title: string; // ex. "50 ml" ou "20 Vol · 6 %"
+  title: string; // ex. "50 ml", "20 Vol · 6 %" ou "Doré : Blond moyen doré"
   availableForSale: boolean;
   price: ShopifyMoney;
   selectedOptions: { name: string; value: string }[];
+  /** Photo propre à la variante — une par teinte sur les gammes de coloration. */
+  image: { url: string; altText: string | null } | null;
 };
 
 export type ShopifyProduct = {
@@ -88,13 +90,14 @@ const PRODUCT_FIELDS = /* GraphQL */ `
   tags
   featuredImage { url altText }
   priceRange { minVariantPrice { amount currencyCode } }
-  variants(first: 20) {
+  variants(first: 100) {
     nodes {
       id
       title
       availableForSale
       price { amount currencyCode }
       selectedOptions { name value }
+      image { url altText }
     }
   }
 `;
@@ -235,11 +238,21 @@ export function toSiteProduct(sp: ShopifyProduct): Product {
     price: base,
     // Un seul variant (« Default Title ») → pas de sélecteur de taille.
     sizes: soloVariant
-      ? [{ label: variants[0].title.replace(/default title/i, "Unité"), delta: 0, variantId: variants[0].id }]
+      ? [
+          {
+            label: variants[0].title.replace(/default title/i, "Unité"),
+            delta: 0,
+            variantId: variants[0].id,
+            image: variants[0].image?.url ?? null,
+            available: variants[0].availableForSale,
+          },
+        ]
       : variants.map((v) => ({
           label: v.title,
           delta: Number(v.price.amount) - base,
           variantId: v.id,
+          image: v.image?.url ?? null,
+          available: v.availableForSale,
         })),
     desc: sp.description,
     usage: "",

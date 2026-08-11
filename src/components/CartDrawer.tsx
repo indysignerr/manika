@@ -4,14 +4,20 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Minus, Plus, Lock } from "lucide-react";
 import { useCart } from "@/components/cart-context";
-import { fmtPrice, fmt, FREE_SHIPPING } from "@/lib/products";
+import { fmtPrice, fmt } from "@/lib/products";
 import { isShopifyConfigured, redirectToShopifyCheckout } from "@/lib/shopify";
+import { PRO } from "@/lib/pro";
 
 export default function CartDrawer() {
   const { items, open, setOpen, setQty, subtotal } = useCart();
   const [loading, setLoading] = useState(false);
-  const progress = Math.min(1, subtotal / FREE_SHIPPING);
-  const remaining = FREE_SHIPPING - subtotal;
+
+  // Jauge de franco de port — affichée UNIQUEMENT si le seuil est arrêté.
+  // Tant que `francoDePortHT` vaut null, annoncer un seuil serait un
+  // engagement commercial inventé (cf. src/lib/pro.ts).
+  const franco = PRO.francoDePortHT;
+  const progress = franco ? Math.min(1, subtotal / franco) : 0;
+  const remaining = franco ? franco - subtotal : 0;
 
   const canCheckout = isShopifyConfigured() && items.length > 0 && items.every((i) => i.variantId);
 
@@ -60,13 +66,13 @@ export default function CartDrawer() {
               </button>
             </div>
 
-            {subtotal > 0 && (
+            {franco !== null && subtotal > 0 && (
               <div className="border-b border-taupe/50 px-6 py-4">
                 <p className="mb-2 text-[11px] tracking-wide text-copper">
                   {remaining > 0 ? (
-                    <>Plus que <strong className="font-medium">{fmt(remaining)}</strong> pour la livraison offerte</>
+                    <>Plus que <strong className="font-medium">{fmt(remaining)}</strong> pour le franco de port</>
                   ) : (
-                    <>Livraison offerte ✦</>
+                    <>Franco de port atteint ✦</>
                   )}
                 </p>
                 <div className="h-[3px] rounded-full bg-ivory-3">
@@ -122,7 +128,9 @@ export default function CartDrawer() {
                 </div>
                 <div className="mb-4 flex justify-between text-[11px] text-taupe-deep">
                   <span>Livraison</span>
-                  <span>{subtotal >= FREE_SHIPPING ? "Offerte" : "Calculée à l'étape suivante"}</span>
+                  <span>
+                    {franco !== null && subtotal >= franco ? "Offerte" : "Calculée à l'étape suivante"}
+                  </span>
                 </div>
                 <button onClick={checkout} disabled={!canCheckout || loading} className="btn-primary w-full disabled:opacity-60" data-cursor>
                   <Lock size={13} strokeWidth={1.5} />
@@ -135,7 +143,7 @@ export default function CartDrawer() {
                 )}
                 {isShopifyConfigured() && (
                   <p className="mt-3 text-center text-[10px] tracking-wide text-taupe-deep">
-                    Paiement sécurisé Shopify · Retours 30 jours
+                    Paiement sécurisé Shopify · Tarifs professionnels HT
                   </p>
                 )}
               </div>

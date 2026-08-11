@@ -4,7 +4,17 @@ export type Product = {
   tagline: string;
   category: string;
   price: number;
-  sizes: { label: string; delta: number; variantId?: string }[];
+  // `image` porte la photo propre à la variante quand elle existe — les
+  // teintes de coloration en ont une chacune, c'est ce qui fait le nuancier.
+  // `available` est la dispo de CETTE variante : une teinte peut être épuisée
+  // alors que le reste de la gamme est en stock.
+  sizes: {
+    label: string;
+    delta: number;
+    variantId?: string;
+    image?: string | null;
+    available?: boolean;
+  }[];
   desc: string;
   usage: string;
   inci: string;
