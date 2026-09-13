@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Lock, Truck, Leaf, RotateCcw, Minus, Plus } from "lucide-react";
+import { ChevronDown, Lock, Truck, PackageCheck, BadgeEuro, Clock, Minus, Plus } from "lucide-react";
 import { Product, fmt } from "@/lib/products";
 import Prix from "@/components/Prix";
-import { usePrixEtat, usePrixVariante, usePrix } from "@/lib/prix";
+import { useDemandePrix, usePrixEtat, usePrixVariante, usePrix } from "@/lib/prix";
 import { useCart } from "@/components/cart-context";
 import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
 import Magnetic from "@/components/Magnetic";
 import Reveal from "@/components/Reveal";
 import NuancierGrid from "@/components/NuancierGrid";
-import { PALIERS } from "@/lib/pro";
+import { COFFRET, PALIERS, PRO } from "@/lib/pro";
 import { parseTeinte } from "@/lib/nuancier";
 
 /**
@@ -21,6 +21,26 @@ import { parseTeinte } from "@/lib/nuancier";
  * quantité par teinte + ajout groupé).
  */
 const SEUIL_NUANCIER = 8;
+
+/**
+ * Les pastilles de réassurance de la fiche produit.
+ *
+ * ⚠️ Elles portaient « Expédié sous 24 h » et « Retours 30 jours » écrits en
+ *    dur, alors que le délai n'est pas arrêté et que les CGV ne prévoient
+ *    aucun retour : le site s'engageait tout seul. On ne montre désormais que
+ *    ce qui est réellement décidé dans src/lib/pro.ts.
+ */
+function reassurancesReelles() {
+  const out: { icon: typeof Truck; label: string }[] = [];
+  if (PRO.francoDePortHT !== null)
+    out.push({ icon: Truck, label: `Livraison offerte dès ${PRO.francoDePortHT} € HT` });
+  if (COFFRET.rembourseProchaineCommande)
+    out.push({ icon: PackageCheck, label: "Coffret découverte remboursé" });
+  if (PRO.delaiExpedition !== null)
+    out.push({ icon: Clock, label: `Expédié sous ${PRO.delaiExpedition}` });
+  out.push({ icon: BadgeEuro, label: "Tarifs HT réservés aux salons" });
+  return out.slice(0, 3);
+}
 
 /**
  * Structure imposée par la cliente (point du 10/08) :
@@ -44,7 +64,9 @@ export default function ProductView({ product, related = [] }: { product: Produc
   const size = product.sizes[sizeIndex] ?? product.sizes[0];
 
   // Le build ne contient aucun montant : le tarif vient de /api/prix, et
-  // seulement si le visiteur est un professionnel validé.
+  // seulement si le visiteur est un professionnel validé. Les cartes des
+  // produits associés réclament les leurs de leur côté.
+  useDemandePrix([product.slug]);
   const { role } = usePrixEtat();
   const tarifProduit = usePrix(product.slug);
   const tarifVariante = usePrixVariante(product.slug, size?.variantId);
@@ -80,6 +102,7 @@ export default function ProductView({ product, related = [] }: { product: Produc
   };
 
   const crossSell = related.filter((p) => p.slug !== product.slug).slice(0, 4);
+  const reassurances = reassurancesReelles();
 
   return (
     <div className="pt-32 md:pt-36">
@@ -101,12 +124,7 @@ export default function ProductView({ product, related = [] }: { product: Produc
           </nav>
 
           <p className="kicker mt-6">{product.category}</p>
-          <h1 className="heading mt-3 text-3xl md:text-[2.4rem]">{product.name}</h1>
-
-          <div className="mt-3 flex items-center gap-3">
-            <span className="text-sm tracking-[0.3em] text-rose" aria-label="4,9 sur 5">★★★★★</span>
-            <span className="text-[11px] text-taupe-deep">4,9 — 214 avis</span>
-          </div>
+          <h1 className="heading-produit mt-3 text-3xl leading-tight md:text-[2.4rem]">{product.name}</h1>
 
           {product.desc && (
             <p className="mt-5 max-w-md text-[14px] font-light leading-relaxed text-ink/80">{product.desc}</p>
@@ -178,18 +196,23 @@ export default function ProductView({ product, related = [] }: { product: Produc
             </div>
           )}
 
-          <div className="mt-8 grid max-w-md grid-cols-3 gap-3 text-center">
-            {[
-              { icon: Truck, label: "Expédié sous 24 h" },
-              { icon: Leaf, label: "Vegan & cruelty-free" },
-              { icon: RotateCcw, label: "Retours 30 jours" },
-            ].map(({ icon: Icon, label }) => (
-              <div key={label} className="rounded-[3px] bg-ivory-2 px-2 py-3.5">
-                <Icon size={16} strokeWidth={1.4} className="mx-auto text-bronze" aria-hidden />
-                <p className="mt-2 text-[9px] uppercase tracking-wider text-copper">{label}</p>
-              </div>
-            ))}
-          </div>
+          {/* Réassurance — UNIQUEMENT des engagements réellement pris.
+              La liste vient de src/lib/pro.ts : rien n'est écrit en dur ici,
+              sinon le site promet ce que personne n'a décidé. */}
+          {reassurances.length > 0 && (
+            <div
+              className={`mt-8 grid max-w-md gap-3 text-center ${
+                reassurances.length >= 3 ? "grid-cols-3" : "grid-cols-2"
+              }`}
+            >
+              {reassurances.map(({ icon: Icon, label }) => (
+                <div key={label} className="rounded-[3px] bg-ivory-2 px-2 py-3.5">
+                  <Icon size={16} strokeWidth={1.4} className="mx-auto text-bronze" aria-hidden />
+                  <p className="mt-2 text-[9px] uppercase tracking-wider text-copper">{label}</p>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="mt-10 max-w-md border-t border-taupe/50">
             {ACCORDION(product).map((item, i) => (
@@ -276,14 +299,21 @@ export default function ProductView({ product, related = [] }: { product: Produc
             {product.name}{multi ? ` · ${size.label}` : ""}
           </p>
           <div className="flex items-center gap-4">
-            <Prix handle={product.slug} variantId={size?.variantId} className="text-sm text-ivory" />
+            <Prix
+              handle={product.slug}
+              variantId={size?.variantId}
+              className="text-sm text-ivory"
+              classeMasque="text-[11px] font-light text-ivory/75"
+            />
             <button
               onClick={addToCart}
-              className="rounded-[2px] bg-rose px-6 py-2.5 text-[10px] uppercase tracking-wide2 text-ivory transition-colors hover:bg-rose-hover"
+              disabled={!peutAcheter}
+              title={peutAcheter ? undefined : "Réservé aux comptes professionnels validés"}
+              className="rounded-[2px] bg-rose px-6 py-2.5 text-[10px] uppercase tracking-wide2 text-ivory transition-colors hover:bg-rose-hover disabled:opacity-45 disabled:hover:bg-rose"
               data-cursor
             >
               <Lock size={11} strokeWidth={1.5} className="mr-2 inline" aria-hidden />
-              Ajouter
+              {peutAcheter ? "Ajouter" : "Compte pro"}
             </button>
           </div>
         </div>

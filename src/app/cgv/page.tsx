@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MAISON, ligneEditeur } from "@/lib/legal";
-import { ESSAI, PALIERS, PRO, essaiResume } from "@/lib/pro";
+import { COFFRET, PALIERS, PRO, coffretResume } from "@/lib/pro";
 
 /**
  * Conditions Générales de Vente — ENTRE PROFESSIONNELS.
@@ -103,21 +103,36 @@ export default function Page() {
           </p>
           {PRO.francoDePortHT !== null && (
             <p className="mt-3">
-              Le port est offert à partir de {PRO.francoDePortHT} € HT de commande.
+              Le port est offert à partir de {PRO.francoDePortHT} € HT de commande, en France
+              métropolitaine. En dessous de ce seuil, les frais de port sont calculés au moment du
+              règlement.
             </p>
           )}
         </section>
 
         <section>
-          <H>6. Offre d&apos;essai</H>
+          <H>6. Coffret découverte</H>
           <p>
-            L&apos;offre d&apos;essai — {essaiResume()} — est facturée à prix coûtant.
-            {ESSAI.deduitPremiereCommande && (
+            Le coffret découverte — {coffretResume()} — est facturé à prix coûtant.
+            {COFFRET.portOffert && (
+              <> Son expédition est offerte, sans condition de montant.</>
+            )}
+            {COFFRET.rembourseProchaineCommande && (
               <>
                 {" "}
-                Son montant est <strong className="font-medium">déduit de la première commande</strong>{" "}
-                passée par le salon. Cette déduction s&apos;applique une seule fois par
-                établissement, identifié par son SIRET.
+                Son montant est{" "}
+                <strong className="font-medium">remboursé sur la commande suivante</strong> passée
+                par le salon, sous forme de remise d&apos;un montant égal au prix payé pour le
+                coffret. Le remboursement s&apos;applique une seule fois par établissement,
+                identifié par son SIRET, et ne peut excéder le montant de la commande sur laquelle
+                il s&apos;impute.{" "}
+                {COFFRET.maxParSalon === 1 && (
+                  <>
+                    Le coffret découverte est <strong className="font-medium">limité à un
+                    exemplaire par salon</strong> : il s&apos;agit d&apos;une offre de découverte et
+                    non d&apos;un mode d&apos;approvisionnement.
+                  </>
+                )}
               </>
             )}
           </p>

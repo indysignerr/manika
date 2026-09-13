@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Search as SearchIcon, X } from "lucide-react";
 import { chercher, type IndexEntry } from "@/lib/search";
-import { fmtPrice } from "@/lib/products";
+import Prix from "@/components/Prix";
+import { useDemandePrix } from "@/lib/prix";
 
 const SUGGESTIONS = ["Coloration", "Oxydant", "Blond cendré", "7.34", "Gants", "Nuancier"];
 
@@ -29,6 +30,10 @@ export default function SearchView({ index }: { index: IndexEntry[] }) {
 
   const hits = useMemo(() => chercher(index, q), [index, q]);
   const aCherche = q.trim().length > 0;
+
+  // Aucun prix n'est dans l'index : on ne demande que ceux des résultats
+  // affichés, au fil de la frappe. Les tarifs déjà reçus sont réutilisés.
+  useDemandePrix(useMemo(() => hits.map((h) => h.entry.slug), [hits]));
 
   return (
     <div className="container-luxe max-w-4xl pb-28 pt-36">
@@ -124,7 +129,12 @@ export default function SearchView({ index }: { index: IndexEntry[] }) {
                   )}
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="text-[13px] font-light text-copper">{fmtPrice(entry.price)}</p>
+                  <Prix
+                    handle={entry.slug}
+                    court
+                    className="block text-[13px] font-light text-copper"
+                    classeMasque="block text-[11px] font-light text-taupe-deep"
+                  />
                   {!entry.available && (
                     <p className="mt-1 text-[10px] uppercase tracking-wide2 text-taupe-deep">
                       Épuisé

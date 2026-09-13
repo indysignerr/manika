@@ -14,7 +14,8 @@ export const metadata: Metadata = {
  * L'index est construit au BUILD et embarqué dans la page : le site est en
  * export statique, il n'y a pas de serveur pour répondre à une requête.
  * On n'embarque que le strict nécessaire (pas les descriptions, pas les INCI)
- * pour garder la page légère.
+ * pour garder la page légère — et surtout AUCUN prix : ce fichier part au
+ * navigateur de tout le monde. Les tarifs viennent de la passerelle.
  */
 async function construireIndex(): Promise<IndexEntry[]> {
   const produits = isShopifyConfigured()
@@ -31,7 +32,6 @@ async function construireIndex(): Promise<IndexEntry[]> {
     name: p.name,
     category: p.category,
     image: p.image,
-    price: p.price,
     available: p.available !== false,
     variantes: p.sizes.map((s) => s.label).filter((l) => !/^unit(é|e)$/i.test(l)),
   }));

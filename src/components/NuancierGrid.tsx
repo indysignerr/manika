@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useCart } from "@/components/cart-context";
-import { fmtPrice } from "@/lib/products";
+import Prix from "@/components/Prix";
+import { usePrixEtat } from "@/lib/prix";
+import { fmt } from "@/lib/products";
 import { PALIERS } from "@/lib/pro";
 import {
   facetteHauteurs,
@@ -36,6 +38,12 @@ type Ligne = { v: TeinteVariante; teinte: Teinte };
 
 export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALIERS }: Props) {
   const { addMany } = useCart();
+
+  // Les tarifs arrivent de la fiche produit, qui les tient de la passerelle.
+  // Hors compte pro ils valent 0 : la grille reste consultable — c'est une
+  // vitrine de teintes — mais rien ne se commande.
+  const { role } = usePrixEtat();
+  const peutAcheter = role === "pro";
 
   const lignes = useMemo<Ligne[]>(
     () => trierTeintes(variantes.map((v) => ({ v, teinte: parseTeinte(v.titre) }))),
@@ -143,8 +151,10 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
         Le nuancier
       </h2>
       <p className="mt-3 text-[13px] font-light text-taupe-deep">
-        {lignes.length} teintes. Choisissez un pack de {paliers.join(", ")} par teinte — et
-        autant de packs que nécessaire — puis ajoutez tout au panier en une fois.
+        {lignes.length} teintes.{" "}
+        {peutAcheter
+          ? `Choisissez un pack de ${paliers.join(", ")} par teinte — et autant de packs que nécessaire — puis ajoutez tout au panier en une fois.`
+          : `Vente par packs de ${paliers.join(", ")} aux salons enregistrés : ouvrez un compte professionnel pour voir les tarifs et commander.`}
       </p>
 
       {/* Filtres */}
@@ -230,7 +240,17 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
                     )}
                   </p>
                   <p className="mt-0.5 text-[11px] font-light text-taupe-deep">
-                    {v.disponible ? fmtPrice(v.prix) : "Épuisée"}
+                    {v.disponible ? (
+                      <Prix
+                        handle={slug}
+                        variantId={v.variantId}
+                        court
+                        className="text-[11px] font-light text-taupe-deep"
+                        classeMasque="text-[11px] font-light text-taupe-deep"
+                      />
+                    ) : (
+                      "Épuisée"
+                    )}
                   </p>
                 </div>
 
@@ -245,7 +265,7 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
                     <button
                       key={p}
                       onClick={() => choisirPack(v.variantId, p)}
-                      disabled={!v.disponible}
+                      disabled={!v.disponible || !peutAcheter}
                       aria-pressed={s?.pack === p}
                       aria-label={`Pack de ${p} — ${teinte.code || teinte.nom}`}
                       className={`h-8 w-9 rounded-[2px] border text-[12px] transition-colors disabled:opacity-30 ${
@@ -305,22 +325,27 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
                   · {nbTeintes} teinte{nbTeintes > 1 ? "s" : ""}
                 </span>
               )}
-              {totalPrix > 0 && <span className="ml-2 font-medium">{fmtPrice(totalPrix)}</span>}
+              {peutAcheter && totalPrix > 0 && (
+                <span className="ml-2 font-medium">{fmt(totalPrix)}</span>
+              )}
             </p>
             <p aria-live="polite" className="mt-1 text-[11px] font-light text-taupe-deep">
-              {totalUnites === 0
-                ? `Vente par packs de ${paliers.join(", ")} — pas d'unité isolée`
-                : `${totalPacks} pack${totalPacks > 1 ? "s" : ""}`}
+              {!peutAcheter
+                ? "Les tarifs et la commande sont réservés aux salons enregistrés"
+                : totalUnites === 0
+                  ? `Vente par packs de ${paliers.join(", ")} — pas d'unité isolée`
+                  : `${totalPacks} pack${totalPacks > 1 ? "s" : ""}`}
             </p>
           </div>
 
           <button
             onClick={ajouter}
-            disabled={totalUnites === 0}
+            disabled={totalUnites === 0 || !peutAcheter}
+            title={peutAcheter ? undefined : "Réservé aux comptes professionnels validés"}
             className="btn-primary disabled:opacity-40"
             data-cursor
           >
-            Ajouter au panier
+            {peutAcheter ? "Ajouter au panier" : "Réservé aux professionnels"}
           </button>
         </div>
       </div>

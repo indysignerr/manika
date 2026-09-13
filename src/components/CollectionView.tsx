@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { X, SlidersHorizontal } from "lucide-react";
-import { HAIR_TYPES, NEEDS, type Product } from "@/lib/products";
+import { type Product } from "@/lib/products";
+import { FACETTES } from "@/lib/shopify";
 import { Collection, collectionsByUnivers } from "@/lib/collections";
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/Reveal";
+import { useDemandePrix, usePrixEtat } from "@/lib/prix";
 
 const MAX_PRICE = 60;
 
@@ -19,6 +21,9 @@ const SORTS = [
 
 type SortId = (typeof SORTS)[number]["id"];
 
+/** Une facette affichable : ses valeurs présentes dans le rayon, et leur compte. */
+type FacetteVue = { cle: string; label: string; valeurs: { valeur: string; n: number }[] };
+
 export default function CollectionView({
   collection,
   products,
@@ -29,33 +34,96 @@ export default function CollectionView({
   const base = products;
   const siblings = collectionsByUnivers(collection.univers);
 
-  const [hair, setHair] = useState<string[]>([]);
-  const [needs, setNeeds] = useState<string[]>([]);
+  // Aucun montant n'est dans le build : on demande ceux de la collection en
+  // une fois, et on ne propose filtre et tri par prix qu'à qui peut les voir.
+  const slugs = useMemo(() => base.map((p) => p.slug), [base]);
+  useDemandePrix(slugs);
+  const { role, prix } = usePrixEtat();
+  const tarifsVisibles = role === "pro";
+  const sorts = useMemo(
+    () => (tarifsVisibles ? SORTS : SORTS.filter((s) => !s.id.startsWith("prix"))),
+    [tarifsVisibles]
+  );
+
+  /**
+   * Les filtres sont CONSTRUITS À PARTIR DU RAYON, pas d'une liste écrite à la
+   * main : on n'affiche que des cases qui ramènent au moins un produit. Une
+   * facette dont tout le rayon partage la même valeur est masquée — proposer
+   * « Marque : Tassel » sur un rayon 100 % Tassel ne filtre rien.
+   */
+  const facettes = useMemo<FacetteVue[]>(() => {
+    const comptes = new Map<string, Map<string, number>>();
+    for (const p of base) {
+      for (const [cle, valeurs] of Object.entries(p.facettes ?? {})) {
+        if (!comptes.has(cle)) comptes.set(cle, new Map());
+        const m = comptes.get(cle)!;
+        for (const v of valeurs) m.set(v, (m.get(v) ?? 0) + 1);
+      }
+    }
+    return FACETTES.flatMap(({ cle, label }) => {
+      const m = comptes.get(cle);
+      if (!m || m.size < 2) return [];
+      const valeurs = [...m.entries()]
+        .map(([valeur, n]) => ({ valeur, n }))
+        .sort((a, b) => b.n - a.n || a.valeur.localeCompare(b.valeur, "fr"));
+      return [{ cle, label, valeurs }];
+    });
+  }, [base]);
+
+  const [actifs, setActifs] = useState<Record<string, string[]>>({});
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [sort, setSort] = useState<SortId>("reco");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const toggle = (list: string[], set: (v: string[]) => void, value: string) =>
-    set(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
+  const basculer = (cle: string, valeur: string) =>
+    setActifs((a) => {
+      const cur = a[cle] ?? [];
+      const suite = cur.includes(valeur) ? cur.filter((v) => v !== valeur) : [...cur, valeur];
+      if (suite.length === 0) {
+        const { [cle]: _retire, ...reste } = a;
+        return reste;
+      }
+      return { ...a, [cle]: suite };
+    });
+
+  /**
+   * Tarif d'entrée de gamme, ou undefined tant qu'il n'est pas arrivé —
+   * auquel cas le produit reste visible : mieux vaut un produit de trop
+   * qu'une grille qui se vide le temps d'une requête.
+   */
+  const tarifDe = (slug: string) => prix[slug]?.min;
 
   const filtered = useMemo(() => {
-    const list = base.filter(
-      (p) =>
-        p.price <= maxPrice &&
-        (hair.length === 0 || p.hair.some((h) => hair.includes(h))) &&
-        (needs.length === 0 || p.need.some((n) => needs.includes(n)))
-    );
-    if (sort === "prix-asc") list.sort((a, b) => a.price - b.price);
-    if (sort === "prix-desc") list.sort((a, b) => b.price - a.price);
+    // Curseur au maximum = pas de plafond. Sans ça, un produit à 80 € HT
+    // disparaîtrait de la grille sans que personne n'ait rien filtré.
+    const plafond = maxPrice < MAX_PRICE ? maxPrice : Infinity;
+    const list = base.filter((p) => {
+      const min = tarifDe(p.slug);
+      // Le prix 0 signifie « pas encore saisi » : il ne doit pas passer pour gratuit.
+      if (tarifsVisibles && min !== undefined && min > 0 && min > plafond) return false;
+      // ET entre facettes, OU à l'intérieur d'une facette.
+      for (const [cle, choisies] of Object.entries(actifs)) {
+        const portees = p.facettes?.[cle] ?? [];
+        if (!choisies.some((v) => portees.includes(v))) return false;
+      }
+      return true;
+    });
+    if (tarifsVisibles && (sort === "prix-asc" || sort === "prix-desc")) {
+      // Les produits sans tarif connu ferment la marche dans les deux sens.
+      const cle = (s: string) => tarifDe(s) || Number.POSITIVE_INFINITY;
+      list.sort((a, b) =>
+        sort === "prix-asc" ? cle(a.slug) - cle(b.slug) : cle(b.slug) - cle(a.slug)
+      );
+    }
     if (sort === "az") list.sort((a, b) => a.name.localeCompare(b.name, "fr"));
     return list;
-  }, [base, hair, needs, maxPrice, sort]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [base, actifs, maxPrice, sort, prix, tarifsVisibles]);
 
-  const activeChips = [...hair, ...needs];
-  const hasFilters = activeChips.length > 0 || maxPrice < MAX_PRICE;
+  const chips = Object.entries(actifs).flatMap(([cle, vs]) => vs.map((valeur) => ({ cle, valeur })));
+  const hasFilters = chips.length > 0 || (tarifsVisibles && maxPrice < MAX_PRICE);
   const resetAll = () => {
-    setHair([]);
-    setNeeds([]);
+    setActifs({});
     setMaxPrice(MAX_PRICE);
   };
 
@@ -105,7 +173,7 @@ export default function CollectionView({
       <div className="border-t border-taupe/40">
         <div className="container-luxe grid gap-8 py-12 md:grid-cols-[240px_1fr] md:gap-12">
           {/* Bascule filtres mobile */}
-          {base.length > 0 && (
+          {facettes.length > 0 && (
             <button
               onClick={() => setFiltersOpen(!filtersOpen)}
               aria-expanded={filtersOpen}
@@ -113,52 +181,54 @@ export default function CollectionView({
             >
               <span className="flex items-center gap-2.5">
                 <SlidersHorizontal size={14} strokeWidth={1.5} aria-hidden />
-                Filtres{activeChips.length > 0 && ` (${activeChips.length})`}
+                Filtres{chips.length > 0 && ` (${chips.length})`}
               </span>
               <span aria-hidden>{filtersOpen ? "−" : "+"}</span>
             </button>
           )}
 
           {/* Filtres */}
-          {base.length > 0 && (
+          {facettes.length > 0 && (
             <aside
               aria-label="Filtres"
               className={`${filtersOpen ? "block" : "hidden"} md:sticky md:top-40 md:block md:self-start`}
             >
               <p className="border-b border-taupe/50 pb-3 text-[10px] uppercase tracking-wide3 text-copper">Affiner</p>
 
-              <fieldset className="mt-7">
-                <legend className="mb-4 text-[11px] uppercase tracking-wide2 text-copper">Type de cheveux</legend>
-                <div className="space-y-2.5">
-                  {HAIR_TYPES.map((h) => (
-                    <label key={h} className="flex cursor-pointer items-center gap-2.5 text-[13px] font-light text-ink/80 transition-colors hover:text-copper">
-                      <input type="checkbox" checked={hair.includes(h)} onChange={() => toggle(hair, setHair, h)} className="h-3.5 w-3.5 accent-copper" />
-                      {h}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
+              {facettes.map((f) => (
+                <fieldset key={f.cle} className="mt-7">
+                  <legend className="mb-4 text-[11px] uppercase tracking-wide2 text-copper">{f.label}</legend>
+                  <div className="space-y-2.5">
+                    {f.valeurs.map(({ valeur, n }) => (
+                      <label
+                        key={valeur}
+                        className="flex cursor-pointer items-center gap-2.5 text-[13px] font-light text-ink/80 transition-colors hover:text-copper"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={(actifs[f.cle] ?? []).includes(valeur)}
+                          onChange={() => basculer(f.cle, valeur)}
+                          className="h-3.5 w-3.5 accent-copper"
+                        />
+                        <span className="flex-1">{valeur}</span>
+                        <span className="text-[11px] text-taupe-deep">{n}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              ))}
 
-              <fieldset className="mt-8">
-                <legend className="mb-4 text-[11px] uppercase tracking-wide2 text-copper">Besoin</legend>
-                <div className="space-y-2.5">
-                  {NEEDS.map((n) => (
-                    <label key={n} className="flex cursor-pointer items-center gap-2.5 text-[13px] font-light text-ink/80 transition-colors hover:text-copper">
-                      <input type="checkbox" checked={needs.includes(n)} onChange={() => toggle(needs, setNeeds, n)} className="h-3.5 w-3.5 accent-copper" />
-                      {n}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-
-              <fieldset className="mt-8">
-                <legend className="mb-4 text-[11px] uppercase tracking-wide2 text-copper">Prix maximum</legend>
-                <input type="range" min={10} max={MAX_PRICE} step={1} value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full accent-copper" aria-label="Prix maximum" />
-                <div className="mt-2 flex justify-between text-[11px] text-copper">
-                  <span>10 €</span>
-                  <span>{maxPrice} €</span>
-                </div>
-              </fieldset>
+              {/* Filtre prix : sans objet pour qui ne voit pas les tarifs */}
+              {tarifsVisibles && (
+                <fieldset className="mt-8">
+                  <legend className="mb-4 text-[11px] uppercase tracking-wide2 text-copper">Prix maximum</legend>
+                  <input type="range" min={10} max={MAX_PRICE} step={1} value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full accent-copper" aria-label="Prix maximum" />
+                  <div className="mt-2 flex justify-between text-[11px] text-copper">
+                    <span>10 €</span>
+                    <span>{maxPrice < MAX_PRICE ? `${maxPrice} €` : "Sans limite"}</span>
+                  </div>
+                </fieldset>
+              )}
 
               {hasFilters && (
                 <button onClick={resetAll} className="mt-8 text-[10px] uppercase tracking-wide2 text-rose underline-offset-4 hover:underline">
@@ -169,7 +239,7 @@ export default function CollectionView({
           )}
 
           {/* Grille / états */}
-          <div className={base.length > 0 ? "" : "md:col-span-2"}>
+          <div className={facettes.length > 0 ? "" : "md:col-span-2"}>
             {base.length === 0 ? (
               <div className="py-20 text-center">
                 <p className="font-serif text-xl italic text-copper">Cette catégorie arrive bientôt.</p>
@@ -186,14 +256,14 @@ export default function CollectionView({
                     <p className="text-[11px] uppercase tracking-wide2 text-taupe-deep" aria-live="polite">
                       {filtered.length} produit{filtered.length > 1 ? "s" : ""}
                     </p>
-                    {activeChips.map((chip) => (
+                    {chips.map(({ cle, valeur }) => (
                       <button
-                        key={chip}
-                        onClick={() => (hair.includes(chip) ? toggle(hair, setHair, chip) : toggle(needs, setNeeds, chip))}
+                        key={cle + valeur}
+                        onClick={() => basculer(cle, valeur)}
                         className="flex items-center gap-1.5 rounded-[2px] bg-ivory-2 px-3 py-1.5 text-[10px] uppercase tracking-wider text-copper transition-colors hover:bg-ivory-3"
-                        aria-label={`Retirer le filtre ${chip}`}
+                        aria-label={`Retirer le filtre ${valeur}`}
                       >
-                        {chip}
+                        {valeur}
                         <X size={10} strokeWidth={1.5} />
                       </button>
                     ))}
@@ -201,7 +271,7 @@ export default function CollectionView({
                   <label className="flex items-center gap-3 text-[10px] uppercase tracking-wide2 text-copper">
                     Trier
                     <select value={sort} onChange={(e) => setSort(e.target.value as SortId)} className="rounded-[2px] border border-taupe/60 bg-transparent px-3 py-2 text-[11px] tracking-wider text-copper focus:border-copper focus:outline-none">
-                      {SORTS.map((s) => (
+                      {sorts.map((s) => (
                         <option key={s.id} value={s.id}>{s.label}</option>
                       ))}
                     </select>

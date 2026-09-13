@@ -3,11 +3,12 @@
 /**
  * Affiche un tarif — ou ce qui le remplace.
  *
- * Quatre états, dans cet ordre de priorité :
- *   rôle inconnu   → un discret indicateur de chargement, jamais un montant
- *   visiteur       → « Tarif réservé aux professionnels »
- *   pro, prix à 0  → « Prix à venir » (la cliente ne l'a pas encore saisi)
- *   pro, prix connu→ le montant
+ * Cinq états, dans cet ordre de priorité :
+ *   rôle inconnu    → le message le plus restrictif, jamais un montant
+ *   visiteur        → « Tarif réservé aux professionnels »
+ *   pro, en attente → un repère discret le temps de la requête
+ *   pro, prix à 0   → « Prix à venir » (la cliente ne l'a pas encore saisi)
+ *   pro, prix connu → le montant
  */
 import Link from "next/link";
 import { fmt } from "@/lib/products";
@@ -22,10 +23,23 @@ type Props = {
   className?: string;
   /** Affiche un lien vers l'ouverture de compte quand le tarif est masqué. */
   avecLien?: boolean;
+  /** Formule courte, pour les grilles et les listes où la place manque. */
+  court?: boolean;
+  /** Habillage du texte de remplacement. `className` ne sert qu'au montant :
+      un « tarif réservé » en 3 rem serait illisible. */
+  classeMasque?: string;
 };
 
-export default function Prix({ handle, variantId, quantite = 1, className = "", avecLien }: Props) {
-  const { role } = usePrixEtat();
+export default function Prix({
+  handle,
+  variantId,
+  quantite = 1,
+  className = "",
+  avecLien,
+  court,
+  classeMasque,
+}: Props) {
+  const { role, charge } = usePrixEtat();
   const produit = usePrix(handle);
   const variante = usePrixVariante(handle, variantId);
 
@@ -34,8 +48,12 @@ export default function Prix({ handle, variantId, quantite = 1, className = "", 
   // JavaScript : jamais un montant, jamais un squelette perpétuel.
   if (role !== "pro") {
     const texte = (
-      <span className={`text-[13px] font-light text-taupe-deep ${className}`}>
-        Tarif réservé aux professionnels
+      <span
+        className={
+          classeMasque ?? `font-light text-taupe-deep ${court ? "text-[11px]" : "text-[13px]"}`
+        }
+      >
+        {court ? "Tarif pro" : "Tarif réservé aux professionnels"}
       </span>
     );
     return avecLien ? (
@@ -46,8 +64,14 @@ export default function Prix({ handle, variantId, quantite = 1, className = "", 
   }
 
   const montant = variantId ? variante?.prix : produit?.min;
+
   if (montant === undefined || montant === null) {
-    return <span className={className}>—</span>;
+    // Le tarif est en route : un tiret ferait croire à un produit sans prix.
+    return (
+      <span className={className} aria-busy={charge || undefined}>
+        {charge ? "…" : "—"}
+      </span>
+    );
   }
   if (montant === 0) {
     return <span className={className}>Prix à venir</span>;

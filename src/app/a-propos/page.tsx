@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import Magnetic from "@/components/Magnetic";
-import { essaiResume } from "@/lib/pro";
+import { coffretResume } from "@/lib/pro";
 
 export const metadata: Metadata = {
   title: "À propos — MANIKA.LAB",
@@ -172,8 +172,8 @@ export default function Page() {
           <Reveal>
             <h2 className="heading text-3xl md:text-4xl">Référencer la gamme dans votre salon</h2>
             <p className="mx-auto mt-4 max-w-md text-[13px] font-light text-ink/75">
-              Commencez par un lot d&apos;essai à prix coûtant — {essaiResume()} — déduit de votre
-              première commande.
+              Commencez par le coffret découverte à prix coûtant — {coffretResume()} — port
+              offert et remboursé sur votre commande suivante.
             </p>
             <div className="mt-9">
               <Magnetic>

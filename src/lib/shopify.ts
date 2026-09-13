@@ -67,10 +67,14 @@ export type ShopifyVariant = {
   image: { url: string; altText: string | null } | null;
 };
 
+export type ShopifyMetafield = { key: string; value: string } | null;
+
 export type ShopifyProduct = {
   id: string;
   handle: string; // = slug de la page produit
   title: string;
+  vendor: string;
+  metafields: ShopifyMetafield[];
   description: string;
   descriptionHtml: string;
   productType: string;
@@ -80,14 +84,41 @@ export type ShopifyProduct = {
   variants: { nodes: ShopifyVariant[] };
 };
 
+/**
+ * Les facettes B2B du catalogue — elles viennent des métachamps Shopify
+ * `manika.*` dérivés par scripts/derive-metafields.mts.
+ *
+ * L'ORDRE de ce tableau est celui des filtres affichés en boutique. Une
+ * facette dont aucun produit de la page ne porte au moins deux valeurs
+ * distinctes n'est pas affichée : inutile de proposer « Marque : Tassel »
+ * quand tout le rayon est du Tassel.
+ */
+export const FACETTES = [
+  { cle: "marque", label: "Marque" },
+  { cle: "univers", label: "Univers" },
+  { cle: "type", label: "Type de produit" },
+  { cle: "gamme", label: "Gamme" },
+  { cle: "volume_oxydant", label: "Volume d'oxydant" },
+  { cle: "ammoniaque", label: "Ammoniaque" },
+  { cle: "reflets", label: "Reflets" },
+  { cle: "besoin", label: "Besoin" },
+  { cle: "format", label: "Format" },
+] as const;
+
+export type CleFacette = (typeof FACETTES)[number]["cle"];
+
 const PRODUCT_FIELDS = /* GraphQL */ `
   id
   handle
   title
+  vendor
   description
   descriptionHtml
   productType
   tags
+  metafields(identifiers: [
+${FACETTES.map((f) => `{ namespace: "manika", key: "${f.cle}" }`).join("\n    ")}
+  ]) { key value }
   featuredImage { url altText }
   priceRange { minVariantPrice { amount currencyCode } }
   variants(first: 100) {
@@ -237,13 +268,72 @@ const catLabel = (productType: string) => {
  * Les montants sont chargés à l'exécution via /api/prix, qui ne répond qu'aux
  * comptes professionnels validés. Voir src/lib/prix.tsx et le composant Prix.
  */
+/**
+ * Retire les montants rédigés en toutes lettres dans les textes Shopify.
+ *
+ * Le prix ne doit exister QUE derrière la passerelle. Or une description comme
+ * « Vendu par boite de 36 unités : 148.50 € » remet le tarif dans le HTML
+ * statique, visible de tous et indexable — exactement ce que le catalogue
+ * fermé empêche partout ailleurs. On coupe donc le montant et le séparateur
+ * qui l'introduit, et on signale le produit au build pour que la source soit
+ * corrigée dans Shopify.
+ */
+const MONTANT =
+  /\s*[:—–-]?\s*(?:€\s*\d[\d\u00A0 .,]*|\d[\d\u00A0 .,]*\s*(?:€|EUR\b|euros?\b))/gi;
+
+export function sansMontant(texte: string, ou?: string): string {
+  if (!texte || !/[€]|euros?\b|EUR\b/i.test(texte)) return texte;
+  const propre = texte
+    .replace(MONTANT, "")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\s+([.,;!?])/g, "$1")
+    .trim();
+  if (propre !== texte && ou) {
+    console.warn(`[prix] montant retiré du build — ${ou} : « ${texte.trim().slice(0, 120)} »`);
+  }
+  return propre;
+}
+
+/**
+ * Titres Shopify → titres lisibles.
+ *
+ * Les intitulés arrivent tels quels du fournisseur : « Spray retouche racines
+ * blond foncé de Tassel - 75ML ». Affichés en capitales dans une grille, ces
+ * tirets cassent la lecture et font grimper certains titres à cinq lignes sur
+ * mobile. On remplace le tiret séparateur par un point médian et on normalise
+ * les unités collées aux capitales (75ML → 75 ml).
+ */
+export function nettoyerTitre(titre: string): string {
+  return titre
+    .replace(/\s+-\s+/g, " · ")
+    .replace(/(\d)\s*(ML|GR?|L|VOL)\b/gi, (_m, n, u) => `${n} ${u.toLowerCase()}`)
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+/** Métachamps `manika.*` → facettes exploitables (une clé, plusieurs valeurs). */
+function facettesDe(sp: ShopifyProduct): Record<string, string[]> {
+  const out: Record<string, string[]> = {};
+  for (const mf of sp.metafields ?? []) {
+    if (!mf?.value) continue;
+    const valeurs = mf.value
+      .split(/\s*[,;]\s*/)
+      .map((v) => v.trim())
+      .filter(Boolean);
+    if (valeurs.length) out[mf.key] = valeurs;
+  }
+  // La marque vit dans le vendor Shopify quand le métachamp n'a pas été saisi.
+  if (!out.marque && sp.vendor) out.marque = [sp.vendor.trim()];
+  return out;
+}
+
 export function toSiteProduct(sp: ShopifyProduct): Product {
   const base = 0; // neutralisé volontairement — ne jamais rétablir
   const variants = sp.variants.nodes;
   const soloVariant = variants.length === 1;
   return {
     slug: sp.handle,
-    name: sp.title,
+    name: nettoyerTitre(sansMontant(sp.title, `titre de ${sp.handle}`)),
     tagline: catLabel(sp.productType),
     category: catLabel(sp.productType),
     price: base,
@@ -251,7 +341,10 @@ export function toSiteProduct(sp: ShopifyProduct): Product {
     sizes: soloVariant
       ? [
           {
-            label: variants[0].title.replace(/default title/i, "Unité"),
+            label: sansMontant(
+              variants[0].title.replace(/default title/i, "Unité"),
+              `variante de ${sp.handle}`
+            ),
             delta: 0,
             variantId: variants[0].id,
             image: variants[0].image?.url ?? null,
@@ -259,18 +352,17 @@ export function toSiteProduct(sp: ShopifyProduct): Product {
           },
         ]
       : variants.map((v) => ({
-          label: v.title,
+          label: sansMontant(v.title, `variante de ${sp.handle}`),
           delta: 0, // idem : aucun écart de prix dans le build
           variantId: v.id,
           image: v.image?.url ?? null,
           available: v.availableForSale,
         })),
-    desc: sp.description,
+    facettes: facettesDe(sp),
+    desc: sansMontant(sp.description, `description de ${sp.handle}`),
     usage: "",
     inci: "",
     image: sp.featuredImage?.url ?? "/images/logo-mark.png",
-    hair: [],
-    need: [],
     available: variants.some((v) => v.availableForSale),
   };
 }

@@ -19,8 +19,15 @@ export type Product = {
   usage: string;
   inci: string;
   image: string;
-  hair: string[];
-  need: string[];
+  /**
+   * Facettes B2B issues des métachamps Shopify `manika.*` : marque, univers,
+   * type, volume d'oxydant, ammoniaque, reflets… Une clé peut porter
+   * plusieurs valeurs (« Cendré, Doré, Cuivré »).
+   *
+   * ⚠️ Remplace les anciens `hair`/`need` : ceux-là n'étaient jamais remplis
+   *    par Shopify, si bien que cocher un filtre vidait toute la grille.
+   */
+  facettes: Record<string, string[]>;
   badge?: string;
   available?: boolean;
 };
@@ -37,7 +44,4 @@ export const fmt = (n: number) => n.toFixed(2).replace(".", ",") + " €";
 // Prix non encore renseigné dans Shopify (0) → libellé provisoire élégant.
 export const fmtPrice = (n: number) => (n > 0 ? fmt(n) : "Prix à venir");
 
-export const HAIR_TYPES = ["Tous types", "Colorés", "Abîmés", "Secs"];
-export const NEEDS = ["Coloration", "Réparation", "Hydratation", "Coiffage", "Brillance"];
 
-export const FREE_SHIPPING = 60;

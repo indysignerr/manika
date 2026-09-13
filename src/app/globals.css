@@ -59,6 +59,13 @@ body.custom-cursor label {
   .heading {
     @apply font-display font-extralight uppercase tracking-luxe text-copper;
   }
+  /* Nom de produit. Les intitulés fournisseurs sont longs (« Spray retouche
+     racines blond foncé de Tassel · 75 ml ») : en capitales espacées ils
+     montaient à cinq lignes sur mobile et cassaient le rythme de la grille.
+     On garde la police d'affichage, on abandonne la casse. */
+  .heading-produit {
+    @apply font-display font-light normal-case tracking-[0.015em] text-copper;
+  }
   .kicker {
     @apply text-[10px] font-normal uppercase tracking-wide3 text-rose md:text-[11px];
   }

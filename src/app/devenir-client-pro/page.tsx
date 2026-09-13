@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import LeadForm from "@/components/LeadForm";
-import { ESSAI, essaiResume, proArguments } from "@/lib/pro";
+import { COFFRET, coffretResume, proArguments } from "@/lib/pro";
 
 export const metadata: Metadata = {
   title: "Devenir client pro — MANIKA.LAB",
@@ -24,12 +24,12 @@ const ETAPES = [
   {
     num: "03",
     title: "Vous testez à prix coûtant",
-    text: `${essaiResume()} — vous ne payez que ce que le lot nous coûte.`,
+    text: `${coffretResume()} — port offert, vous ne payez que ce que le coffret nous coûte.`,
   },
   {
     num: "04",
-    title: "Le lot vous est remboursé",
-    text: "Le montant de l'essai est déduit de votre première commande. Tester ne vous coûte rien.",
+    title: "Le coffret vous est remboursé",
+    text: "Son montant est remboursé sur votre commande suivante. Tester ne vous coûte rien.",
   },
 ];
 
@@ -54,8 +54,8 @@ export default function Page() {
             </h1>
             <p className="mt-8 max-w-xl text-[15px] font-light leading-relaxed text-ink/80">
               Changer de coloration, c&apos;est prendre un risque sur vos clientes. Alors testez
-              d&apos;abord : le lot d&apos;essai est vendu à prix coûtant, et son montant est déduit
-              de votre première commande.
+              d&apos;abord : le coffret découverte est vendu à prix coûtant, livré sans frais de
+              port, et son montant vous est remboursé sur votre commande suivante.
             </p>
           </Reveal>
         </div>
@@ -66,15 +66,19 @@ export default function Page() {
         <div className="container-luxe">
           <Reveal>
             <div className="rounded-[3px] border border-bronze/40 bg-ivory-2 p-8 md:p-12">
-              <p className="kicker">L&apos;offre de lancement</p>
+              <p className="kicker">Le coffret découverte</p>
               <p className="mt-5 max-w-2xl font-serif text-2xl italic leading-relaxed text-copper md:text-[1.9rem]">
-                « {ESSAI.nbEchantillons} échantillons au choix, un oxydant, à prix coûtant — déduits
-                de votre première commande. »
+                « {COFFRET.nbEchantillons} échantillons au choix, un oxydant, port offert — et le
+                coffret vous est remboursé sur votre commande suivante. »
               </p>
               <p className="mt-7 max-w-xl text-[14px] font-light leading-relaxed text-ink/80">
-                Vous choisissez les {ESSAI.nbEchantillons} teintes que vous voulez essayer et le
-                volume d&apos;oxydant qui va avec ({ESSAI.volumesOxydant.join(", ")}). Posez-les sur
-                vos vraies clientes avant de décider quoi que ce soit.
+                Vous choisissez les {COFFRET.nbEchantillons} teintes que vous voulez essayer et le
+                volume d&apos;oxydant qui va avec ({COFFRET.volumesOxydant.join(", ")}). Posez-les
+                sur vos vraies clientes avant de décider quoi que ce soit. Si la couleur vous
+                convainc, l&apos;essai ne vous aura rien coûté.
+              </p>
+              <p className="mt-4 text-[12px] font-light text-taupe-deep">
+                Un seul coffret par salon — c&apos;est une offre de découverte.
               </p>
               <a href="#formulaire" className="btn-primary mt-9" data-cursor>
                 Ouvrir mon compte pro

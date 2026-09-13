@@ -55,14 +55,59 @@ export async function catalogProduct(handle: string): Promise<Product | null> {
 }
 
 /** Produits mis en avant (accueil). Priorité : image + disponible. */
+/**
+ * Sélection mise en avant sur l'accueil.
+ *
+ * ⚠️ Elle était tirée du catalogue par simple ordre de disponibilité : sous un
+ *    héros « techniciens de la couleur », elle affichait un rouleau
+ *    d'aluminium et une boîte de gants. On classe désormais par proximité avec
+ *    le métier annoncé — la coloration d'abord, les consommables jamais en
+ *    vitrine — et on laisse la possibilité d'imposer une sélection à la main.
+ *
+ * Pour figer la vitrine : renseigner VITRINE avec des handles Shopify.
+ */
+const VITRINE: string[] = [];
+
+/** Plus le score est haut, plus le produit a sa place en vitrine. */
+function scoreVitrine(p: Product): number {
+  const univers = (p.facettes.univers ?? []).join(" ").toLowerCase();
+  const type = (p.facettes.type ?? []).join(" ").toLowerCase();
+  const nom = p.name.toLowerCase();
+
+  let score = 0;
+  if (univers.includes("coloration")) score += 100;
+  if (univers.includes("soin")) score += 60;
+  if (type.includes("coloration")) score += 40;
+  // Une gamme de teintes EST le métier annoncé par le héros. Les auxiliaires
+  // de technique (nettoyants, protecteurs de taches) sont du réassort.
+  if (p.sizes.length > 10) score += 80;
+  if (/nettoyant|protecteur|protectrice|tâche|tache|cleaner|protect/.test(nom)) score -= 90;
+  // Le consommable est un produit de réassort, pas un produit d'image.
+  if (/consommable|matériel|accessoire/.test(univers)) score -= 120;
+  if (/gant|aluminium|papier|feuille|pinceau|bol|charlotte|cape|serviette/.test(nom)) score -= 150;
+  // Un nuancier est un catalogue, pas un produit à mettre en tête de gondole.
+  if (/nuancier/.test(nom)) score -= 60;
+  if (p.available) score += 30;
+  // Une gamme à variantes montre mieux la profondeur qu'une référence isolée.
+  if (p.sizes.length > 4) score += 20;
+  return score;
+}
+
 export async function catalogFeatured(n = 4): Promise<Product[]> {
   if (isShopifyConfigured()) {
     try {
       const all = (await getAllProducts(250)).map(toSiteProduct);
-      const scored = all
-        .filter((p) => !p.image.includes("logo-mark"))
-        .sort((a, b) => Number(b.available) - Number(a.available));
-      return (scored.length ? scored : all).slice(0, n);
+      const avecImage = all.filter((p) => !p.image.includes("logo-mark"));
+
+      if (VITRINE.length) {
+        const choisis = VITRINE.map((h) => avecImage.find((p) => p.slug === h)).filter(
+          (p): p is Product => Boolean(p)
+        );
+        if (choisis.length >= n) return choisis.slice(0, n);
+      }
+
+      const classes = [...avecImage].sort((a, b) => scoreVitrine(b) - scoreVitrine(a));
+      return (classes.length ? classes : all).slice(0, n);
     } catch (e) {
       console.error("[catalog] featured", e);
     }

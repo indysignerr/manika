@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { bandeauAnnonce } from "@/lib/pro";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, User, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/components/cart-context";
@@ -41,7 +42,7 @@ export default function Header() {
   return (
     <div className="fixed inset-x-0 top-0 z-[85]">
       <div className="bg-copper py-2 text-center text-[9px] uppercase tracking-wide3 text-ivory md:text-[10px]">
-        Tarifs professionnels HT · Sans minimum de commande · Échantillons à prix coûtant
+        {bandeauAnnonce().join(" · ")}
       </div>
 
       <header
@@ -113,11 +114,38 @@ export default function Header() {
             >
               Compte pro
             </Link>
+            {/* Commande rapide : le geste n°1 d'un salon qui réassortit est de
+                chercher une teinte ou une référence, pas de naviguer dans des
+                rayons. Le champ est donc permanent à partir du desktop.
+                C'est un formulaire GET : il marche même sans JavaScript, et
+                /recherche/ relit le paramètre `q` à l'arrivée. */}
+            <form
+              action="/recherche/"
+              role="search"
+              className="relative hidden items-center lg:flex"
+            >
+              <label htmlFor="recherche-entete" className="sr-only">
+                Rechercher une teinte, une référence ou un produit
+              </label>
+              <Search
+                size={15}
+                strokeWidth={1.5}
+                aria-hidden
+                className="pointer-events-none absolute left-0 text-bronze"
+              />
+              <input
+                id="recherche-entete"
+                type="search"
+                name="q"
+                placeholder="Teinte, référence…"
+                className="w-44 border-b border-taupe/60 bg-transparent py-2 pl-6 pr-2 text-[12px] font-light text-ink placeholder:text-taupe-deep focus:border-copper focus:outline-none xl:w-56"
+              />
+            </form>
             <Link
               href="/recherche/"
               aria-label="Rechercher un produit"
               title="Rechercher"
-              className="p-1 transition-opacity hover:opacity-60"
+              className="p-1 transition-opacity hover:opacity-60 lg:hidden"
             >
               <Search size={17} strokeWidth={1.5} />
             </Link>

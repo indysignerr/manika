@@ -16,7 +16,6 @@ export type IndexEntry = {
   name: string;
   category: string;
   image: string;
-  price: number;
   available: boolean;
   /** Libellés des variantes (teintes, volumes, contenances). */
   variantes: string[];

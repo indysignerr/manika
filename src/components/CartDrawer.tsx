@@ -70,9 +70,13 @@ export default function CartDrawer() {
               <div className="border-b border-taupe/50 px-6 py-4">
                 <p className="mb-2 text-[11px] tracking-wide text-copper">
                   {remaining > 0 ? (
-                    <>Plus que <strong className="font-medium">{fmt(remaining)}</strong> pour le franco de port</>
+                    <>
+                      Plus que <strong className="font-medium">{fmt(remaining)}</strong> pour la
+                      livraison offerte{" "}
+                      <span className="text-taupe-deep">(dès {franco} € HT)</span>
+                    </>
                   ) : (
-                    <>Franco de port atteint ✦</>
+                    <>Livraison offerte ✦</>
                   )}
                 </p>
                 <div className="h-[3px] rounded-full bg-ivory-3">
@@ -129,7 +133,9 @@ export default function CartDrawer() {
                 <div className="mb-4 flex justify-between text-[11px] text-taupe-deep">
                   <span>Livraison</span>
                   <span>
-                    {franco !== null && subtotal >= franco ? "Offerte" : "Calculée à l'étape suivante"}
+                    {franco !== null && subtotal >= franco
+                      ? "Offerte"
+                      : "Calculée à l'étape suivante"}
                   </span>
                 </div>
                 <button onClick={checkout} disabled={!canCheckout || loading} className="btn-primary w-full disabled:opacity-60" data-cursor>

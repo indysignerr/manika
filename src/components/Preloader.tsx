@@ -9,8 +9,15 @@ export default function Preloader() {
   const [fast, setFast] = useState(false);
 
   useEffect(() => {
+    /**
+     * Un salon connecté vient réassortir, pas admirer une intro : on lui rend
+     * la main tout de suite. Le cookie `manika_role` est posé par la passerelle
+     * (functions/_lib/roles.js) et lisible ici — il n'est pas httpOnly.
+     */
+    const estPro = document.cookie.includes("manika_role=pro");
+
     // Déjà vu dans cette session : on ne rejoue pas l'intro à chaque retour à l'accueil
-    if (sessionStorage.getItem("mk-preloaded") === "1") {
+    if (estPro || sessionStorage.getItem("mk-preloaded") === "1") {
       setFast(true);
       setGone(true);
       window.dispatchEvent(new Event("manika:ready"));
@@ -19,7 +26,9 @@ export default function Preloader() {
 
     document.documentElement.style.overflow = "hidden";
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const DURATION = reduced ? 10 : 1900;
+    // 1100 ms suffisent à poser la marque. Au-delà, on fait attendre un
+    // professionnel qui a une cliente sous la main.
+    const DURATION = reduced ? 10 : 1100;
     const start = performance.now();
     let raf = 0;
 
@@ -34,7 +43,7 @@ export default function Preloader() {
           setGone(true);
           document.documentElement.style.overflow = "";
           window.dispatchEvent(new Event("manika:ready"));
-        }, reduced ? 0 : 400);
+        }, reduced ? 0 : 200);
       }
     };
     raf = requestAnimationFrame(tick);
@@ -49,7 +58,7 @@ export default function Preloader() {
       {!gone && (
         <motion.div
           exit={{ y: "-100%" }}
-          transition={{ duration: fast ? 0 : 0.9, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ duration: fast ? 0 : 0.65, ease: [0.76, 0, 0.24, 1] }}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-ivory"
           aria-hidden="true"
         >

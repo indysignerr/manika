@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import { CartProvider } from "@/components/cart-context";
+import { PrixProvider } from "@/lib/prix";
 
 const jost = Jost({
   subsets: ["latin"],
@@ -51,13 +52,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <CartProvider>
-          <CustomCursor />
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <CartDrawer />
-        </CartProvider>
+        {/* Les tarifs ne sont jamais dans le build : ils sont demandés à la
+            passerelle après chargement, et seulement pour un compte pro. */}
+        <PrixProvider>
+          <CartProvider>
+            <CustomCursor />
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <CartDrawer />
+          </CartProvider>
+        </PrixProvider>
       </body>
     </html>
   );

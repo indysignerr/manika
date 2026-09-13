@@ -159,8 +159,8 @@ export default function Page() {
             <p className="text-[10px] uppercase tracking-wide3 text-ivory/75">L&apos;essentiel</p>
             <h2 className="heading mt-3 text-3xl !text-ivory md:text-4xl">La routine complète</h2>
             <p className="mt-5 max-w-md text-[14px] font-light leading-relaxed text-ivory/80">
-              Les trois gestes réunis — coloration, shampoing kératine et texture. Et comme le
-              coffret dépasse 60 €, la livraison est offerte.
+              Les trois gestes réunis — coloration, shampoing kératine et texture. Composez la
+              routine complète pour votre salon depuis la boutique professionnelle.
             </p>
             <div className="mt-8">
               <RituelBundle />

@@ -44,15 +44,20 @@ export async function onRequest({ request, env }) {
   for (let i = 0; i < handles.length; i++) {
     const p = data[`p${i}`];
     if (!p) continue;
+    const variantes = p.variants.nodes.map((v) => ({
+      id: v.id,
+      titre: v.title,
+      prix: Number(v.price.amount),
+      dispo: v.availableForSale,
+    }));
+    // Tant que le catalogue n'est pas complet, beaucoup de variantes sont à 0.
+    // Le minimum de Shopify les compte et ramène la gamme entière à « prix à
+    // venir » : on prend donc le plus petit tarif RÉELLEMENT saisi.
+    const saisis = variantes.map((v) => v.prix).filter((n) => n > 0);
     prix[p.handle] = {
-      min: Number(p.priceRange.minVariantPrice.amount),
+      min: saisis.length ? Math.min(...saisis) : 0,
       devise: p.priceRange.minVariantPrice.currencyCode,
-      variantes: p.variants.nodes.map((v) => ({
-        id: v.id,
-        titre: v.title,
-        prix: Number(v.price.amount),
-        dispo: v.availableForSale,
-      })),
+      variantes,
     };
   }
 
