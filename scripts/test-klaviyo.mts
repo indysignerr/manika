@@ -3,6 +3,10 @@
  *
  *   npx tsx scripts/test-klaviyo.mts votre@email.com [--abonner]
  *
+ * ⚠️ Pas besoin de `source .env.local` : `source` crée des variables de SHELL,
+ *    que le processus fils n'hérite pas faute d'export. Le fichier est donc lu
+ *    ici, comme dans les autres scripts du dépôt.
+ *
  * Chaque étape exerce ses propres scopes : quand elle échoue en 403, le script
  * nomme celui qui manque. C'est le piège connu de Klaviyo — une clé à laquelle
  * il manque un scope d'abonnement fonctionne pour tout le reste et échoue
@@ -15,6 +19,10 @@
  * `--abonner` ajoute réellement l'adresse à la liste de diffusion : à ne
  * lancer qu'avec une adresse à soi.
  */
+import { loadEnv } from "./lib/shopify.mts";
+
+loadEnv();
+
 const REVISION = "2026-07-15";
 const CLE = process.env.KLAVIYO_API_KEY;
 const LISTE = process.env.KLAVIYO_LIST_ID;
@@ -59,7 +67,7 @@ async function etape(nom: string, fn: () => Promise<string>) {
 
 async function main() {
   if (!CLE) {
-    console.error("KLAVIYO_API_KEY absente — `source .env.local` puis relancer.");
+    console.error("KLAVIYO_API_KEY absente de .env.local — la poser avec : bash scripts/klaviyo-env.sh");
     process.exit(1);
   }
   if (!EMAIL || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(EMAIL)) {

@@ -18,12 +18,17 @@
  * Par défaut le script est en SIMULATION : il affiche ce qu'il ferait sans
  * rien écrire. Ajouter `--reel` pour appliquer.
  *
- * Prérequis : source .env.local (SHOPIFY_CLIENT_ID/SECRET, KLAVIYO_API_KEY).
+ * Prérequis : .env.local renseigné (SHOPIFY_CLIENT_ID/SECRET, KLAVIYO_API_KEY).
  * Scope Shopify : read_customers.
  * Scopes Klaviyo : profiles:READ (retrouver le profil par email),
  *                  profiles:write (poser le statut), events:write.
  */
 import { admin } from "./shopify-admin.mts";
+import { loadEnv } from "./lib/shopify.mts";
+
+// `source .env.local` ne suffit pas : sans export, un processus fils n'hérite
+// de rien. On lit le fichier ici, comme les autres scripts du dépôt.
+loadEnv();
 
 const KLAVIYO_REVISION = "2026-07-15";
 const CLE = process.env.KLAVIYO_API_KEY;
@@ -104,7 +109,7 @@ async function evenementValidation(email: string, nom: string) {
 
 async function main() {
   if (!CLE) {
-    console.error("KLAVIYO_API_KEY absente — `source .env.local` puis relancer.");
+    console.error("KLAVIYO_API_KEY absente de .env.local — la poser avec : bash scripts/klaviyo-env.sh");
     process.exit(1);
   }
 
