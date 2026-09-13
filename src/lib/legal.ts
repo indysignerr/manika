@@ -23,12 +23,21 @@ export const MAISON = {
   telephone: "06 20 14 90 60",
   /** Version compacte pour les liens tel: */
   telephoneLien: "+33620149060",
-  email: "contact@manika-lab.fr",
+  /** Domaine manika-lab.com — acheté, confirmé par Indy le 14/09/2026. */
+  email: "contact@manika-lab.com",
+  /** Domaine public du site, sans protocole. Sert aux URL canoniques et au SEO. */
+  domaine: "manika-lab.com",
 
   /* ── Identité juridique — à renseigner par les gérants ────── */
   formeJuridique: null as string | null,
   capital: null as string | null,
-  adresse: null as string | null,
+  /**
+   * Adresse relevée dans les paramètres Klaviyo le 14/09/2026.
+   * ⚠️ À CONFIRMER comme siège social auprès des gérantes : c'est cette
+   *    adresse qui figure au pied de tous les emails et dans les mentions
+   *    légales, elle doit correspondre à l'immatriculation.
+   */
+  adresse: "2405 Route des Dolines, Sophia-Antipolis, 06560 Valbonne",
   rcs: null as string | null,
   tvaIntracom: null as string | null,
   directeurPublication: null as string | null,
