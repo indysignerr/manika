@@ -37,7 +37,7 @@ export default function Page() {
   const args = proArguments();
 
   return (
-    <div className="pt-32 md:pt-36">
+    <div className="page-top">
       {/* Héro */}
       <section className="relative overflow-hidden pb-16">
         <div className="pointer-events-none absolute -right-20 -top-24 w-[440px] opacity-[0.06]">

@@ -34,7 +34,7 @@ export async function onRequest({ request, env }) {
     .map((h, i) => `p${i}: productByHandle(handle: ${JSON.stringify(h)}) {
       handle
       priceRange { minVariantPrice { amount currencyCode } }
-      variants(first: 100) { nodes { id title availableForSale price { amount currencyCode } } }
+      variants(first: 100) { nodes { id title availableForSale price { amount currencyCode } compareAtPrice { amount } } }
     }`)
     .join("\n");
 
@@ -44,12 +44,19 @@ export async function onRequest({ request, env }) {
   for (let i = 0; i < handles.length; i++) {
     const p = data[`p${i}`];
     if (!p) continue;
-    const variantes = p.variants.nodes.map((v) => ({
-      id: v.id,
-      titre: v.title,
-      prix: Number(v.price.amount),
-      dispo: v.availableForSale,
-    }));
+    const variantes = p.variants.nodes.map((v) => {
+      // `compareAtPrice` = le prix barré. C'est LUI qui définit une promotion :
+      // on ne devine jamais une remise, Shopify la déclare.
+      const avant = v.compareAtPrice ? Number(v.compareAtPrice.amount) : 0;
+      const prixVar = Number(v.price.amount);
+      return {
+        id: v.id,
+        titre: v.title,
+        prix: prixVar,
+        dispo: v.availableForSale,
+        ...(avant > prixVar ? { avant } : {}),
+      };
+    });
     // Tant que le catalogue n'est pas complet, beaucoup de variantes sont à 0.
     // Le minimum de Shopify les compte et ramène la gamme entière à « prix à
     // venir » : on prend donc le plus petit tarif RÉELLEMENT saisi.
@@ -57,6 +64,7 @@ export async function onRequest({ request, env }) {
     prix[p.handle] = {
       min: saisis.length ? Math.min(...saisis) : 0,
       devise: p.priceRange.minVariantPrice.currencyCode,
+      promo: variantes.some((v) => v.avant > 0),
       variantes,
     };
   }

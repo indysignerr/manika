@@ -11,15 +11,21 @@
  * et la catégorie, pas seulement le titre.
  */
 
+/** Une variante commandable : son identifiant sert à la commande rapide. */
+export type IndexVariante = { id?: string; label: string; dispo: boolean };
+
 export type IndexEntry = {
   slug: string;
   name: string;
   category: string;
   image: string;
   available: boolean;
-  /** Libellés des variantes (teintes, volumes, contenances). */
-  variantes: string[];
+  /** Variantes (teintes, volumes, contenances) — libellé ET identifiant. */
+  variantes: IndexVariante[];
 };
+
+/** Le libellé d'une variante unique (« Unité ») n'apprend rien à la recherche. */
+const LABEL_NEUTRE = /^unit(é|e)$/i;
 
 /** Minuscules sans accents ni ponctuation — pour comparer ce que les gens tapent. */
 export const norm = (s: string) =>
@@ -46,7 +52,9 @@ export function chercher(index: IndexEntry[], requete: string, max = 40): Hit[] 
   for (const entry of index) {
     const nom = norm(entry.name);
     const cat = norm(entry.category);
-    const variantesNorm = entry.variantes.map((v) => ({ brut: v, n: norm(v) }));
+    const variantesNorm = entry.variantes
+      .filter((v) => !LABEL_NEUTRE.test(v.label))
+      .map((v) => ({ brut: v.label, n: norm(v.label) }));
 
     let score = 0;
     let tousTrouves = true;

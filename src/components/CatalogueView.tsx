@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 import { X, SlidersHorizontal } from "lucide-react";
 import { type Product } from "@/lib/products";
 import { FACETTES } from "@/lib/shopify";
-import { Collection, collectionsByUnivers } from "@/lib/collections";
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/Reveal";
 import { useDemandePrix, usePrixEtat } from "@/lib/prix";
@@ -20,22 +19,48 @@ const SORTS = [
 ] as const;
 
 type SortId = (typeof SORTS)[number]["id"];
-
-/** Une facette affichable : ses valeurs présentes dans le rayon, et leur compte. */
 type FacetteVue = { cle: string; label: string; valeurs: { valeur: string; n: number }[] };
 
-export default function CollectionView({
-  collection,
-  products,
-}: {
-  collection: Collection;
-  products: Product[];
-}) {
-  const base = products;
-  const siblings = collectionsByUnivers(collection.univers);
+export type LienRayon = { label: string; href: string; n?: number; actif?: boolean };
 
-  // Aucun montant n'est dans le build : on demande ceux de la collection en
-  // une fois, et on ne propose filtre et tri par prix qu'à qui peut les voir.
+/**
+ * Un raccourci « Acheter par … » : le document en veut sur les pages de
+ * marque (par gamme, par besoin, par type). Ils filtrent SUR PLACE au lieu
+ * d'ouvrir une sous-collection — c'est précisément la cascade que le
+ * document demande d'éviter.
+ */
+export type Raccourci = { cle: string; titre: string };
+
+type Props = {
+  /** Fil d'ariane, du plus général au plus précis. Le dernier n'est pas cliquable. */
+  filAriane: { label: string; href?: string }[];
+  titre: string;
+  intro?: string;
+  produits: Product[];
+  /** Rayons voisins — c'est la navigation latérale du document, pas un sous-menu. */
+  liens?: LienRayon[];
+  liensLabel?: string;
+  /** Facettes à ne pas proposer ici (la marque sur une page de marque, p. ex.). */
+  masquer?: string[];
+  /** Message affiché quand la page n'a aucun produit. */
+  vide?: string;
+  /** Entrées « Acheter par … » mises en avant au-dessus de la grille. */
+  raccourcis?: Raccourci[];
+};
+
+export default function CatalogueView({
+  filAriane,
+  titre,
+  intro,
+  produits,
+  liens = [],
+  liensLabel = "Rayons",
+  masquer = [],
+  vide = "Ce rayon est en cours de constitution.",
+  raccourcis = [],
+}: Props) {
+  const base = produits;
+
   const slugs = useMemo(() => base.map((p) => p.slug), [base]);
   useDemandePrix(slugs);
   const { role, prix } = usePrixEtat();
@@ -46,15 +71,15 @@ export default function CollectionView({
   );
 
   /**
-   * Les filtres sont CONSTRUITS À PARTIR DU RAYON, pas d'une liste écrite à la
-   * main : on n'affiche que des cases qui ramènent au moins un produit. Une
-   * facette dont tout le rayon partage la même valeur est masquée — proposer
-   * « Marque : Tassel » sur un rayon 100 % Tassel ne filtre rien.
+   * Les filtres sont construits à partir des produits réellement présents :
+   * on ne propose jamais une case qui ne ramènerait rien, ni une facette dont
+   * tout le rayon partage la même valeur.
    */
   const facettes = useMemo<FacetteVue[]>(() => {
     const comptes = new Map<string, Map<string, number>>();
     for (const p of base) {
       for (const [cle, valeurs] of Object.entries(p.facettes ?? {})) {
+        if (masquer.includes(cle)) continue;
         if (!comptes.has(cle)) comptes.set(cle, new Map());
         const m = comptes.get(cle)!;
         for (const v of valeurs) m.set(v, (m.get(v) ?? 0) + 1);
@@ -68,12 +93,12 @@ export default function CollectionView({
         .sort((a, b) => b.n - a.n || a.valeur.localeCompare(b.valeur, "fr"));
       return [{ cle, label, valeurs }];
     });
-  }, [base]);
+  }, [base, masquer]);
 
   const [actifs, setActifs] = useState<Record<string, string[]>>({});
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [sort, setSort] = useState<SortId>("reco");
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtresOuverts, setFiltresOuverts] = useState(false);
 
   const basculer = (cle: string, valeur: string) =>
     setActifs((a) => {
@@ -86,22 +111,13 @@ export default function CollectionView({
       return { ...a, [cle]: suite };
     });
 
-  /**
-   * Tarif d'entrée de gamme, ou undefined tant qu'il n'est pas arrivé —
-   * auquel cas le produit reste visible : mieux vaut un produit de trop
-   * qu'une grille qui se vide le temps d'une requête.
-   */
   const tarifDe = (slug: string) => prix[slug]?.min;
 
-  const filtered = useMemo(() => {
-    // Curseur au maximum = pas de plafond. Sans ça, un produit à 80 € HT
-    // disparaîtrait de la grille sans que personne n'ait rien filtré.
+  const filtres = useMemo(() => {
     const plafond = maxPrice < MAX_PRICE ? maxPrice : Infinity;
     const list = base.filter((p) => {
       const min = tarifDe(p.slug);
-      // Le prix 0 signifie « pas encore saisi » : il ne doit pas passer pour gratuit.
       if (tarifsVisibles && min !== undefined && min > 0 && min > plafond) return false;
-      // ET entre facettes, OU à l'intérieur d'une facette.
       for (const [cle, choisies] of Object.entries(actifs)) {
         const portees = p.facettes?.[cle] ?? [];
         if (!choisies.some((v) => portees.includes(v))) return false;
@@ -109,7 +125,6 @@ export default function CollectionView({
       return true;
     });
     if (tarifsVisibles && (sort === "prix-asc" || sort === "prix-desc")) {
-      // Les produits sans tarif connu ferment la marche dans les deux sens.
       const cle = (s: string) => tarifDe(s) || Number.POSITIVE_INFINITY;
       list.sort((a, b) =>
         sort === "prix-asc" ? cle(a.slug) - cle(b.slug) : cle(b.slug) - cle(a.slug)
@@ -121,15 +136,14 @@ export default function CollectionView({
   }, [base, actifs, maxPrice, sort, prix, tarifsVisibles]);
 
   const chips = Object.entries(actifs).flatMap(([cle, vs]) => vs.map((valeur) => ({ cle, valeur })));
-  const hasFilters = chips.length > 0 || (tarifsVisibles && maxPrice < MAX_PRICE);
-  const resetAll = () => {
+  const aDesFiltres = chips.length > 0 || (tarifsVisibles && maxPrice < MAX_PRICE);
+  const reinitialiser = () => {
     setActifs({});
     setMaxPrice(MAX_PRICE);
   };
 
   return (
     <div className="page-top">
-      {/* En-tête */}
       <div className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-16 -top-24 w-[380px] opacity-[0.05]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -138,60 +152,71 @@ export default function CollectionView({
         <div className="container-luxe pb-8">
           <Reveal>
             <nav className="text-[10px] uppercase tracking-wide2 text-taupe-deep" aria-label="Fil d'ariane">
-              <Link href="/boutique/" className="hover:text-copper">Boutique</Link> / {collection.univers} /{" "}
-              <span className="text-rose">{collection.label}</span>
+              {filAriane.map((f, i) => (
+                <span key={f.label}>
+                  {i > 0 && " / "}
+                  {f.href ? (
+                    <Link href={f.href} className="hover:text-copper">{f.label}</Link>
+                  ) : (
+                    <span className="text-rose">{f.label}</span>
+                  )}
+                </span>
+              ))}
             </nav>
-            <h1 className="heading mt-4 text-4xl leading-[1.1] md:text-5xl">{collection.label}</h1>
-            <p className="mt-4 max-w-md text-[13px] font-light leading-relaxed text-ink/75">
-              {collection.tagline} · Univers {collection.univers}.
-            </p>
+            <h1 className="heading mt-4 text-4xl leading-[1.1] md:text-5xl">{titre}</h1>
+            {intro && (
+              <p className="mt-4 max-w-lg text-[13px] font-light leading-relaxed text-ink/75">{intro}</p>
+            )}
           </Reveal>
 
-          {/* Catégories sœurs */}
-          <Reveal delay={0.1}>
-            <div className="mt-8 flex flex-wrap gap-2" aria-label={`Autres catégories ${collection.univers}`}>
-              {siblings.map((c) => (
-                <Link
-                  key={c.slug}
-                  href={`/boutique/${c.slug}/`}
-                  aria-current={c.slug === collection.slug ? "page" : undefined}
-                  className={`rounded-[2px] border px-5 py-2.5 text-[10px] uppercase tracking-wide2 transition-colors duration-300 ${
-                    c.slug === collection.slug
-                      ? "border-copper bg-copper text-ivory"
-                      : "border-taupe/60 text-copper hover:border-copper"
-                  }`}
-                  data-cursor
-                >
-                  {c.label}
-                </Link>
-              ))}
-            </div>
-          </Reveal>
+          {/* Rayons voisins : on reste à plat, on ne descend pas d'un niveau */}
+          {liens.length > 0 && (
+            <Reveal delay={0.1}>
+              <div className="mt-8 flex flex-wrap gap-2" aria-label={liensLabel}>
+                {liens.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    aria-current={l.actif ? "page" : undefined}
+                    className={`rounded-[2px] border px-5 py-2.5 text-[10px] uppercase tracking-wide2 transition-colors duration-300 ${
+                      l.actif
+                        ? "border-copper bg-copper text-ivory"
+                        : "border-taupe/60 text-copper hover:border-copper"
+                    }`}
+                    data-cursor
+                  >
+                    {l.label}
+                    {typeof l.n === "number" && (
+                      <span className={l.actif ? "ml-2 text-ivory/70" : "ml-2 text-taupe-deep"}>{l.n}</span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            </Reveal>
+          )}
         </div>
       </div>
 
       <div className="border-t border-taupe/40">
         <div className="container-luxe grid gap-8 py-12 md:grid-cols-[240px_1fr] md:gap-12">
-          {/* Bascule filtres mobile */}
           {facettes.length > 0 && (
             <button
-              onClick={() => setFiltersOpen(!filtersOpen)}
-              aria-expanded={filtersOpen}
+              onClick={() => setFiltresOuverts(!filtresOuverts)}
+              aria-expanded={filtresOuverts}
               className="flex items-center justify-between rounded-[2px] border border-taupe/60 px-5 py-3.5 text-[10px] uppercase tracking-wide2 text-copper md:hidden"
             >
               <span className="flex items-center gap-2.5">
                 <SlidersHorizontal size={14} strokeWidth={1.5} aria-hidden />
                 Filtres{chips.length > 0 && ` (${chips.length})`}
               </span>
-              <span aria-hidden>{filtersOpen ? "−" : "+"}</span>
+              <span aria-hidden>{filtresOuverts ? "−" : "+"}</span>
             </button>
           )}
 
-          {/* Filtres */}
           {facettes.length > 0 && (
             <aside
               aria-label="Filtres"
-              className={`${filtersOpen ? "block" : "hidden"} md:sticky md:top-40 md:block md:self-start`}
+              className={`${filtresOuverts ? "block" : "hidden"} md:sticky md:top-40 md:block md:self-start`}
             >
               <p className="border-b border-taupe/50 pb-3 text-[10px] uppercase tracking-wide3 text-copper">Affiner</p>
 
@@ -218,7 +243,6 @@ export default function CollectionView({
                 </fieldset>
               ))}
 
-              {/* Filtre prix : sans objet pour qui ne voit pas les tarifs */}
               {tarifsVisibles && (
                 <fieldset className="mt-8">
                   <legend className="mb-4 text-[11px] uppercase tracking-wide2 text-copper">Prix maximum</legend>
@@ -230,23 +254,53 @@ export default function CollectionView({
                 </fieldset>
               )}
 
-              {hasFilters && (
-                <button onClick={resetAll} className="mt-8 text-[10px] uppercase tracking-wide2 text-rose underline-offset-4 hover:underline">
+              {aDesFiltres && (
+                <button onClick={reinitialiser} className="mt-8 text-[10px] uppercase tracking-wide2 text-rose underline-offset-4 hover:underline">
                   Tout réinitialiser
                 </button>
               )}
             </aside>
           )}
 
-          {/* Grille / états */}
           <div className={facettes.length > 0 ? "" : "md:col-span-2"}>
+            {/* « Acheter par … » — les valeurs sont celles réellement portées
+                par les produits de la page ; un raccourci dont la donnée
+                n'est pas encore saisie ne s'affiche tout simplement pas. */}
+            {base.length > 0 &&
+              raccourcis.map(({ cle, titre }) => {
+                const f = facettes.find((x) => x.cle === cle);
+                if (!f) return null;
+                return (
+                  <div key={cle} className="mb-8">
+                    <p className="mb-3 text-[10px] uppercase tracking-wide3 text-bronze">{titre}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {f.valeurs.map(({ valeur, n }) => {
+                        const actif = (actifs[cle] ?? []).includes(valeur);
+                        return (
+                          <button
+                            key={valeur}
+                            onClick={() => basculer(cle, valeur)}
+                            aria-pressed={actif}
+                            className={`rounded-[2px] border px-4 py-2 text-[11px] tracking-wide transition-colors ${
+                              actif
+                                ? "border-copper bg-copper text-ivory"
+                                : "border-taupe/60 text-copper hover:border-copper"
+                            }`}
+                            data-cursor
+                          >
+                            {valeur}
+                            <span className={actif ? "ml-2 text-ivory/70" : "ml-2 text-taupe-deep"}>{n}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
             {base.length === 0 ? (
               <div className="py-20 text-center">
-                <p className="font-serif text-xl italic text-copper">Cette catégorie arrive bientôt.</p>
-                <p className="mx-auto mt-4 max-w-sm text-[13px] font-light text-ink/70">
-                  Les produits « {collection.label} » de l&apos;univers {collection.univers} sont en cours
-                  d&apos;ajout. Reviens très vite.
-                </p>
+                <p className="font-serif text-xl italic text-copper">{vide}</p>
                 <Link href="/boutique/" className="btn-ghost mt-8">Retour à la boutique</Link>
               </div>
             ) : (
@@ -254,7 +308,7 @@ export default function CollectionView({
                 <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-[11px] uppercase tracking-wide2 text-taupe-deep" aria-live="polite">
-                      {filtered.length} produit{filtered.length > 1 ? "s" : ""}
+                      {filtres.length} produit{filtres.length > 1 ? "s" : ""}
                     </p>
                     {chips.map(({ cle, valeur }) => (
                       <button
@@ -278,14 +332,14 @@ export default function CollectionView({
                   </label>
                 </div>
 
-                {filtered.length === 0 ? (
+                {filtres.length === 0 ? (
                   <div className="py-20 text-center">
                     <p className="font-serif text-xl italic text-copper">Aucun produit ne correspond à ces filtres.</p>
-                    <button onClick={resetAll} className="btn-ghost mt-7">Réinitialiser les filtres</button>
+                    <button onClick={reinitialiser} className="btn-ghost mt-7">Réinitialiser les filtres</button>
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-7">
-                    {filtered.map((p, i) => (
+                    {filtres.map((p, i) => (
                       <Reveal key={p.slug} delay={(i % 3) * 0.07}>
                         <ProductCard product={p} />
                       </Reveal>

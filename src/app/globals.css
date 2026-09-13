@@ -55,6 +55,14 @@ body.custom-cursor label {
   cursor: auto;
 }
 
+/* Chrome ajoute sa propre croix dans les champs `type="search"` : elle
+   doublait celle que nous dessinons. */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 @layer components {
   .heading {
     @apply font-display font-extralight uppercase tracking-luxe text-copper;
@@ -74,6 +82,12 @@ body.custom-cursor label {
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center rounded-[2px] border border-copper px-6 py-3 text-[10px] font-normal uppercase tracking-wide2 text-copper transition-colors duration-300 hover:bg-copper hover:text-ivory;
+  }
+  /* Dégagement sous l'en-tête fixe. Il porte désormais TROIS rangées —
+     bandeau d'annonce, logo, barre de rayons — et la hauteur exacte doit
+     vivre à un seul endroit, sinon chaque page dérive. */
+  .page-top {
+    @apply pt-[8.75rem] lg:pt-[10.5rem];
   }
   .container-luxe {
     @apply mx-auto w-full max-w-[1240px] px-6 md:px-10;

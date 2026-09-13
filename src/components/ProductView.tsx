@@ -105,7 +105,7 @@ export default function ProductView({ product, related = [] }: { product: Produc
   const reassurances = reassurancesReelles();
 
   return (
-    <div className="pt-32 md:pt-36">
+    <div className="page-top">
       <div className="container-luxe grid gap-14 pb-20 md:grid-cols-2 md:gap-20">
         {/* Galerie photo */}
         <div className="md:sticky md:top-36 md:self-start">
@@ -274,8 +274,8 @@ export default function ProductView({ product, related = [] }: { product: Produc
         <section className="bg-ivory-2 py-20">
           <div className="container-luxe">
             <Reveal>
-              <p className="kicker">Compléter la routine</p>
-              <h2 className="heading mt-3 text-2xl md:text-3xl">Ils vont bien ensemble</h2>
+              <p className="kicker">Ne repartez pas sans</p>
+              <h2 className="heading mt-3 text-2xl md:text-3xl">Pour aller avec</h2>
             </Reveal>
             <div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-7">
               {crossSell.map((p, i) => (

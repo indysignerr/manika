@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import { CartProvider } from "@/components/cart-context";
 import { PrixProvider } from "@/lib/prix";
+import { catalogTous } from "@/lib/catalog";
+import { marquesDuCatalogue, universDuCatalogue } from "@/lib/taxonomie";
 
 const jost = Jost({
   subsets: ["latin"],
@@ -44,7 +46,17 @@ const jsonLd = {
   audience: { "@type": "BusinessAudience", audienceType: "Salons de coiffure et barbershops" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // L'arborescence du menu est dérivée du catalogue au build (métachamps
+  // `manika.*`), pas écrite à la main : une marque ou un rayon ajouté dans
+  // Shopify apparaît tout seul. `catalogTous` est mémoïsé pour ne pas
+  // relancer une requête par page.
+  const produits = await catalogTous();
+  const navigation = {
+    univers: universDuCatalogue(produits),
+    marques: marquesDuCatalogue(produits),
+  };
+
   return (
     <html lang="fr" className={`${jost.variable} ${marcellus.variable}`}>
       <body>
@@ -57,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PrixProvider>
           <CartProvider>
             <CustomCursor />
-            <Header />
+            <Header navigation={navigation} />
             <main>{children}</main>
             <Footer />
             <CartDrawer />

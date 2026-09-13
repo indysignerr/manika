@@ -16,6 +16,7 @@ import {
 } from "@/lib/shopify";
 import { products as localProducts, type Product } from "@/lib/products";
 import { collections, productsInCollection as localProductsInCollection } from "@/lib/collections";
+import type { IndexEntry } from "@/lib/search";
 
 /** Produits d'une collection (par handle). */
 export async function catalogCollection(handle: string): Promise<Product[]> {
@@ -27,6 +28,56 @@ export async function catalogCollection(handle: string): Promise<Product[]> {
     }
   }
   return localProductsInCollection(handle);
+}
+
+/**
+ * TOUT le catalogue, mappé. C'est la source des pages d'arborescence
+ * (univers, rayons, marques) : celles-ci ne reposent pas sur des collections
+ * Shopify mais sur les métachamps portés par les produits.
+ */
+let _tous: Promise<Product[]> | null = null;
+
+export async function catalogTous(): Promise<Product[]> {
+  // Mémoïsé pour toute la durée du build : l'en-tête en a besoin sur CHAQUE
+  // page, et `fetch` en POST n'est pas mis en cache par Next. Sans ça, 249
+  // pages = 249 requêtes Shopify identiques.
+  _tous ??= chargerTous();
+  return _tous;
+}
+
+async function chargerTous(): Promise<Product[]> {
+  if (isShopifyConfigured()) {
+    try {
+      return (await getAllProducts(250)).map(toSiteProduct);
+    } catch (e) {
+      console.error("[catalog] tous", e);
+    }
+  }
+  return localProducts;
+}
+
+/**
+ * L'index de recherche, construit au BUILD et embarqué dans les pages qui en
+ * ont besoin (recherche et commande rapide).
+ *
+ * ⚠️ AUCUN PRIX ici : ce fichier part dans le navigateur de tout le monde.
+ *    Les identifiants de variante, eux, ne sont pas des secrets — ils servent
+ *    à remplir le panier.
+ */
+export async function catalogIndex(): Promise<IndexEntry[]> {
+  const produits = await catalogTous();
+  return produits.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    category: p.category,
+    image: p.image,
+    available: p.available !== false,
+    variantes: p.sizes.map((s) => ({
+      id: s.variantId,
+      label: s.label,
+      dispo: s.available !== false,
+    })),
+  }));
 }
 
 /** Tous les handles produits (pour generateStaticParams). */
@@ -52,6 +103,89 @@ export async function catalogProduct(handle: string): Promise<Product | null> {
     }
   }
   return localProducts.find((p) => p.slug === handle) ?? null;
+}
+
+/**
+ * VENTES COMPLÉMENTAIRES — les règles du document, à la lettre.
+ *
+ * « Sur une fiche COLORATION, proposer si possible : oxydant compatible,
+ *   gants, bol, pinceau, presse-tube, palette, papier aluminium,
+ *   balance/minuteur si pertinent. »
+ *
+ * L'ordre des tableaux EST l'ordre de priorité d'affichage. On prend au plus
+ * un produit par type, pour ne pas proposer quatre paires de gants.
+ */
+const COMPLEMENTS: Record<string, string[]> = {
+  Coloration: [
+    "Oxydant", "Gants", "Bols", "Pinceaux", "Presse-tubes",
+    "Palettes coloration", "Papier aluminium", "Balances", "Minuteurs",
+  ],
+  "Retouche racines": ["Gants", "Pinceaux", "Bols"],
+  Décoloration: ["Oxydant", "Papier aluminium", "Gants", "Bols", "Pinceaux", "Balances"],
+  Oxydant: ["Coloration", "Bols", "Pinceaux", "Gants"],
+  Shampooing: ["Après-shampooing", "Masque"],
+  "Après-shampooing": ["Shampooing", "Masque"],
+  Masque: ["Shampooing", "Après-shampooing"],
+};
+
+const valeur = (p: Product, cle: string) => p.facettes?.[cle]?.[0] ?? null;
+
+/**
+ * Les compléments d'une fiche produit.
+ *
+ * À défaut de règle pour ce type, on retombe sur « d'autres produits de la
+ * même gamme » — ce que le document demande pour les shampooings. La gamme
+ * n'étant pas encore saisie dans Shopify, la même MARQUE dans le même univers
+ * en tient lieu.
+ */
+export async function catalogComplements(produit: Product, n = 4): Promise<Product[]> {
+  const tous = (await catalogTous()).filter((p) => p.slug !== produit.slug);
+  const type = valeur(produit, "type");
+  const marque = valeur(produit, "marque");
+  const gamme = valeur(produit, "gamme");
+  const univers = valeur(produit, "univers");
+
+  const choisis: Product[] = [];
+  const pris = new Set<string>();
+
+  /** Le meilleur candidat d'un type : même gamme d'abord, puis même marque. */
+  const meilleur = (t: string) => {
+    const candidats = tous.filter((p) => valeur(p, "type") === t && !pris.has(p.slug));
+    if (!candidats.length) return null;
+    const note = (p: Product) =>
+      (gamme && valeur(p, "gamme") === gamme ? 4 : 0) +
+      (marque && valeur(p, "marque") === marque ? 2 : 0) +
+      (p.available !== false ? 1 : 0);
+    return candidats.sort((a, b) => note(b) - note(a))[0];
+  };
+
+  for (const t of COMPLEMENTS[type ?? ""] ?? []) {
+    if (choisis.length >= n) break;
+    const c = meilleur(t);
+    if (c) {
+      choisis.push(c);
+      pris.add(c.slug);
+    }
+  }
+
+  // Complément de remplissage : la même gamme, sinon la même marque.
+  if (choisis.length < n) {
+    const memeFamille = tous
+      .filter((p) => !pris.has(p.slug))
+      .filter((p) =>
+        gamme
+          ? valeur(p, "gamme") === gamme
+          : marque && valeur(p, "marque") === marque && valeur(p, "univers") === univers
+      )
+      .sort((a, b) => Number(b.available !== false) - Number(a.available !== false));
+    for (const p of memeFamille) {
+      if (choisis.length >= n) break;
+      choisis.push(p);
+      pris.add(p.slug);
+    }
+  }
+
+  return choisis.slice(0, n);
 }
 
 /** Produits mis en avant (accueil). Priorité : image + disponible. */

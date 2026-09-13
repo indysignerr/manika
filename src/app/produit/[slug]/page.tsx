@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { catalogAllHandles, catalogProduct, catalogFeatured } from "@/lib/catalog";
+import { catalogAllHandles, catalogProduct, catalogComplements } from "@/lib/catalog";
 import ProductView from "@/components/ProductView";
 
 export async function generateStaticParams() {
@@ -19,7 +19,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function Page({ params }: { params: { slug: string } }) {
   const product = await catalogProduct(params.slug);
   if (!product) notFound();
-  const related = (await catalogFeatured(5)).filter((p) => p.slug !== product.slug).slice(0, 4);
+  // Les compléments suivent les règles de ventes complémentaires du document
+  // (oxydant + accessoires sur une coloration, après-shampooing sur un
+  // shampooing…), pas un simple « produits en avant ».
+  const related = await catalogComplements(product, 4);
 
   // Les tarifs ne sont pas ici : la fiche et les cartes associées les
   // réclament elles-mêmes à la passerelle après chargement.

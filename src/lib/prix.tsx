@@ -24,8 +24,21 @@ import {
   type ReactNode,
 } from "react";
 
-export type PrixVariante = { id: string; titre: string; prix: number; dispo: boolean };
-export type PrixProduit = { min: number; devise: string; variantes: PrixVariante[] };
+export type PrixVariante = {
+  id: string;
+  titre: string;
+  prix: number;
+  dispo: boolean;
+  /** Prix barré Shopify (compareAtPrice) quand il y a promotion. */
+  avant?: number;
+};
+export type PrixProduit = {
+  min: number;
+  devise: string;
+  /** Au moins une variante en promotion. */
+  promo?: boolean;
+  variantes: PrixVariante[];
+};
 
 /** null tant qu'on ne sait pas encore — évite d'afficher « réservé » puis un prix. */
 export type Role = "visiteur" | "pro" | null;

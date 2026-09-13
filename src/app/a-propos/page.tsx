@@ -45,7 +45,7 @@ const Leaf = () => (
 
 export default function Page() {
   return (
-    <div className="pt-32 md:pt-36">
+    <div className="page-top">
       {/* Héro éditorial */}
       <section className="relative overflow-hidden pb-20">
         <div className="pointer-events-none absolute -right-20 -top-28 w-[460px] opacity-[0.06]">

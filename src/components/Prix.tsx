@@ -76,5 +76,18 @@ export default function Prix({
   if (montant === 0) {
     return <span className={className}>Prix à venir</span>;
   }
+
+  // Promotion : le prix barré vient de Shopify (compareAtPrice), jamais d'un calcul.
+  const avant = variantId ? variante?.avant : undefined;
+  if (avant && avant > montant) {
+    return (
+      <span className={className}>
+        {fmt(montant * quantite)}
+        <span className="ml-2 text-[0.8em] font-light text-taupe-deep line-through">
+          {fmt(avant * quantite)}
+        </span>
+      </span>
+    );
+  }
   return <span className={className}>{fmt(montant * quantite)}</span>;
 }

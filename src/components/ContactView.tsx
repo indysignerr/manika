@@ -31,7 +31,7 @@ export default function ContactView() {
   };
 
   return (
-    <div className="relative overflow-hidden pt-32 md:pt-36">
+    <div className="relative overflow-hidden page-top">
       <div className="pointer-events-none absolute -left-24 top-40 w-[420px] opacity-[0.06]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/logo-mark.png" alt="" />

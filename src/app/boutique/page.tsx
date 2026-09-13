@@ -1,14 +1,21 @@
 import type { Metadata } from "next";
 import BoutiqueLanding from "@/components/BoutiqueLanding";
-import { catalogCounts } from "@/lib/catalog";
+import { catalogTous } from "@/lib/catalog";
+import { marquesDuCatalogue, universDuCatalogue } from "@/lib/taxonomie";
 
 export const metadata: Metadata = {
   title: "Boutique — MANIKA.LAB",
   description:
-    "Coloration, soin, coiffage et consommables — pour la clientèle Femme et Barber. La gamme capillaire professionnelle MANIKA.LAB.",
+    "Le catalogue professionnel MANIKA.LAB : coloration & technique, soins, coiffage, accessoires et consommables. Toutes marques, tarifs HT réservés aux salons.",
 };
 
 export default async function Page() {
-  const counts = await catalogCounts();
-  return <BoutiqueLanding counts={counts} />;
+  const produits = await catalogTous();
+  return (
+    <BoutiqueLanding
+      univers={universDuCatalogue(produits)}
+      marques={marquesDuCatalogue(produits)}
+      total={produits.length}
+    />
+  );
 }
