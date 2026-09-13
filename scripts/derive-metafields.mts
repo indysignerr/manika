@@ -9,32 +9,14 @@
  * Sortie : un rapport de couverture + un CSV importable dans Shopify
  * (Produits → Importer), qui ne demande AUCUN jeton Admin.
  *
- *   npx tsx scripts/derive-metafields.mts
+ *   npm run metafields
  */
 import { parseTeinte } from "../src/lib/nuancier";
 import { writeFileSync } from "node:fs";
-
-const DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
-const TOKEN = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN;
+import { fetchAllProducts, loadEnv } from "./lib/shopify.mts";
+import { MARQUES } from "./lib/referentiel.mts";
 
 /* ── Référentiels issus du document d'arborescence ────────────────── */
-
-/** Orthographes Shopify → marque canonique. À arbitrer avec la cliente. */
-const MARQUES: Record<string, string> = {
-  TASSEL: "Tassel",
-  BIOPYGMA: "Biopygma",
-  "MANIKA LAB": "Manika",
-  DOUSSE: "Dousse",
-  EUROSTIL: "Eurostil",
-  NEUTHROSUN: "Neuthrosun",
-  VASSO: "Vasso",
-  RAGNAR: "Ragnar",
-  "CAPTAIN COOK": "Captain Cook",
-  // Suzishen ne doit plus apparaître publiquement : ses 3 produits sont
-  // réattribués à la marque maison.
-  SUZISHEN: "Manika",
-  "NUTRI HAIR": "Nutri Hair",
-};
 
 const UNIVERS = {
   COLORATION: "Coloration & Technique",
@@ -134,24 +116,12 @@ function jetable(titre: string, type: string | null): string | null {
 type Row = Record<string, string>;
 
 async function main() {
-  if (!DOMAIN || !TOKEN) throw new Error("Variables Shopify absentes — source .env.local d'abord.");
+  loadEnv();
 
-  const res = await fetch(`https://${DOMAIN}/api/2025-07/graphql.json`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Shopify-Storefront-Access-Token": TOKEN },
-    body: JSON.stringify({
-      query: `{ products(first:250){ nodes {
-        handle title vendor productType
-        variants(first:100){ nodes { title } }
-      } } }`,
-    }),
-  });
-  const { data, errors } = await res.json();
-  if (errors) throw new Error(JSON.stringify(errors));
-  const produits = data.products.nodes as {
+  const produits = await fetchAllProducts<{
     handle: string; title: string; vendor: string; productType: string;
     variants: { nodes: { title: string }[] };
-  }[];
+  }>(`handle title vendor productType variants(first: 100) { nodes { title } }`);
 
   const rows: Row[] = [];
   const manquants: Record<string, string[]> = { type: [], univers: [] };

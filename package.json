@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start -p 1104",
     "prepare-assets": "node scripts/prepare-assets.mjs",
-    "build:check": "NEXT_DIST_DIR=.next-build next build"
+    "build:check": "NEXT_DIST_DIR=.next-build next build",
+    "audit:shopify": "tsx scripts/audit-shopify.mts",
+    "check:outils": "tsx scripts/check-outils.mts",
+    "metafields": "tsx scripts/derive-metafields.mts"
   },
   "dependencies": {
     "framer-motion": "^11.11.9",
@@ -26,6 +29,7 @@
     "sharp": "^0.33.5",
     "tailwindcss": "^3.4.13",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.23.13",
     "typescript": "^5.6.2"
   }
 }

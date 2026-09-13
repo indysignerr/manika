@@ -6,3 +6,7 @@ out/
 *.tsbuildinfo
 next-env.d.ts
 .next-build
+
+# Le gabarit de configuration ne contient aucun secret : il doit suivre le dépôt.
+!.env.local.example
+.dev.vars
