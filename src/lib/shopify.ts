@@ -226,8 +226,19 @@ const catLabel = (productType: string) => {
  * TODO (finition) : `tagline`, `usage`, `inci`, `hair`, `need` viendront de
  * METAFIELDS Shopify ou des tags. Ici valeurs de repli — rien ne casse.
  */
+/**
+ * ⚠️ LES PRIX NE SORTENT PAS D'ICI.
+ *
+ * Le site est en export statique : tout montant présent à la construction se
+ * retrouve écrit en clair dans le HTML, lisible par n'importe qui et indexable
+ * par Google. Le catalogue fermé décidé le 13/09 impose donc que le build ne
+ * contienne aucun tarif.
+ *
+ * Les montants sont chargés à l'exécution via /api/prix, qui ne répond qu'aux
+ * comptes professionnels validés. Voir src/lib/prix.tsx et le composant Prix.
+ */
 export function toSiteProduct(sp: ShopifyProduct): Product {
-  const base = Number(sp.priceRange.minVariantPrice.amount);
+  const base = 0; // neutralisé volontairement — ne jamais rétablir
   const variants = sp.variants.nodes;
   const soloVariant = variants.length === 1;
   return {
@@ -249,7 +260,7 @@ export function toSiteProduct(sp: ShopifyProduct): Product {
         ]
       : variants.map((v) => ({
           label: v.title,
-          delta: Number(v.price.amount) - base,
+          delta: 0, // idem : aucun écart de prix dans le build
           variantId: v.id,
           image: v.image?.url ?? null,
           available: v.availableForSale,

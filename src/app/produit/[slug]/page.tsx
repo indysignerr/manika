@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { catalogAllHandles, catalogProduct, catalogFeatured } from "@/lib/catalog";
 import ProductView from "@/components/ProductView";
+import { PrixProvider } from "@/lib/prix";
 
 export async function generateStaticParams() {
   const handles = await catalogAllHandles();
@@ -20,5 +21,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const product = await catalogProduct(params.slug);
   if (!product) notFound();
   const related = (await catalogFeatured(5)).filter((p) => p.slug !== product.slug).slice(0, 4);
-  return <ProductView product={product} related={related} />;
+
+  // Les tarifs de cette fiche et des produits associés sont chargés en une
+  // seule requête, et seulement si le visiteur y a droit.
+  const handles = [product.slug, ...related.map((p) => p.slug)];
+
+  return (
+    <PrixProvider handles={handles}>
+      <ProductView product={product} related={related} />
+    </PrixProvider>
+  );
 }

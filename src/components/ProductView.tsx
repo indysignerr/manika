@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Lock, Truck, Leaf, RotateCcw, Minus, Plus } from "lucide-react";
-import { Product, fmtPrice } from "@/lib/products";
+import { Product, fmt } from "@/lib/products";
+import Prix from "@/components/Prix";
+import { usePrixEtat, usePrixVariante, usePrix } from "@/lib/prix";
 import { useCart } from "@/components/cart-context";
 import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
@@ -40,7 +42,14 @@ export default function ProductView({ product, related = [] }: { product: Produc
   const [showBar, setShowBar] = useState(false);
 
   const size = product.sizes[sizeIndex] ?? product.sizes[0];
-  const unit = product.price + (size?.delta ?? 0);
+
+  // Le build ne contient aucun montant : le tarif vient de /api/prix, et
+  // seulement si le visiteur est un professionnel validé.
+  const { role } = usePrixEtat();
+  const tarifProduit = usePrix(product.slug);
+  const tarifVariante = usePrixVariante(product.slug, size?.variantId);
+  const unit = tarifVariante?.prix ?? 0;
+  const peutAcheter = role === "pro";
 
   // Une gamme de coloration : assez de variantes ET des libellés qui se lisent
   // comme des teintes. Sinon (contenances, volumes d'oxydant…), sélecteur normal.
@@ -104,7 +113,12 @@ export default function ProductView({ product, related = [] }: { product: Produc
           )}
 
           <div className="mt-6 flex items-baseline gap-4">
-            <p className="text-3xl font-extralight text-copper">{fmtPrice(unit)}</p>
+            <Prix
+              handle={product.slug}
+              variantId={size?.variantId}
+              avecLien
+              className="text-3xl font-extralight text-copper"
+            />
             <p className="text-[11px] text-taupe-deep">
               Tarif professionnel HT · dégressif par {PALIERS.join(" / ")}
             </p>
@@ -149,8 +163,16 @@ export default function ProductView({ product, related = [] }: { product: Produc
                 </button>
               </div>
               <Magnetic className="flex-1">
-                <button onClick={addToCart} className="btn-primary w-full !py-[15px]" data-cursor>
-                  Ajouter au panier{unit > 0 ? ` — ${fmtPrice(unit * qty)}` : ""}
+                <button
+                  onClick={addToCart}
+                  disabled={!peutAcheter}
+                  title={peutAcheter ? undefined : "Réservé aux comptes professionnels validés"}
+                  className="btn-primary w-full !py-[15px] disabled:opacity-45"
+                  data-cursor
+                >
+                  {peutAcheter
+                    ? `Ajouter au panier${unit > 0 ? ` — ${fmt(unit * qty)}` : ""}`
+                    : "Réservé aux professionnels"}
                 </button>
               </Magnetic>
             </div>
@@ -215,7 +237,7 @@ export default function ProductView({ product, related = [] }: { product: Produc
               variantes={product.sizes.map((s, i) => ({
                 variantId: s.variantId ?? `${product.slug}-${i}`,
                 titre: s.label,
-                prix: product.price + s.delta,
+                prix: tarifProduit?.variantes.find((v) => v.id === s.variantId)?.prix ?? 0,
                 disponible: s.available !== false,
                 image: s.image ?? null,
               }))}
@@ -254,7 +276,7 @@ export default function ProductView({ product, related = [] }: { product: Produc
             {product.name}{multi ? ` · ${size.label}` : ""}
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-ivory">{fmtPrice(unit)}</span>
+            <Prix handle={product.slug} variantId={size?.variantId} className="text-sm text-ivory" />
             <button
               onClick={addToCart}
               className="rounded-[2px] bg-rose px-6 py-2.5 text-[10px] uppercase tracking-wide2 text-ivory transition-colors hover:bg-rose-hover"
