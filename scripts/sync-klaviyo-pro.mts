@@ -19,7 +19,9 @@
  * rien écrire. Ajouter `--reel` pour appliquer.
  *
  * Prérequis : source .env.local (SHOPIFY_CLIENT_ID/SECRET, KLAVIYO_API_KEY).
- * Scope Shopify : read_customers. Scope Klaviyo : profiles:write, events:write.
+ * Scope Shopify : read_customers.
+ * Scopes Klaviyo : profiles:READ (retrouver le profil par email),
+ *                  profiles:write (poser le statut), events:write.
  */
 import { admin } from "./shopify-admin.mts";
 

@@ -178,8 +178,11 @@ async function sendEmail(env, p) {
    révision ancienne continue de fonctionner mais finit par être retirée.
    Dernière stable vérifiée le 12/08/2026.
 
-   Scopes requis sur la clé privée : profiles:write, lists:write ET
-   subscriptions:write — l'oubli du troisième donne un 403 silencieux.
+   Scopes requis sur la clé privée (doc API vérifiée le 14/09/2026) :
+   profiles:write (profil), events:write (évènements), puis lists:write ET
+   subscriptions:write pour l'abonnement — le job les exige tous les deux.
+   Un scope d'abonnement manquant donne un 403 SILENCIEUX : le profil et
+   l'évènement partent quand même, seul l'abonnement échoue.
 
    ⚠️ Klaviyo n'a AUCUNE région de données européenne : hébergement
       états-unien couvert par le Data Privacy Framework et des clauses

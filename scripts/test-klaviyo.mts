@@ -3,10 +3,14 @@
  *
  *   npx tsx scripts/test-klaviyo.mts votre@email.com [--abonner]
  *
- * Chaque étape exerce UN scope : quand elle échoue en 403, le script nomme le
- * scope manquant. C'est le piège connu de Klaviyo — une clé à laquelle il
- * manque `subscriptions:write` fonctionne pour tout le reste et échoue
- * silencieusement au moment de l'abonnement.
+ * Chaque étape exerce ses propres scopes : quand elle échoue en 403, le script
+ * nomme celui qui manque. C'est le piège connu de Klaviyo — une clé à laquelle
+ * il manque un scope d'abonnement fonctionne pour tout le reste et échoue
+ * silencieusement au seul moment de l'abonnement.
+ *
+ * Scopes attendus sur la clé :
+ *   profiles:read, profiles:write, lists:read, lists:write,
+ *   events:write, subscriptions:write
  *
  * `--abonner` ajoute réellement l'adresse à la liste de diffusion : à ne
  * lancer qu'avec une adresse à soi.
@@ -24,11 +28,16 @@ const enTetes = () => ({
   revision: REVISION,
 });
 
+/**
+ * Le scope exercé par chaque étape — vérifié dans la doc API le 14/09/2026.
+ * L'abonnement en réclame DEUX : le job les exige tous les deux, et il suffit
+ * qu'un seul manque pour un 403.
+ */
 const SCOPE_PAR_ETAPE: Record<string, string> = {
   "Lecture des listes": "lists:read",
   "Création / mise à jour du profil": "profiles:write",
   "Envoi de l'évènement": "events:write",
-  "Abonnement à la liste": "subscriptions:write",
+  "Abonnement à la liste": "lists:write ET subscriptions:write",
 };
 
 let echecs = 0;

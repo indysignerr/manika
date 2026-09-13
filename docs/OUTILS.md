@@ -141,9 +141,27 @@ qu'au déploiement suivant :
 Le flux de réassort à J+45 est ce qui transforme un acheteur en client
 récurrent. Variables : `KLAVIYO_API_KEY` (clé **privée**) et `KLAVIYO_LIST_ID`.
 
-Scopes à cocher à la création de la clé : `profiles:write`, `lists:read`,
-`subscriptions:write` **et `events:write`** — ce dernier est indispensable
-depuis que le site envoie des évènements (voir plus bas).
+Scopes à cocher à la création de la clé (vérifiés dans la doc API le
+14/09/2026) : `profiles:read`, `profiles:write`, `lists:read`, `lists:write`,
+`events:write`, `subscriptions:write`.
+
+| Scope | À quoi il sert ici |
+|---|---|
+| `profiles:write` | créer / mettre à jour le profil d'un salon |
+| `profiles:read` | retrouver un profil par email (script de synchronisation) |
+| `events:write` | enregistrer les évènements — **ce qui déclenche les scénarios** |
+| `subscriptions:write` + `lists:write` | abonner à la liste (les DEUX sont exigés par le job) |
+| `lists:read` | lire les listes et leurs ID (diagnostic) |
+
+Lien avec les scopes pré-cochés :
+`https://www.klaviyo.com/create-private-api-key?scopes=profiles:read,profiles:write,lists:read,lists:write,events:write,subscriptions:write`
+
+⚠️ **Prendre « Custom », pas « Full ».** La clé vit dans une variable
+d'environnement Cloudflare utilisée par un point d'entrée public : avec un
+accès complet, une fuite permettrait d'envoyer une campagne à toute la liste.
+
+⚠️ Les scopes **ne sont pas modifiables après création** — une clé incomplète
+se supprime et se recrée.
 
 Trois points vérifiés le 12 septembre 2026 :
 
@@ -152,8 +170,9 @@ Trois points vérifiés le 12 septembre 2026 :
   **signer le DPA**. (L'artefact budget d'août affirme le contraire : il a tort.)
 - Révision d'API à jour : **`2026-07-15`** — valeur utilisée par
   `functions/lead.js`, et par `scripts/check-outils.mts` qui doit rester alignée.
-- Scopes de la clé privée : `profiles:write`, `lists:write` **et
-  `subscriptions:write`**. L'oubli du troisième provoque un 403 silencieux.
+- L'oubli d'un scope d'abonnement provoque un **403 silencieux** : le profil et
+  l'évènement partent, seul l'abonnement échoue. D'où `scripts/test-klaviyo.mts`,
+  qui teste chaque étape à part et nomme le scope fautif.
 
 #### Ce que le site envoie à Klaviyo
 
