@@ -167,7 +167,12 @@ async function sendKlaviyo(env, p) {
       Authorization: `Klaviyo-API-Key ${env.KLAVIYO_API_KEY}`,
       "Content-Type": "application/json",
       accept: "application/json",
-      revision: "2024-10-15",
+      // Klaviyo fige le comportement de l'API sur ce header : une révision
+      // ancienne continue de fonctionner, mais finit par être retirée.
+      // Dernière stable vérifiée le 12/08/2026.
+      // Scopes requis sur la clé privée : profiles:write, lists:write,
+      // subscriptions:write (le troisième est facile à oublier → 403).
+      revision: "2026-07-15",
     },
     body: JSON.stringify({
       data: {
