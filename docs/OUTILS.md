@@ -141,6 +141,10 @@ qu'au déploiement suivant :
 Le flux de réassort à J+45 est ce qui transforme un acheteur en client
 récurrent. Variables : `KLAVIYO_API_KEY` (clé **privée**) et `KLAVIYO_LIST_ID`.
 
+Scopes à cocher à la création de la clé : `profiles:write`, `lists:read`,
+`subscriptions:write` **et `events:write`** — ce dernier est indispensable
+depuis que le site envoie des évènements (voir plus bas).
+
 Trois points vérifiés le 12 septembre 2026 :
 
 - **Aucune région de données européenne n'existe.** Hébergement aux États-Unis,
@@ -150,6 +154,56 @@ Trois points vérifiés le 12 septembre 2026 :
   `functions/lead.js`, et par `scripts/check-outils.mts` qui doit rester alignée.
 - Scopes de la clé privée : `profiles:write`, `lists:write` **et
   `subscriptions:write`**. L'oubli du troisième provoque un 403 silencieux.
+
+#### Ce que le site envoie à Klaviyo
+
+Branché le 13 septembre 2026 (`functions/lead.js`). Trois écritures, dans cet
+ordre :
+
+1. **Le profil** (`POST /api/profiles/`, puis `PATCH` sur 409 en récupérant
+   `duplicate_profile_id`). Propriétés retenues, toutes B2B :
+   `origine`, `statut_compte`, `optin_marketing`, `siret`, `telephone`,
+   `ville`. Le téléphone est normalisé en E.164 (`06 12 34 56 78` →
+   `+33612345678`) : Klaviyo rejette tout le profil sinon.
+2. **L'évènement** (`POST /api/events/`) — « Demande de compte pro »,
+   « Message de contact » ou « Inscription newsletter ». **C'est lui qui arme
+   les scénarios** : un profil seul ne déclenche rien.
+3. **L'abonnement à la liste** — *uniquement* si la personne a coché l'opt-in
+   marketing.
+
+> ⚠️ **Deux consentements distincts.** La case obligatoire des formulaires
+> autorise le *traitement de la demande*. L'abonnement à la liste de diffusion
+> dépend d'une **seconde case, facultative et décochée par défaut**
+> (`optinMarketing`). Un salon qui demande l'ouverture d'un compte n'a pas
+> demandé à recevoir des offres — les confondre serait de la prospection non
+> consentie. Ne pas « simplifier » en réunissant les deux cases.
+
+#### Segmentation prévue
+
+`statut_compte` vaut `prospect` (newsletter, contact), `demande` (compte pro
+soumis) ou `valide`. Le passage à `valide` **ne peut pas venir du site** : la
+validation est un geste manuel des gérantes dans Shopify (étiquette
+`pro-valide`). C'est le rôle de :
+
+```bash
+source .env.local && npx tsx scripts/sync-klaviyo-pro.mts        # simulation
+source .env.local && npx tsx scripts/sync-klaviyo-pro.mts --reel # applique
+```
+
+Il met `statut_compte` à jour et déclenche « Compte pro validé » — l'évènement
+sur lequel brancher le scénario de bienvenue. À relancer après chaque vague de
+validations (ou en tâche planifiée une fois le domaine en place).
+
+#### Mise en service
+
+```bash
+source .env.local && npx tsx scripts/test-klaviyo.mts votre@email.com
+```
+
+Le script exerce chaque étape séparément et **nomme le scope manquant** en cas
+de 403. Ajouter `--abonner` pour tester aussi l'inscription à la liste (avec
+une adresse à soi). Tant qu'aucune clé n'est posée, les formulaires répondent
+503 avec un message explicite — ils n'affichent jamais un faux « merci ».
 
 ### Étape 5 — Vérification du fichier · ~40 € une fois · **Indy**
 

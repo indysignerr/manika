@@ -194,6 +194,24 @@ export default function LeadForm({ variant, cta, messageLabel, messagePlaceholde
             Votre accord est nécessaire pour que nous puissions traiter la demande.
           </p>
         )}
+
+        {/* Opt-in MARKETING — séparé, facultatif, décoché par défaut.
+            La case ci-dessus autorise le traitement de la demande, pas
+            l'envoi d'offres : les confondre, c'est inscrire à une liste de
+            diffusion quelqu'un qui n'a rien demandé. */}
+        <div className="mt-4 flex items-start gap-2.5">
+          <input
+            id="lf-optin"
+            type="checkbox"
+            checked={Boolean(data.optinMarketing)}
+            onChange={(e) => setData((d) => ({ ...d, optinMarketing: e.target.checked }))}
+            className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-copper"
+          />
+          <label htmlFor="lf-optin" className="text-[10px] leading-relaxed text-ink/60">
+            Je souhaite recevoir les nouveautés, les teintes ajoutées au catalogue et les
+            offres réservées aux salons. Facultatif — désinscription en un clic.
+          </label>
+        </div>
       </div>
 
       {state === "error" && (

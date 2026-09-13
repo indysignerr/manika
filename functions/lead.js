@@ -10,7 +10,16 @@
  *
  * Destinations, activées par variable d'environnement (Pages → Settings → Env vars) :
  *   RESEND_API_KEY + LEAD_TO_EMAIL + LEAD_FROM_EMAIL → notification email
- *   KLAVIYO_API_KEY + KLAVIYO_LIST_ID                → ajout à la liste (flux J+45, relances)
+ *   KLAVIYO_API_KEY                                   → profil + évènement
+ *   KLAVIYO_LIST_ID                                   → abonnement à la liste
+ *
+ * ⚠️ CONSENTEMENT — deux choses distinctes, à ne jamais confondre :
+ *    · l'accord de TRAITEMENT de la demande (obligatoire, case du formulaire) ;
+ *    · l'opt-in MARKETING (`optinMarketing`, facultatif, décoché par défaut).
+ *    Sans opt-in marketing, le profil est créé dans Klaviyo — on a besoin du
+ *    salon pour la segmentation et les messages transactionnels — mais il
+ *    n'est PAS abonné à la liste de diffusion. Abonner un salon parce qu'il a
+ *    demandé l'ouverture d'un compte serait une prospection non consentie.
  *
  * Si AUCUNE destination n'est configurée, on renvoie 503 avec un message clair :
  * mieux vaut un formulaire qui dit « indisponible » qu'un formulaire qui affiche
@@ -42,7 +51,7 @@ export async function onRequest(context) {
 
   const targets = [];
   if (env.RESEND_API_KEY && env.LEAD_TO_EMAIL) targets.push(sendEmail(env, p));
-  if (env.KLAVIYO_API_KEY && env.KLAVIYO_LIST_ID) targets.push(sendKlaviyo(env, p));
+  if (env.KLAVIYO_API_KEY) targets.push(sendKlaviyo(env, p));
 
   if (!targets.length) {
     return json(
@@ -88,7 +97,11 @@ function validate(p) {
   const e = [];
   if (!validEmail(p.email)) e.push("Email invalide.");
 
-  if (p.variant === "newsletter") return e;
+  if (p.variant === "newsletter") {
+    // Une inscription à la diffusion SANS consentement marketing n'a pas de sens.
+    if (!p.optinMarketing) e.push("Votre accord est nécessaire pour recevoir nos communications.");
+    return e;
+  }
 
   if (p.variant === "contact") {
     if (!p.contact?.trim()) e.push("Nom manquant.");
@@ -160,40 +173,135 @@ async function sendEmail(env, p) {
   return true;
 }
 
-async function sendKlaviyo(env, p) {
-  const res = await fetch("https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs", {
-    method: "POST",
-    headers: {
-      Authorization: `Klaviyo-API-Key ${env.KLAVIYO_API_KEY}`,
-      "Content-Type": "application/json",
-      accept: "application/json",
-      // Klaviyo fige le comportement de l'API sur ce header : une révision
-      // ancienne continue de fonctionner, mais finit par être retirée.
-      // Dernière stable vérifiée le 12/08/2026.
-      // Scopes requis sur la clé privée : profiles:write, lists:write,
-      // subscriptions:write (le troisième est facile à oublier → 403).
-      revision: "2026-07-15",
+/* ── Klaviyo ─────────────────────────────────────────────────────────────
+   Klaviyo fige le comportement de l'API sur l'en-tête `revision` : une
+   révision ancienne continue de fonctionner mais finit par être retirée.
+   Dernière stable vérifiée le 12/08/2026.
+
+   Scopes requis sur la clé privée : profiles:write, lists:write ET
+   subscriptions:write — l'oubli du troisième donne un 403 silencieux.
+
+   ⚠️ Klaviyo n'a AUCUNE région de données européenne : hébergement
+      états-unien couvert par le Data Privacy Framework et des clauses
+      contractuelles types. Le DPA doit être signé côté Klaviyo.
+   ──────────────────────────────────────────────────────────────────────── */
+
+const KLAVIYO_REVISION = "2026-07-15";
+
+const enTetesKlaviyo = (env) => ({
+  Authorization: `Klaviyo-API-Key ${env.KLAVIYO_API_KEY}`,
+  "Content-Type": "application/json",
+  accept: "application/json",
+  revision: KLAVIYO_REVISION,
+});
+
+/** Nom de l'évènement déclencheur, côté Klaviyo (Flows → Metric). */
+const METRIQUE = {
+  pro: "Demande de compte pro",
+  contact: "Message de contact",
+  newsletter: "Inscription newsletter",
+};
+
+/**
+ * Les attributs d'un profil. La segmentation visée est B2B : on retient ce
+ * qui distingue un salon (SIRET, ville, statut du compte), pas des critères
+ * grand public.
+ */
+/**
+ * Klaviyo n'accepte un numéro qu'au format E.164 et rejette TOUT le profil
+ * sinon. « 06 12 34 56 78 » devient donc « +33612345678 ». Si le numéro ne
+ * rentre pas dans ce moule, on ne l'envoie pas comme `phone_number` — il
+ * reste disponible en propriété libre.
+ */
+function telephoneE164(brut) {
+  const n = String(brut || "").replace(/[^\d+]/g, "");
+  if (/^\+\d{8,15}$/.test(n)) return n;
+  // Préfixe international composé « 00 », habituel sur les cartes de visite.
+  if (/^00\d{8,15}$/.test(n)) return `+${n.slice(2)}`;
+  if (/^0\d{9}$/.test(n)) return `+33${n.slice(1)}`;
+  if (/^33\d{9}$/.test(n)) return `+${n}`;
+  return null;
+}
+
+function profilKlaviyo(p) {
+  const tel = telephoneE164(p.telephone);
+  return {
+    email: p.email,
+    ...(p.contact ? { first_name: p.contact } : {}),
+    ...(p.salon ? { organization: p.salon } : {}),
+    ...(tel ? { phone_number: tel } : {}),
+    ...(p.ville ? { location: { city: p.ville, country: "France" } } : {}),
+    properties: {
+      origine: p.variant,
+      // Le compte n'est validé qu'à la main par les gérantes, dans Shopify.
+      // scripts/sync-klaviyo-pro.mts fait passer ce statut à « valide ».
+      statut_compte: p.variant === "pro" ? "demande" : "prospect",
+      optin_marketing: Boolean(p.optinMarketing),
+      ...(p.siret ? { siret: String(p.siret).replace(/\s/g, "") } : {}),
+      ...(p.telephone ? { telephone: p.telephone } : {}),
+      ...(p.ville ? { ville: p.ville } : {}),
+      ...(p.message ? { dernier_message: p.message } : {}),
     },
+  };
+}
+
+/**
+ * Crée le profil, ou le met à jour s'il existe déjà.
+ *
+ * Klaviyo répond 409 sur un doublon et donne l'identifiant existant dans
+ * `errors[0].meta.duplicate_profile_id` : on enchaîne alors sur un PATCH.
+ * Renvoie l'identifiant du profil.
+ */
+async function upsertProfil(env, p) {
+  const corps = {
+    data: { type: "profile", attributes: profilKlaviyo(p) },
+  };
+
+  const res = await fetch("https://a.klaviyo.com/api/profiles/", {
+    method: "POST",
+    headers: enTetesKlaviyo(env),
+    body: JSON.stringify(corps),
+  });
+
+  if (res.ok) {
+    const d = await res.json();
+    return d?.data?.id ?? null;
+  }
+
+  if (res.status === 409) {
+    const d = await res.json().catch(() => null);
+    const id = d?.errors?.[0]?.meta?.duplicate_profile_id;
+    if (!id) throw new Error(`Klaviyo 409 sans duplicate_profile_id: ${JSON.stringify(d)}`);
+
+    const maj = await fetch(`https://a.klaviyo.com/api/profiles/${id}/`, {
+      method: "PATCH",
+      headers: enTetesKlaviyo(env),
+      body: JSON.stringify({ data: { type: "profile", id, attributes: profilKlaviyo(p) } }),
+    });
+    if (!maj.ok) throw new Error(`Klaviyo PATCH ${maj.status}: ${await maj.text()}`);
+    return id;
+  }
+
+  throw new Error(`Klaviyo POST profil ${res.status}: ${await res.text()}`);
+}
+
+/** Abonne à la liste de diffusion — UNIQUEMENT sur opt-in marketing explicite. */
+async function abonnerListe(env, p) {
+  const res = await fetch("https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs/", {
+    method: "POST",
+    headers: enTetesKlaviyo(env),
     body: JSON.stringify({
       data: {
         type: "profile-subscription-bulk-create-job",
         attributes: {
+          // Trace du consentement : Klaviyo conserve la date et la source.
+          custom_source: `Site MANIKA.LAB — ${METRIQUE[p.variant] || p.variant}`,
           profiles: {
             data: [
               {
                 type: "profile",
                 attributes: {
                   email: p.email,
-                  // Champs absents selon le variant (newsletter = email seul).
-                  ...(p.salon ? { organization: p.salon } : {}),
-                  ...(p.ville ? { location: { city: p.ville } } : {}),
-                  properties: {
-                    origine: p.variant,
-                    ...(p.siret ? { siret: p.siret } : {}),
-                    ...(p.contact ? { contact: p.contact } : {}),
-                    ...(p.telephone ? { telephone: p.telephone } : {}),
-                    ...(p.message ? { message: p.message } : {}),
-                  },
                   subscriptions: { email: { marketing: { consent: "SUBSCRIBED" } } },
                 },
               },
@@ -204,7 +312,50 @@ async function sendKlaviyo(env, p) {
       },
     }),
   });
-  if (!res.ok) throw new Error(`Klaviyo ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`Klaviyo abonnement ${res.status}: ${await res.text()}`);
+  return true;
+}
+
+/**
+ * Enregistre l'évènement. C'est LUI qui déclenche les scénarios Klaviyo
+ * (accusé de réception, relance à J+45…) : un profil seul ne déclenche rien.
+ */
+async function envoyerEvenement(env, p) {
+  const nom = METRIQUE[p.variant] || "Demande site";
+  const res = await fetch("https://a.klaviyo.com/api/events/", {
+    method: "POST",
+    headers: enTetesKlaviyo(env),
+    body: JSON.stringify({
+      data: {
+        type: "event",
+        attributes: {
+          properties: {
+            origine: p.variant,
+            ...(p.salon ? { salon: p.salon } : {}),
+            ...(p.ville ? { ville: p.ville } : {}),
+            ...(p.siret ? { siret: String(p.siret).replace(/\s/g, "") } : {}),
+            ...(p.sujet ? { sujet: p.sujet } : {}),
+            optin_marketing: Boolean(p.optinMarketing),
+          },
+          metric: { data: { type: "metric", attributes: { name: nom } } },
+          profile: { data: { type: "profile", attributes: { email: p.email } } },
+        },
+      },
+    }),
+  });
+  if (!res.ok) throw new Error(`Klaviyo évènement ${res.status}: ${await res.text()}`);
+  return true;
+}
+
+async function sendKlaviyo(env, p) {
+  // Le profil d'abord : l'évènement et l'abonnement s'y rattachent.
+  await upsertProfil(env, p);
+
+  const suite = [envoyerEvenement(env, p)];
+  // L'abonnement n'a lieu QUE si la personne l'a explicitement demandé.
+  if (p.optinMarketing && env.KLAVIYO_LIST_ID) suite.push(abonnerListe(env, p));
+
+  await Promise.all(suite);
   return true;
 }
 

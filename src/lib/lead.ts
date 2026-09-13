@@ -54,6 +54,15 @@ export type LeadPayload = {
   telephone: string;
   ville: string;
   message?: string;
+  /**
+   * Consentement MARKETING explicite — à ne pas confondre avec l'accord de
+   * traitement de la demande, qui est obligatoire et coché à part.
+   *
+   * ⚠️ Un salon qui demande l'ouverture d'un compte n'a PAS demandé à
+   *    recevoir des offres. Seule cette case autorise l'inscription à la
+   *    liste Klaviyo ; sans elle, le profil est créé sans abonnement.
+   */
+  optinMarketing?: boolean;
   /** Champ piège anti-robot : doit rester vide. */
   website?: string;
 };

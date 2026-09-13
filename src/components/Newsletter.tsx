@@ -3,12 +3,54 @@
 import { FormEvent, useState } from "react";
 import Reveal from "@/components/Reveal";
 
+/**
+ * Inscription à la liste de diffusion.
+ *
+ * ⚠️ Ce formulaire N'ENVOYAIT RIEN : il affichait « Bienvenue dans le cercle »
+ *    sans jamais appeler le serveur — toutes les inscriptions étaient perdues.
+ *    Il poste désormais sur /lead, comme les autres formulaires, et ne
+ *    remercie qu'en cas de succès réel.
+ *
+ * La case à cocher est un consentement MARKETING explicite : c'est elle qui
+ * autorise l'abonnement Klaviyo (`optinMarketing`).
+ */
 export default function Newsletter() {
-  const [sent, setSent] = useState(false);
+  const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [etat, setEtat] = useState<"repos" | "envoi" | "fait" | "erreur">("repos");
+  const [message, setMessage] = useState("");
+  const [piege, setPiege] = useState("");
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSent(true);
+    if (etat === "envoi") return;
+
+    // Piège à robots : rempli = on simule un succès sans rien envoyer.
+    if (piege) {
+      setEtat("fait");
+      return;
+    }
+
+    setEtat("envoi");
+    try {
+      const res = await fetch("/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          variant: "newsletter",
+          email: email.trim(),
+          optinMarketing: consent,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message || "Inscription impossible pour le moment.");
+      }
+      setEtat("fait");
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Inscription impossible pour le moment.");
+      setEtat("erreur");
+    }
   };
 
   return (
@@ -22,8 +64,8 @@ export default function Newsletter() {
             de plus.
           </p>
 
-          {sent ? (
-            <p className="mt-9 font-serif text-lg italic text-ivory">
+          {etat === "fait" ? (
+            <p role="status" className="mt-9 font-serif text-lg italic text-ivory">
               Bienvenue dans le cercle. À très vite.
             </p>
           ) : (
@@ -36,18 +78,41 @@ export default function Newsletter() {
                   id="nl-email"
                   type="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="votre@email.com"
                   className="flex-1 rounded-[2px] border border-ivory/40 bg-transparent px-5 py-3.5 text-sm font-light text-ivory placeholder:text-ivory/50 focus:border-ivory focus:outline-none"
                 />
-                <button type="submit" className="btn-primary !px-7" data-cursor>
-                  S&apos;inscrire
+                <button
+                  type="submit"
+                  disabled={etat === "envoi"}
+                  className="btn-primary !px-7 disabled:opacity-60"
+                  data-cursor
+                >
+                  {etat === "envoi" ? "Envoi…" : "S'inscrire"}
                 </button>
               </div>
+
+              {/* Piège à robots — invisible, jamais rempli par un humain */}
+              <div aria-hidden className="absolute left-[-9999px]">
+                <label htmlFor="nl-website">Ne pas remplir</label>
+                <input
+                  id="nl-website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={piege}
+                  onChange={(e) => setPiege(e.target.value)}
+                />
+              </div>
+
               <div className="mx-auto mt-5 flex max-w-md items-start justify-center gap-2.5 text-left">
                 <input
                   id="nl-consent"
                   type="checkbox"
                   required
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
                   className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-rose"
                 />
                 <label htmlFor="nl-consent" className="text-[10px] leading-relaxed text-ivory/70">
@@ -58,6 +123,12 @@ export default function Newsletter() {
                   . Désinscription en un clic, à tout moment.
                 </label>
               </div>
+
+              {etat === "erreur" && (
+                <p role="alert" className="mx-auto mt-4 max-w-md text-[12px] text-ivory">
+                  {message}
+                </p>
+              )}
             </form>
           )}
         </Reveal>
