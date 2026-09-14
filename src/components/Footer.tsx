@@ -39,14 +39,14 @@ export default function Footer() {
       <div className="container-luxe grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <p className="font-display text-lg font-light tracking-[0.3em] text-ivory">MANIKA.LAB</p>
-          <p className="mt-1 text-[9px] uppercase tracking-wide3 text-ivory/70">
+          <p className="mt-1 text-[9px] uppercase tracking-wide3 text-ivory/85">
             Techniciens de la couleur
           </p>
-          <p className="mt-5 max-w-xs text-[12px] font-light leading-relaxed text-ivory/70">
+          <p className="mt-5 max-w-xs text-[12px] font-light leading-relaxed text-ivory/85">
             Coloration végétale, bio vegan et sans ammoniaque, avec les consommables et les soins
             qui vont avec. Distribution directe aux salons et barbershops, en tarifs HT.
           </p>
-          <div className="mt-4 flex gap-4 text-[10px] uppercase tracking-wide2 text-ivory/70">
+          <div className="mt-4 flex gap-4 text-[10px] uppercase tracking-wide2 text-ivory/85">
             {reseauxActifs().map((r) => (
               <a
                 key={r.nom}
@@ -59,13 +59,13 @@ export default function Footer() {
               </a>
             ))}
           </div>
-          <p className="mt-8 max-w-xs text-[11px] font-light leading-relaxed text-ivory/60">
+          <p className="mt-8 max-w-xs text-[11px] font-light leading-relaxed text-ivory/85">
             Maison sœur ·{" "}
             <a
               href="https://nayumatea.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center text-ivory/80 underline-offset-2 transition-colors hover:text-ivory hover:underline"
+              className="inline-flex min-h-11 items-center text-ivory/85 underline-offset-2 transition-colors hover:text-ivory hover:underline"
             >
               Découvrez NAYUMA — thé &amp; rituel capillaire ↗
             </a>
@@ -74,13 +74,13 @@ export default function Footer() {
 
         {COLS.map((col) => (
           <nav key={col.title} aria-label={col.title}>
-            <p className="mb-5 text-[10px] uppercase tracking-wide3 text-ivory/70">{col.title}</p>
+            <p className="mb-5 text-[10px] uppercase tracking-wide3 text-ivory/85">{col.title}</p>
             <ul>
               {col.links.map((l) => (
                 <li key={l.label}>
                   <Link
                     href={l.href}
-                    className="flex min-h-11 w-full items-center text-[12px] font-light text-ivory/80 transition-colors hover:text-ivory"
+                    className="flex min-h-11 w-full items-center text-[12px] font-light text-ivory/85 transition-colors hover:text-ivory"
                   >
                     {l.label}
                   </Link>
@@ -92,7 +92,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-ivory/15">
-        <div className="container-luxe flex flex-col items-center justify-between gap-4 py-6 text-[10px] tracking-wider text-ivory/60 md:flex-row">
+        <div className="container-luxe flex flex-col items-center justify-between gap-4 py-6 text-[10px] tracking-wider text-ivory/85 md:flex-row">
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
             <span>© 2026 MANIKA.LAB</span>
             <span aria-hidden>·</span>

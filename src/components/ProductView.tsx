@@ -306,7 +306,7 @@ export default function ProductView({ product, related = [] }: { product: Produc
               handle={product.slug}
               variantId={size?.variantId}
               className="text-sm text-ivory"
-              classeMasque="text-[11px] font-light text-ivory/75"
+              classeMasque="text-[11px] font-light text-ivory/85"
             />
             <button
               onClick={addToCart}

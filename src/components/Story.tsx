@@ -21,7 +21,7 @@ export default function Story() {
               className="absolute left-1/2 top-1/2 w-3/5 -translate-x-1/2 -translate-y-1/2 opacity-90"
             />
             <div className="absolute inset-x-0 bottom-0 bg-copper-deep/80 px-6 py-4 backdrop-blur-sm">
-              <p className="text-[10px] uppercase tracking-wide3 text-ivory/80">
+              <p className="text-[10px] uppercase tracking-wide3 text-ivory/85">
                 Formulé en Italie — laboratoire partenaire
               </p>
             </div>

@@ -211,21 +211,23 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
             return (
               <li
                 key={v.variantId}
-                className={`flex items-center gap-3.5 border-b border-taupe/30 py-3 ${
-                  v.disponible ? "" : "opacity-45"
-                }`}
+                /* ⚠️ Pas d'opacité sur la LIGNE : à 45 % le texte tombait sous
+                   le seuil de contraste et devenait illisible. L'indisponibilité
+                   se lit au libellé « Épuisée » et à la pastille estompée — le
+                   nom de la teinte, lui, reste net. */
+                className="flex items-center gap-3.5 border-b border-taupe/30 py-3"
               >
                 {v.image && imagesUniques.has(v.image) ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={v.image}
                     alt=""
-                    className="h-9 w-9 shrink-0 rounded-full object-cover"
+                    className={`h-9 w-9 shrink-0 rounded-full object-cover ${v.disponible ? "" : "opacity-40"}`}
                   />
                 ) : (
                   <span
                     aria-hidden
-                    className="h-9 w-9 shrink-0 rounded-full ring-1 ring-inset ring-black/10"
+                    className={`h-9 w-9 shrink-0 rounded-full ring-1 ring-inset ring-black/10 ${v.disponible ? "" : "opacity-40"}`}
                     style={{ background: swatch(teinte) }}
                   />
                 )}
@@ -236,7 +238,7 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
                   <p className="truncate text-[13px] text-copper">
                     <span className="font-medium">{teinte.code || teinte.nom}</span>
                     {teinte.code && teinte.nom && (
-                      <span className="ml-2 font-light text-ink/70">{teinte.nom}</span>
+                      <span className="ml-2 font-light text-ink/85">{teinte.nom}</span>
                     )}
                   </p>
                   <p className="mt-0.5 text-[11px] font-light text-taupe-deep">

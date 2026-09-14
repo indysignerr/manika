@@ -138,7 +138,7 @@ export default function Page() {
       <section className="bg-copper py-20 text-ivory md:py-24">
         <div className="container-luxe">
           <Reveal className="text-center">
-            <p className="text-[10px] uppercase tracking-wide3 text-ivory/75">La règle du labo</p>
+            <p className="text-[10px] uppercase tracking-wide3 text-ivory/85">La règle du labo</p>
             <h2 className="heading mt-3 text-3xl !text-ivory md:text-4xl">
               Jamais dans nos formules
             </h2>
@@ -152,7 +152,7 @@ export default function Page() {
                   </span>
                   <div>
                     <p className="text-[13px] uppercase tracking-wide2">{b.name}</p>
-                    <p className="mt-1 text-[12px] font-light text-ivory/70">{b.why}</p>
+                    <p className="mt-1 text-[12px] font-light text-ivory/85">{b.why}</p>
                   </div>
                 </div>
               </Reveal>

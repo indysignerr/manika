@@ -57,9 +57,9 @@ export default function Newsletter() {
     <section className="bg-copper py-24 text-ivory md:py-28">
       <div className="container-luxe max-w-2xl text-center">
         <Reveal>
-          <p className="text-[10px] uppercase tracking-wide3 text-ivory/75">Cercle privé</p>
+          <p className="text-[10px] uppercase tracking-wide3 text-ivory/85">Cercle privé</p>
           <h2 className="heading mt-3 text-3xl !text-ivory md:text-4xl">Recevoir nos rituels</h2>
-          <p className="mx-auto mt-5 max-w-md text-[13px] font-light leading-relaxed text-ivory/75">
+          <p className="mx-auto mt-5 max-w-md text-[13px] font-light leading-relaxed text-ivory/85">
             Conseils de coiffage, nouvelles teintes et offres réservées — une fois par mois, rien
             de plus.
           </p>
@@ -81,7 +81,7 @@ export default function Newsletter() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="votre@email.com"
-                  className="flex-1 rounded-[2px] border border-ivory/40 bg-transparent px-5 py-3.5 text-sm font-light text-ivory placeholder:text-ivory/50 focus:border-ivory focus:outline-none"
+                  className="flex-1 rounded-[2px] border border-ivory/40 bg-transparent px-5 py-3.5 text-sm font-light text-ivory placeholder:text-ivory/85 focus:border-ivory focus:outline-none"
                 />
                 <button
                   type="submit"
@@ -115,7 +115,7 @@ export default function Newsletter() {
                   onChange={(e) => setConsent(e.target.checked)}
                   className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-rose"
                 />
-                <label htmlFor="nl-consent" className="text-[10px] leading-relaxed text-ivory/70">
+                <label htmlFor="nl-consent" className="text-[10px] leading-relaxed text-ivory/85">
                   J&apos;accepte de recevoir les communications MANIKA.LAB et j&apos;ai lu la{" "}
                   <a href="/politique-de-confidentialite/" className="underline hover:text-ivory">
                     politique de confidentialité

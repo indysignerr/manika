@@ -187,7 +187,7 @@ export default function CatalogueView({
                   >
                     {l.label}
                     {typeof l.n === "number" && (
-                      <span className={l.actif ? "ml-2 text-ivory/70" : "ml-2 text-taupe-deep"}>{l.n}</span>
+                      <span className={l.actif ? "ml-2 text-ivory/85" : "ml-2 text-taupe-deep"}>{l.n}</span>
                     )}
                   </Link>
                 ))}
@@ -289,7 +289,7 @@ export default function CatalogueView({
                             data-cursor
                           >
                             {valeur}
-                            <span className={actif ? "ml-2 text-ivory/70" : "ml-2 text-taupe-deep"}>{n}</span>
+                            <span className={actif ? "ml-2 text-ivory/85" : "ml-2 text-taupe-deep"}>{n}</span>
                           </button>
                         );
                       })}

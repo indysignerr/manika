@@ -156,9 +156,9 @@ export default function Page() {
       <section className="bg-copper py-20 text-ivory md:py-24">
         <div className="container-luxe grid items-center gap-12 md:grid-cols-[1.1fr_0.9fr]">
           <Reveal>
-            <p className="text-[10px] uppercase tracking-wide3 text-ivory/75">L&apos;essentiel</p>
+            <p className="text-[10px] uppercase tracking-wide3 text-ivory/85">L&apos;essentiel</p>
             <h2 className="heading mt-3 text-3xl !text-ivory md:text-4xl">La routine complète</h2>
-            <p className="mt-5 max-w-md text-[14px] font-light leading-relaxed text-ivory/80">
+            <p className="mt-5 max-w-md text-[14px] font-light leading-relaxed text-ivory/85">
               Les trois gestes réunis — coloration, shampoing kératine et texture. Composez la
               routine complète pour votre salon depuis la boutique professionnelle.
             </p>
