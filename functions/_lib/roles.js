@@ -10,6 +10,8 @@
  *   3. à défaut, visiteur
  */
 import { cookie, jetonValide } from "./apercu.js";
+import { lireJetonSession, secretSession } from "./session.js";
+import { salonValide } from "./clients.js";
 
 export const VISITEUR = "visiteur";
 export const PRO = "pro";
@@ -25,10 +27,18 @@ export async function resoudreRole(request, env) {
     };
   }
 
-  // 2. Session client réelle — branchée à l'étape « Customer Account API ».
-  //    Tant qu'elle n'existe pas, on retombe volontairement sur visiteur :
-  //    mieux vaut trop peu montrer que trop.
-  // TODO(session) : vérifier le jeton client puis lire l'étiquette pro-valide.
+  // 2. Session réelle du salon, ouverte par son lien d'accès personnel.
+  //    Le jeton signé donne l'identifiant client ; l'étiquette `pro-valide`
+  //    est REVÉRIFIÉE auprès de Shopify à chaque fois (avec un cache de 5 min),
+  //    pour qu'un retrait d'étiquette coupe l'accès sans attendre l'expiration
+  //    du cookie.
+  const idClient = await lireJetonSession(
+    cookie(request, "manika_session"),
+    secretSession(env)
+  );
+  if (idClient && (await salonValide(env, idClient))) {
+    return { role: PRO, apercu: false, client: idClient };
+  }
 
   // 3.
   return { role: VISITEUR, apercu: false };
