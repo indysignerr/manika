@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://manika.fr/sitemap.xml
+# Le catalogue est fermé : les tarifs ne sont jamais dans le HTML, les pages
+# produit peuvent donc être indexées sans rien divulguer.
+Disallow: /apercu
+Disallow: /api/
+
+Sitemap: https://manika-lab.com/sitemap.xml

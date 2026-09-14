@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { catalogAllHandles, catalogProduct, catalogComplements } from "@/lib/catalog";
 import ProductView from "@/components/ProductView";
+import { ProduitJsonLd, FilAriane } from "@/components/DonneesStructurees";
 
 export async function generateStaticParams() {
   const handles = await catalogAllHandles();
@@ -26,5 +27,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   // Les tarifs ne sont pas ici : la fiche et les cartes associées les
   // réclament elles-mêmes à la passerelle après chargement.
-  return <ProductView product={product} related={related} />;
+  return (
+    <>
+      <ProduitJsonLd produit={product} />
+      <FilAriane
+        items={[
+          { nom: "Accueil", chemin: "/" },
+          { nom: "Boutique", chemin: "/boutique/" },
+          { nom: product.name, chemin: `/produit/${product.slug}/` },
+        ]}
+      />
+      <ProductView product={product} related={related} />
+    </>
+  );
 }

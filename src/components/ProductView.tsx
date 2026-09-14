@@ -46,10 +46,13 @@ function reassurancesReelles() {
  * Structure imposée par la cliente (point du 10/08) :
  * Description · Conseil aux pros · Ingrédients — et PAS de bloc
  * « Livraison & retours », retiré à sa demande.
+ *
+ * ⚠️ « Description » N'EST PLUS dans l'accordéon : elle est déjà affichée en
+ *    entier juste sous le titre, et la répéter mot pour mot deux fois sur la
+ *    même page donnait un doublon visible.
  */
 const ACCORDION = (p: Product) =>
   [
-    { title: "Description", body: p.desc },
     { title: "Conseil aux pros", body: p.usage },
     { title: "Ingrédients", body: p.inci },
   ].filter((i) => i.body && i.body.trim().length > 0);
