@@ -155,7 +155,7 @@ export default function CollectionView({
                   key={c.slug}
                   href={`/boutique/${c.slug}/`}
                   aria-current={c.slug === collection.slug ? "page" : undefined}
-                  className={`rounded-[2px] border px-5 py-2.5 text-[10px] uppercase tracking-wide2 transition-colors duration-300 ${
+                  className={`rounded-[2px] border px-5 py-3.5 text-[10px] uppercase tracking-wide2 transition-colors duration-300 ${
                     c.slug === collection.slug
                       ? "border-copper bg-copper text-ivory"
                       : "border-taupe/60 text-copper hover:border-copper"
@@ -202,13 +202,13 @@ export default function CollectionView({
                     {f.valeurs.map(({ valeur, n }) => (
                       <label
                         key={valeur}
-                        className="flex cursor-pointer items-center gap-2.5 text-[13px] font-light text-ink/80 transition-colors hover:text-copper"
+                        className="flex min-h-11 cursor-pointer items-center gap-2.5 text-[13px] font-light text-ink/80 transition-colors hover:text-copper"
                       >
                         <input
                           type="checkbox"
                           checked={(actifs[f.cle] ?? []).includes(valeur)}
                           onChange={() => basculer(f.cle, valeur)}
-                          className="h-3.5 w-3.5 accent-copper"
+                          className="h-4 w-4 shrink-0 accent-copper"
                         />
                         <span className="flex-1">{valeur}</span>
                         <span className="text-[11px] text-taupe-deep">{n}</span>
@@ -270,7 +270,7 @@ export default function CollectionView({
                   </div>
                   <label className="flex items-center gap-3 text-[10px] uppercase tracking-wide2 text-copper">
                     Trier
-                    <select value={sort} onChange={(e) => setSort(e.target.value as SortId)} className="rounded-[2px] border border-taupe/60 bg-transparent px-3 py-2 text-[11px] tracking-wider text-copper focus:border-copper focus:outline-none">
+                    <select value={sort} onChange={(e) => setSort(e.target.value as SortId)} className="min-h-11 rounded-[2px] border border-taupe/60 bg-transparent px-3 py-2 text-[11px] tracking-wider text-copper focus:border-copper focus:outline-none">
                       {sorts.map((s) => (
                         <option key={s.id} value={s.id}>{s.label}</option>
                       ))}

@@ -67,7 +67,7 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
       <div className="mt-4">
         <p className="text-[10px] uppercase tracking-wide2 text-bronze">{product.category}</p>
-        <Link href={`/produit/${product.slug}/`} className="heading-produit mt-1 block text-[14px] leading-snug">
+        <Link href={`/produit/${product.slug}/`} className="heading-produit mt-1 block py-1 text-[14px] leading-snug">
           {product.name}
         </Link>
         <Prix

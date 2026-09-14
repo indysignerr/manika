@@ -76,7 +76,7 @@ export default async function Page() {
                 <Link
                   key={u.slug}
                   href={`/univers/${u.slug}/`}
-                  className="rounded-[2px] border border-taupe/60 px-5 py-2.5 text-[10px] uppercase tracking-wide2 text-copper transition-colors hover:border-copper"
+                  className="rounded-[2px] border border-taupe/60 px-5 py-3.5 text-[10px] uppercase tracking-wide2 text-copper transition-colors hover:border-copper"
                   data-cursor
                 >
                   {u.valeur}

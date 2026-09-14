@@ -69,7 +69,7 @@ export default function BoutiqueLanding({
                     <Link
                       key={r.slug}
                       href={`/rayon/${r.slug}/`}
-                      className="rounded-[2px] border border-taupe/60 px-5 py-2.5 text-[11px] tracking-wide text-copper transition-colors duration-300 hover:border-copper"
+                      className="rounded-[2px] border border-taupe/60 px-5 py-3.5 text-[11px] tracking-wide text-copper transition-colors duration-300 hover:border-copper"
                       data-cursor
                     >
                       {r.valeur}
@@ -78,7 +78,7 @@ export default function BoutiqueLanding({
                   ))}
                   <Link
                     href={`/univers/${u.slug}/`}
-                    className="rounded-[2px] border border-copper bg-copper px-5 py-2.5 text-[11px] tracking-wide text-ivory transition-colors duration-300 hover:bg-copper-deep"
+                    className="rounded-[2px] border border-copper bg-copper px-5 py-3.5 text-[11px] tracking-wide text-ivory transition-colors duration-300 hover:bg-copper-deep"
                     data-cursor
                   >
                     Tout voir
@@ -102,7 +102,7 @@ export default function BoutiqueLanding({
                 <Link
                   key={m.slug}
                   href={`/marques/${m.slug}/`}
-                  className="rounded-[2px] border border-taupe/60 px-5 py-2.5 text-[11px] tracking-wide text-copper transition-colors duration-300 hover:border-copper"
+                  className="rounded-[2px] border border-taupe/60 px-5 py-3.5 text-[11px] tracking-wide text-copper transition-colors duration-300 hover:border-copper"
                   data-cursor
                 >
                   {m.valeur}

@@ -31,11 +31,11 @@ const NAV_EDITO = [
 ];
 
 const linkCls =
-  "whitespace-nowrap text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60";
+  "inline-flex min-h-11 items-center whitespace-nowrap text-[11px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60";
 
 /** Un onglet de la barre de rayons, avec son méga-menu éventuel. */
 const ongletCls =
-  "whitespace-nowrap py-3 text-[10px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60";
+  "inline-flex min-h-11 items-center whitespace-nowrap text-[10px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60";
 
 export default function Header({ navigation }: { navigation: Navigation }) {
   const { univers, marques } = navigation;
@@ -64,7 +64,7 @@ export default function Header({ navigation }: { navigation: Navigation }) {
         <div className="container-luxe grid grid-cols-[1fr_auto_1fr] items-center gap-6 py-4">
           <div className="flex items-center gap-3">
             <button
-              className="p-1 text-copper md:hidden"
+              className="-ml-2.5 flex h-11 w-11 items-center justify-center text-copper md:hidden"
               onClick={() => setMenu(true)}
               aria-label="Ouvrir le menu"
             >
@@ -82,7 +82,7 @@ export default function Header({ navigation }: { navigation: Navigation }) {
             </nav>
           </div>
 
-          <Link href="/" aria-label="MANIKA.LAB — Accueil" data-cursor>
+          <Link href="/" aria-label="MANIKA.LAB — Accueil" data-cursor className="inline-flex min-h-11 items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/wordmark.png" alt="MANIKA.LAB" className="h-6 w-auto md:h-7" />
           </Link>
@@ -126,7 +126,7 @@ export default function Header({ navigation }: { navigation: Navigation }) {
               href="/recherche/"
               aria-label="Rechercher un produit"
               title="Rechercher"
-              className="p-1 transition-opacity hover:opacity-60 lg:hidden"
+              className="flex h-11 w-11 items-center justify-center transition-opacity hover:opacity-60 lg:hidden"
             >
               <Search size={17} strokeWidth={1.5} />
             </Link>
@@ -134,18 +134,18 @@ export default function Header({ navigation }: { navigation: Navigation }) {
               href={accountUrl}
               aria-label="S'identifier — mon compte"
               title="S'identifier · Mon compte"
-              className="hidden p-1 transition-opacity hover:opacity-60 md:block"
+              className="hidden h-11 w-11 items-center justify-center transition-opacity hover:opacity-60 md:flex"
             >
               <User size={17} strokeWidth={1.5} />
             </a>
             <button
               onClick={() => setOpen(true)}
               aria-label={`Ouvrir le panier — ${count} article${count > 1 ? "s" : ""}`}
-              className="relative p-1 transition-opacity hover:opacity-60"
+              className="relative -mr-2.5 flex h-11 w-11 items-center justify-center transition-opacity hover:opacity-60"
             >
               <ShoppingBag size={17} strokeWidth={1.5} />
               {count > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-copper text-[9px] text-ivory">
+                <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-copper text-[9px] text-ivory">
                   {count}
                 </span>
               )}
@@ -362,7 +362,7 @@ export default function Header({ navigation }: { navigation: Navigation }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setMenu(false)}
-                className="mt-2 inline-flex items-center gap-1.5 text-[12px] uppercase tracking-wide2 text-bronze"
+                className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-[12px] uppercase tracking-wide2 text-bronze"
               >
                 Découvrez NAYUMA — thé &amp; rituel capillaire <span aria-hidden>↗</span>
               </a>
