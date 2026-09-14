@@ -19,6 +19,9 @@ export type Product = {
   usage: string;
   inci: string;
   image: string;
+  /** Dimensions natives de l'image, quand Shopify les connaît. */
+  imageLargeur?: number | null;
+  imageHauteur?: number | null;
   /**
    * Facettes B2B issues des métachamps Shopify `manika.*` : marque, univers,
    * type, volume d'oxydant, ammoniaque, reflets… Une clé peut porter

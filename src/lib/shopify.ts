@@ -79,7 +79,7 @@ export type ShopifyProduct = {
   descriptionHtml: string;
   productType: string;
   tags: string[];
-  featuredImage: { url: string; altText: string | null } | null;
+  featuredImage: { url: string; altText: string | null; width: number | null; height: number | null } | null;
   priceRange: { minVariantPrice: ShopifyMoney };
   variants: { nodes: ShopifyVariant[] };
 };
@@ -119,7 +119,7 @@ const PRODUCT_FIELDS = /* GraphQL */ `
   metafields(identifiers: [
 ${FACETTES.map((f) => `{ namespace: "manika", key: "${f.cle}" }`).join("\n    ")}
   ]) { key value }
-  featuredImage { url altText }
+  featuredImage { url altText width height }
   priceRange { minVariantPrice { amount currencyCode } }
   variants(first: 100) {
     nodes {
@@ -363,6 +363,12 @@ export function toSiteProduct(sp: ShopifyProduct): Product {
     usage: "",
     inci: "",
     image: sp.featuredImage?.url ?? "/images/logo-mark.png",
+    // Dimensions natives : elles servent à ne JAMAIS agrandir une image au-delà
+    // de sa taille réelle (les visuels fournisseurs font parfois 190 px de
+    // large et deviennent flous étirés dans une vignette de 269 px), et à
+    // réserver la place avant chargement.
+    imageLargeur: sp.featuredImage?.width ?? null,
+    imageHauteur: sp.featuredImage?.height ?? null,
     available: variants.some((v) => v.availableForSale),
   };
 }
