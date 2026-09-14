@@ -86,7 +86,7 @@ export default function Newsletter() {
                 <button
                   type="submit"
                   disabled={etat === "envoi"}
-                  className="btn-primary !px-7 disabled:opacity-60"
+                  className="btn-clair !px-7 disabled:opacity-60"
                   data-cursor
                 >
                   {etat === "envoi" ? "Envoi…" : "S'inscrire"}

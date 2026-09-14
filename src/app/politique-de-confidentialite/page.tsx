@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Politique de confidentialité — MA
 export default function Page() {
   return (
     <div className="container-luxe max-w-2xl pb-24 pt-36">
-      <Link href="/" className="text-[10px] uppercase tracking-wide2 text-rose">
+      <Link href="/" className="text-[10px] uppercase tracking-wide2 text-bronze">
         ← Retour à l&apos;accueil
       </Link>
       <h1 className="heading mt-6 text-3xl">Politique de confidentialité</h1>

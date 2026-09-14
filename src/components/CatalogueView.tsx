@@ -158,7 +158,7 @@ export default function CatalogueView({
                   {f.href ? (
                     <Link href={f.href} className="hover:text-copper">{f.label}</Link>
                   ) : (
-                    <span className="text-rose">{f.label}</span>
+                    <span className="text-bronze">{f.label}</span>
                   )}
                 </span>
               ))}
@@ -255,7 +255,7 @@ export default function CatalogueView({
               )}
 
               {aDesFiltres && (
-                <button onClick={reinitialiser} className="mt-8 text-[10px] uppercase tracking-wide2 text-rose underline-offset-4 hover:underline">
+                <button onClick={reinitialiser} className="mt-8 text-[10px] uppercase tracking-wide2 text-bronze underline-offset-4 hover:underline">
                   Tout réinitialiser
                 </button>
               )}

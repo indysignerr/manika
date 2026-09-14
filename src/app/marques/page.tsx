@@ -32,7 +32,7 @@ export default async function Page() {
         <Reveal>
           <nav className="text-[10px] uppercase tracking-wide2 text-taupe-deep" aria-label="Fil d'ariane">
             <Link href="/boutique/" className="hover:text-copper">Boutique</Link> /{" "}
-            <span className="text-rose">Nos marques</span>
+            <span className="text-bronze">Nos marques</span>
           </nav>
           <h1 className="heading mt-4 text-4xl leading-[1.1] md:text-5xl">Nos marques</h1>
           <p className="mt-4 max-w-lg text-[13px] font-light leading-relaxed text-ink/75">
@@ -57,7 +57,7 @@ export default async function Page() {
                     {(universParMarque.get(m.valeur) ?? []).join(" · ") || "Catalogue en cours"}
                   </p>
                 </div>
-                <p className="mt-7 text-[10px] uppercase tracking-wide2 text-rose">
+                <p className="mt-7 text-[10px] uppercase tracking-wide2 text-bronze">
                   {m.n} référence{m.n > 1 ? "s" : ""} →
                 </p>
               </Link>

@@ -34,7 +34,7 @@ export default function PromotionsView({ produits }: { produits: Product[] }) {
         <Reveal>
           <nav className="text-[10px] uppercase tracking-wide2 text-taupe-deep" aria-label="Fil d'ariane">
             <Link href="/boutique/" className="hover:text-copper">Boutique</Link> /{" "}
-            <span className="text-rose">Promotions</span>
+            <span className="text-bronze">Promotions</span>
           </nav>
           <h1 className="heading mt-4 text-4xl leading-[1.1] md:text-5xl">Promotions</h1>
           <p className="mt-4 max-w-lg text-[13px] font-light leading-relaxed text-ink/75">

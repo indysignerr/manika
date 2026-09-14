@@ -112,7 +112,7 @@ export default function CommandeRapideView({ index }: { index: IndexEntry[] }) {
       <div className="container-luxe pb-8">
         <nav className="text-[10px] uppercase tracking-wide2 text-taupe-deep" aria-label="Fil d'ariane">
           <Link href="/boutique/" className="hover:text-copper">Boutique</Link> /{" "}
-          <span className="text-rose">Commande rapide</span>
+          <span className="text-bronze">Commande rapide</span>
         </nav>
         <h1 className="heading mt-4 text-4xl leading-[1.1] md:text-5xl">Commande rapide</h1>
         <p className="mt-4 max-w-xl text-[13px] font-light leading-relaxed text-ink/75">

@@ -145,7 +145,7 @@ export default function Header({ navigation }: { navigation: Navigation }) {
             >
               <ShoppingBag size={17} strokeWidth={1.5} />
               {count > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose text-[9px] text-ivory">
+                <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-copper text-[9px] text-ivory">
                   {count}
                 </span>
               )}
@@ -186,7 +186,7 @@ export default function Header({ navigation }: { navigation: Navigation }) {
                   </ul>
                   <Link
                     href="/marques/"
-                    className="mt-5 block border-t border-taupe/40 pt-3.5 text-[10px] uppercase tracking-wide2 text-rose transition-opacity hover:opacity-60"
+                    className="mt-5 block border-t border-taupe/40 pt-3.5 text-[10px] uppercase tracking-wide2 text-bronze transition-opacity hover:opacity-60"
                   >
                     Toutes les marques →
                   </Link>
@@ -218,7 +218,7 @@ export default function Header({ navigation }: { navigation: Navigation }) {
                       </ul>
                       <Link
                         href={`/univers/${u.slug}/`}
-                        className="mt-5 block border-t border-taupe/40 pt-3.5 text-[10px] uppercase tracking-wide2 text-rose transition-opacity hover:opacity-60"
+                        className="mt-5 block border-t border-taupe/40 pt-3.5 text-[10px] uppercase tracking-wide2 text-bronze transition-opacity hover:opacity-60"
                       >
                         Tout {u.menu.toLowerCase()} →
                       </Link>
@@ -275,7 +275,7 @@ export default function Header({ navigation }: { navigation: Navigation }) {
                 <Link
                   href="/commande-rapide/"
                   onClick={() => setMenu(false)}
-                  className="flex items-center justify-between border border-rose px-5 py-4 text-[12px] uppercase tracking-wide2 text-rose"
+                  className="flex items-center justify-between border border-rose px-5 py-4 text-[12px] uppercase tracking-wide2 text-bronze"
                 >
                   Commande rapide <span aria-hidden>→</span>
                 </Link>

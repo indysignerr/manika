@@ -25,7 +25,7 @@ const RITUELS = [
       "Laisser poser 35 min, émulsionner puis rincer abondamment",
     ],
     bg: "bg-ivory-2",
-    numColor: "text-taupe",
+    numColor: "text-taupe-deep",
   },
   {
     num: "02",
@@ -42,7 +42,7 @@ const RITUELS = [
       "Rincer à l'eau tiède, renouveler si nécessaire",
     ],
     bg: "bg-ivory-3",
-    numColor: "text-rose",
+    numColor: "text-bronze",
   },
   {
     num: "03",

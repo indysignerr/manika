@@ -74,11 +74,21 @@ input[type="search"]::-webkit-search-decoration {
   .heading-produit {
     @apply font-display font-light normal-case tracking-[0.015em] text-copper;
   }
+  /* Le bronze remplace le rose sur tous les petits libellés : le rose-gold
+     ne donne que 2,68:1 sur ivoire, il échoue même au seuil des grands
+     textes. Le bronze est à 5,05:1 et appartient déjà à la palette. */
   .kicker {
-    @apply text-[10px] font-normal uppercase tracking-wide3 text-rose md:text-[11px];
+    @apply text-[10px] font-normal uppercase tracking-wide3 text-bronze md:text-[11px];
   }
+  /* Fond CUIVRE et non rose : ivoire sur rose ne donnait que 2,68:1, le
+     bouton principal du site était le pire contraste de la page. Sur cuivre,
+     5,99:1. Le rose reste pour le décoratif, jamais sous du texte. */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-[2px] bg-rose px-8 py-4 text-[11px] font-normal uppercase tracking-wide2 text-ivory transition-colors duration-300 hover:bg-rose-hover;
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] bg-copper px-8 py-4 text-[11px] font-normal uppercase tracking-wide2 text-ivory transition-colors duration-300 hover:bg-copper-deep;
+  }
+  /* Variante pour les sections à fond cuivre, où btn-primary serait invisible. */
+  .btn-clair {
+    @apply inline-flex items-center justify-center gap-2 rounded-[2px] bg-ivory px-8 py-4 text-[11px] font-normal uppercase tracking-wide2 text-copper transition-colors duration-300 hover:bg-ivory-2;
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center rounded-[2px] border border-copper px-6 py-3 text-[10px] font-normal uppercase tracking-wide2 text-copper transition-colors duration-300 hover:bg-copper hover:text-ivory;

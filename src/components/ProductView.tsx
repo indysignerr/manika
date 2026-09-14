@@ -120,7 +120,7 @@ export default function ProductView({ product, related = [] }: { product: Produc
         {/* Détails */}
         <div>
           <nav className="text-[10px] uppercase tracking-wide2 text-taupe-deep" aria-label="Fil d'ariane">
-            Accueil / Boutique / <span className="text-rose">{product.name}</span>
+            Accueil / Boutique / <span className="text-bronze">{product.name}</span>
           </nav>
 
           <p className="kicker mt-6">{product.category}</p>
@@ -309,7 +309,7 @@ export default function ProductView({ product, related = [] }: { product: Produc
               onClick={addToCart}
               disabled={!peutAcheter}
               title={peutAcheter ? undefined : "Réservé aux comptes professionnels validés"}
-              className="rounded-[2px] bg-rose px-6 py-2.5 text-[10px] uppercase tracking-wide2 text-ivory transition-colors hover:bg-rose-hover disabled:opacity-45 disabled:hover:bg-rose"
+              className="rounded-[2px] bg-ivory px-6 py-2.5 text-[10px] uppercase tracking-wide2 text-copper-deep transition-colors hover:bg-ivory-2 disabled:opacity-45 disabled:hover:bg-ivory"
               data-cursor
             >
               <Lock size={11} strokeWidth={1.5} className="mr-2 inline" aria-hidden />

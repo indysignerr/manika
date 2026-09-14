@@ -38,7 +38,7 @@ export default function Footer() {
       <div className="container-luxe grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <p className="font-display text-lg font-light tracking-[0.3em] text-ivory">MANIKA.LAB</p>
-          <p className="mt-1 text-[9px] uppercase tracking-wide3 text-rose">
+          <p className="mt-1 text-[9px] uppercase tracking-wide3 text-ivory/70">
             Techniciens de la couleur
           </p>
           <p className="mt-5 max-w-xs text-[12px] font-light leading-relaxed text-ivory/70">
@@ -56,7 +56,7 @@ export default function Footer() {
               href="https://nayumatea.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-rose underline-offset-2 transition-colors hover:text-ivory hover:underline"
+              className="text-ivory/80 underline-offset-2 transition-colors hover:text-ivory hover:underline"
             >
               Découvrez NAYUMA — thé &amp; rituel capillaire ↗
             </a>
@@ -65,7 +65,7 @@ export default function Footer() {
 
         {COLS.map((col) => (
           <nav key={col.title} aria-label={col.title}>
-            <p className="mb-5 text-[10px] uppercase tracking-wide3 text-rose">{col.title}</p>
+            <p className="mb-5 text-[10px] uppercase tracking-wide3 text-ivory/70">{col.title}</p>
             <ul className="space-y-2.5">
               {col.links.map((l) => (
                 <li key={l.label}>

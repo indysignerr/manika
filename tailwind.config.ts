@@ -9,7 +9,11 @@ const config: Config = {
         copper: { DEFAULT: "#82503C", deep: "#6B4230" },
         rose: { DEFAULT: "#B68D78", hover: "#C89678" },
         bronze: "#8A5F2A",
-        taupe: { DEFAULT: "#C8BEB4", deep: "#8A7E70" },
+        // `deep` porte tout le petit texte du site. À #8A7E70 il ne donnait
+        // que 3,58:1 sur ivoire. Calé sur le fond le PLUS sombre de la palette
+        // (ivory-3) : 4,51:1 dessus, 5,24:1 sur l'ivoire clair.
+        // `DEFAULT` reste très clair — réservé aux bordures, jamais au texte.
+        taupe: { DEFAULT: "#C8BEB4", deep: "#6D6458" },
         ink: "#4A3428",
       },
       fontFamily: {

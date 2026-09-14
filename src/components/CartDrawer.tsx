@@ -81,7 +81,7 @@ export default function CartDrawer() {
                 </p>
                 <div className="h-[3px] rounded-full bg-ivory-3">
                   <div
-                    className="h-[3px] rounded-full bg-rose transition-all duration-700"
+                    className="h-[3px] rounded-full bg-copper transition-all duration-700"
                     style={{ width: `${(progress * 100).toFixed(0)}%` }}
                   />
                 </div>

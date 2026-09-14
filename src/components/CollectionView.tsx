@@ -139,7 +139,7 @@ export default function CollectionView({
           <Reveal>
             <nav className="text-[10px] uppercase tracking-wide2 text-taupe-deep" aria-label="Fil d'ariane">
               <Link href="/boutique/" className="hover:text-copper">Boutique</Link> / {collection.univers} /{" "}
-              <span className="text-rose">{collection.label}</span>
+              <span className="text-bronze">{collection.label}</span>
             </nav>
             <h1 className="heading mt-4 text-4xl leading-[1.1] md:text-5xl">{collection.label}</h1>
             <p className="mt-4 max-w-md text-[13px] font-light leading-relaxed text-ink/75">
@@ -231,7 +231,7 @@ export default function CollectionView({
               )}
 
               {hasFilters && (
-                <button onClick={resetAll} className="mt-8 text-[10px] uppercase tracking-wide2 text-rose underline-offset-4 hover:underline">
+                <button onClick={resetAll} className="mt-8 text-[10px] uppercase tracking-wide2 text-bronze underline-offset-4 hover:underline">
                   Tout réinitialiser
                 </button>
               )}

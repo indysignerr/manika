@@ -7,7 +7,7 @@ export default function NotFound() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/logo-mark.png" alt="" />
       </div>
-      <p className="font-display text-[7rem] font-extralight leading-none text-taupe md:text-[10rem]">
+      <p className="font-display text-[7rem] font-extralight leading-none text-taupe-deep md:text-[10rem]">
         404
       </p>
       <p className="mt-6 font-serif text-xl italic text-copper md:text-2xl">

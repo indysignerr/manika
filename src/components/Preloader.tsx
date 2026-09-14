@@ -76,8 +76,8 @@ export default function Preloader() {
               <div className="h-px bg-bronze transition-all duration-150" style={{ width: `${progress}%` }} />
             </div>
           </div>
-          <div className="absolute bottom-8 left-8 text-[11px] tracking-wide2 text-rose">{progress} %</div>
-          <div className="absolute bottom-8 right-8 text-[10px] uppercase tracking-wide3 text-taupe">
+          <div className="absolute bottom-8 left-8 text-[11px] tracking-wide2 text-bronze">{progress} %</div>
+          <div className="absolute bottom-8 right-8 text-[10px] uppercase tracking-wide3 text-taupe-deep">
             Professional hair care
           </div>
         </motion.div>
