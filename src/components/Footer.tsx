@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { reseauxActifs } from "@/lib/legal";
 
 const COLS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -46,9 +47,17 @@ export default function Footer() {
             qui vont avec. Distribution directe aux salons et barbershops, en tarifs HT.
           </p>
           <div className="mt-4 flex gap-4 text-[10px] uppercase tracking-wide2 text-ivory/70">
-            <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-ivory">Instagram</a>
-            <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-ivory">Pinterest</a>
-            <a href="#" className="inline-flex min-h-11 items-center transition-colors hover:text-ivory">TikTok</a>
+            {reseauxActifs().map((r) => (
+              <a
+                key={r.nom}
+                href={r.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-ivory"
+              >
+                {r.nom}
+              </a>
+            ))}
           </div>
           <p className="mt-8 max-w-xs text-[11px] font-light leading-relaxed text-ivory/60">
             Maison sœur ·{" "}

@@ -28,6 +28,20 @@ export const MAISON = {
   /** Domaine public du site, sans protocole. Sert aux URL canoniques et au SEO. */
   domaine: "manika-lab.com",
 
+  /**
+   * Réseaux sociaux. `null` = compte pas encore créé → le lien N'EST PAS
+   * affiché, conformément à la règle du fichier. Un lien mort en pied de page
+   * fait plus de mal que pas de lien du tout.
+   *
+   * ⚠️ Comptes en cours de création par Indy (semaine du 15/09/2026) : il
+   *    suffira de coller les URL ici pour qu'ils apparaissent.
+   */
+  reseaux: {
+    instagram: null as string | null,
+    pinterest: null as string | null,
+    tiktok: null as string | null,
+  },
+
   /* ── Identité juridique — à renseigner par les gérants ────── */
   formeJuridique: null as string | null,
   capital: null as string | null,
@@ -52,6 +66,18 @@ export const MAISON = {
   paiement: "Shopify Inc.",
   delaiReponse: "24 h ouvrées",
 } as const;
+
+/** Les réseaux réellement ouverts, prêts à être affichés. */
+export function reseauxActifs(): { nom: string; url: string }[] {
+  const libelles: Record<string, string> = {
+    instagram: "Instagram",
+    pinterest: "Pinterest",
+    tiktok: "TikTok",
+  };
+  return Object.entries(MAISON.reseaux)
+    .filter(([, url]) => Boolean(url))
+    .map(([cle, url]) => ({ nom: libelles[cle] ?? cle, url: url as string }));
+}
 
 /** L'identité légale est-elle complète ? Sert à alerter en développement. */
 export const identiteComplete = (): boolean =>
