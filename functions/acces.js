@@ -50,7 +50,7 @@ const page = (message, status) =>
 <h1 style="font-weight:400;letter-spacing:.08em">MANIKA.LAB</h1>
 <p>${message}</p>
 <p style="font-size:.9rem;color:#6D6458">Votre lien d'accès est personnel et valable 90 jours.
-Écrivez-nous à <a href="mailto:contact@manika-lab.com" style="color:#82503C">contact@manika-lab.com</a>
+Écrivez-nous à <a href="mailto:contact@manikalab.com" style="color:#82503C">contact@manikalab.com</a>
 pour en recevoir un nouveau.</p>
 <p><a href="/" style="color:#82503C">← Retour à l'accueil</a></p>
 </body></html>`,

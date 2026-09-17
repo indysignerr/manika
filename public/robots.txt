@@ -6,4 +6,4 @@ Allow: /
 Disallow: /apercu
 Disallow: /api/
 
-Sitemap: https://manika-lab.com/sitemap.xml
+Sitemap: https://manikalab.com/sitemap.xml

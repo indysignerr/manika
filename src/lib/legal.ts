@@ -23,10 +23,14 @@ export const MAISON = {
   telephone: "06 20 14 90 60",
   /** Version compacte pour les liens tel: */
   telephoneLien: "+33620149060",
-  /** Domaine manika-lab.com — acheté, confirmé par Indy le 14/09/2026. */
-  email: "contact@manika-lab.com",
+  /**
+   * ⚠️ Le domaine est manikalab.com, SANS tiret (corrigé le 16/09/2026).
+   *    manika-lab.com n'a jamais été enregistré : tout courrier envoyé à
+   *    l'ancienne adresse revenait en erreur. Boîtes hébergées chez IONOS.
+   */
+  email: "contact@manikalab.com",
   /** Domaine public du site, sans protocole. Sert aux URL canoniques et au SEO. */
-  domaine: "manika-lab.com",
+  domaine: "manikalab.com",
 
   /**
    * Réseaux sociaux. `null` = compte pas encore créé → le lien N'EST PAS
