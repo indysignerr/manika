@@ -22,8 +22,14 @@ import { fetchAllProducts, loadEnv, storeDomain } from "./lib/shopify.mts";
 /** ⚠️ Doit rester aligné sur la révision utilisée dans functions/lead.js. */
 const KLAVIYO_REVISION = "2026-07-15";
 
-/** Sélecteur DKIM posé par Resend. */
-const DKIM_SELECTEUR = "resend._domainkey";
+/**
+ * Sélecteurs DKIM connus. Le DNS ne permet pas de lister tous les sélecteurs
+ * d'un domaine : on interroge ceux des outils branchés, un par un.
+ */
+const DKIM_SELECTEURS: Record<string, string> = {
+  "IONOS (boîtes mail)": "s1-ionos._domainkey",
+  Resend: "resend._domainkey",
+};
 
 type Etat = "ok" | "attention" | "absent";
 type Ligne = { etape: string; outil: string; etat: Etat; detail: string; action: string };
@@ -98,7 +104,7 @@ async function verifierDomaine(domaine: string): Promise<Ligne> {
     ...base,
     etat: resolu ? "ok" : "absent",
     detail: resolu ? `${domaine} → ${[...a, ...cname][0]}` : `${domaine} ne résout pas`,
-    action: resolu ? "—" : "Acheter le domaine, puis le pointer sur Cloudflare Pages",
+    action: resolu ? "—" : "Ajouter le domaine dans Cloudflare Pages → Custom domains",
   };
 }
 
@@ -108,21 +114,28 @@ async function verifierAuthEmail(domaine: string): Promise<Ligne[]> {
     return [{ ...base, etat: "absent", detail: "dépend du domaine", action: "Passer l'étape 1 d'abord" }];
   }
 
-  const [txt, dkim, dmarc] = await Promise.all([
+  const [txt, dmarc, ...dkims] = await Promise.all([
     dns(domaine, "TXT"),
-    dns(`${DKIM_SELECTEUR}.${domaine}`, "TXT"),
     dns(`_dmarc.${domaine}`, "TXT"),
+    // TXT suit les CNAME : on obtient la clé publique, qu'elle soit posée
+    // directement ou déléguée au fournisseur (cas d'IONOS).
+    ...Object.values(DKIM_SELECTEURS).map((sel) => dns(`${sel}.${domaine}`, "TXT")),
   ]);
 
   const spf = txt.find((t) => t.startsWith("v=spf1"));
   const politique = dmarc.find((t) => t.startsWith("v=DMARC1"))?.match(/p=(\w+)/)?.[1];
+  const dkimAbsents = Object.keys(DKIM_SELECTEURS).filter((_, i) => !dkims[i].length);
 
-  const manquants = [!spf && "SPF", !dkim.length && "DKIM", !politique && "DMARC"].filter(Boolean);
+  const manquants = [
+    !spf && "SPF",
+    ...dkimAbsents.map((outil) => `DKIM ${outil}`),
+    !politique && "DMARC",
+  ].filter(Boolean);
 
   return [
     {
       ...base,
-      etat: manquants.length ? (manquants.length === 3 ? "absent" : "attention") : "ok",
+      etat: manquants.length ? (!spf && !politique ? "absent" : "attention") : "ok",
       detail: manquants.length ? `manque ${manquants.join(", ")}` : `SPF, DKIM, DMARC (p=${politique})`,
       action: manquants.length
         ? "Ajouter les enregistrements DNS (docs/OUTILS.md, étape 2)"
@@ -133,7 +146,7 @@ async function verifierAuthEmail(domaine: string): Promise<Ligne[]> {
   ];
 }
 
-async function verifierResend(): Promise<Ligne> {
+async function verifierResend(domaine: string): Promise<Ligne> {
   const base = { etape: "3", outil: "Resend" };
   const cle = process.env.RESEND_API_KEY;
   if (!cle) {
@@ -141,6 +154,25 @@ async function verifierResend(): Promise<Ligne> {
   }
 
   const res = await fetch("https://api.resend.com/domains", { headers: { Authorization: `Bearer ${cle}` } });
+
+  // La clé recommandée est limitée à l'envoi (« Sending access ») : elle n'a
+  // pas le droit de lister les domaines et Resend répond 401. C'est le bon
+  // réglage, pas une panne — on vérifie alors le domaine par le DNS.
+  if (res.status === 401) {
+    const corps = (await res.json().catch(() => ({}))) as { name?: string };
+    if (corps.name === "restricted_api_key") {
+      const [dkim, envoi] = domaine
+        ? await Promise.all([dns(`resend._domainkey.${domaine}`, "TXT"), dns(`send.${domaine}`, "CNAME")])
+        : [[], []];
+      const dnsOk = dkim.length > 0 && envoi.length > 0;
+      return {
+        ...base,
+        etat: dnsOk ? "ok" : "attention",
+        detail: dnsOk ? "clé d'envoi valide, DNS Resend en place" : "clé d'envoi valide, DNS Resend incomplet",
+        action: dnsOk ? "—" : "Vérifier le domaine dans Resend (send + resend._domainkey)",
+      };
+    }
+  }
   if (!res.ok) {
     return { ...base, etat: "absent", detail: `API ${res.status}`, action: "Clé invalide ou révoquée" };
   }
@@ -248,7 +280,7 @@ async function main() {
     await verifierShopify(),
     await verifierDomaine(domaine),
     ...(await verifierAuthEmail(domaine)),
-    await verifierResend(),
+    await verifierResend(domaine),
     await verifierFormulaire(site),
     await verifierKlaviyo(),
     ...MANUELS,

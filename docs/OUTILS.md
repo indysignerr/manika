@@ -99,15 +99,25 @@ Le domaine est **`manikalab.com`, sans tiret**. Il est enregistré chez **IONOS*
 qui en héberge aussi le DNS et les boîtes mail (`contact@manikalab.com`).
 État relevé le 16 sept. 2026 :
 
-| Enregistrement | Valeur actuelle |
-|---|---|
-| NS | `ns10xx.ui-dns.*` (IONOS) |
-| MX | `mx00.ionos.fr`, `mx01.ionos.fr` |
-| A | `217.160.0.207` — hébergement IONOS, **pas** le site |
-| SPF | `v=spf1 include:_spf-eu.ionos.com ~all` |
-| DMARC | CNAME `_dmarc` → `dmarc.ionos.fr` (`v=DMARC1; p=none;`) |
-| Autodiscover | CNAME `autodiscover` → `adsredir.ionos.info` (configuration auto des boîtes) |
-| www | **aucun enregistrement** |
+Relevé complet de la zone IONOS (17 sept. 2026) et sort de chaque ligne lors
+du passage chez Cloudflare :
+
+| Type | Nom | Valeur | Chez Cloudflare |
+|---|---|---|---|
+| A | `@` | `217.160.0.207` (page par défaut IONOS) | **supprimer** — remplacé par Pages |
+| AAAA | `@` | `2001:8d8:100f:f000::200` | **supprimer** — remplacé par Pages |
+| TXT | `_dep_ws_mutex` | jeton du site IONOS | supprimer (interne à IONOS) |
+| CNAME | `_domainconnect` | `_domainconnect.ionos.com` | supprimer (interne à IONOS) |
+| MX (10) | `@` | `mx00.ionos.fr` | **garder** |
+| MX (10) | `@` | `mx01.ionos.fr` | **garder** |
+| TXT | `@` | `v=spf1 include:_spf-eu.ionos.com ~all` | **garder** |
+| CNAME | `_dmarc` | `dmarc.ionos.fr` | **garder** |
+| CNAME | `s1-ionos._domainkey` | `s1.dkim.ionos.com` | **garder** — DKIM des boîtes IONOS |
+| CNAME | `s2-ionos._domainkey` | `s2.dkim.ionos.com` | **garder** — DKIM des boîtes IONOS |
+| CNAME | `s42582890._domainkey` | `s42582890.dkim.ionos.com` | **garder** — DKIM des boîtes IONOS |
+| CNAME | `autodiscover` | `adsredir.ionos.info` | **garder** |
+
+Tous les enregistrements gardés passent en **« DNS only » (nuage gris)**.
 
 > `manika-lab.com` (avec tiret) n'a jamais été enregistré. Le site l'a affiché
 > jusqu'au 16 sept. : tout courrier écrit à cette adresse revenait en erreur.
@@ -130,8 +140,8 @@ Puis : Pages → Custom domain, **l'apex et le www** → redirection www → ape
 Sans eux, la prospection part en indésirables et le domaine se grille — un
 domaine grillé ne se répare pas, il se remplace.
 
-SPF et DMARC existent déjà (posés par IONOS). **Il manque le DKIM** des outils
-d'envoi, et Resend comme Klaviyo le fournissent au moment où on ajoute le
+SPF, DMARC et le DKIM des boîtes IONOS existent déjà. **Il manque le DKIM des
+outils d'envoi**, et Resend comme Klaviyo le fournissent au moment où on ajoute le
 domaine : **copier leurs valeurs, ne pas les inventer**.
 
 ⚠️ **Un seul enregistrement SPF par nom.** Resend et Klaviyo envoient depuis un
@@ -151,6 +161,16 @@ Sans clé, `functions/lead.js` répond **503** et le formulaire de compte pro
 affiche « service indisponible ». C'est volontaire : mieux vaut un formulaire
 qui refuse qu'un formulaire qui dit « merci » en jetant le lead.
 
+Domaine déclaré dans Resend : **`manikalab.com`** (région UE), posé le
+17 sept. 2026 via la connexion Cloudflare de Resend (Domain Connect, accès
+ponctuel). Trois enregistrements, tous en « DNS only », aucun sur la racine :
+
+| Type | Nom | Valeur |
+|---|---|---|
+| CNAME | `send` | `send.forge.rmta.net` |
+| CNAME | `rsend` | `rsend.forge.rmta.net` |
+| TXT | `resend._domainkey` | clé publique DKIM de Resend |
+
 À poser dans Cloudflare Pages → Settings → Environment variables (Production
 **et** Preview), puis **redéployer** — les Functions ne captent les secrets
 qu'au déploiement suivant :
@@ -158,8 +178,8 @@ qu'au déploiement suivant :
 | Variable | Valeur |
 |---|---|
 | `RESEND_API_KEY` | clé Resend (chiffrée) |
-| `LEAD_TO_EMAIL` | destinataires, séparés par des virgules |
-| `LEAD_FROM_EMAIL` | `MANIKA.LAB <contact@…>` — domaine **vérifié** dans Resend |
+| `LEAD_TO_EMAIL` | `contact@manikalab.com` (boîte des gérantes, chez IONOS) |
+| `LEAD_FROM_EMAIL` | `MANIKA.LAB <notifications@manikalab.com>` — domaine **vérifié** dans Resend |
 
 ### Étape 4 — Klaviyo · gratuit puis ~45 €/mois · **Indy**
 
