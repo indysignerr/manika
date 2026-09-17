@@ -93,32 +93,57 @@ on relance sur une liste à jour, pas sur un souvenir.
 
 L'ordre n'est pas négociable : chaque étape débloque la suivante.
 
-### Étape 1 — Nom de domaine · ~10 €/an · **Indy + la cliente**
+### Étape 1 — Nom de domaine · ✅ acheté · **Indy**
 
-L'authentification e-mail s'attache au domaine : en changer ensuite oblige à
-tout refaire. À choisir avant toute création de compte e-mailing.
+Le domaine est **`manikalab.com`, sans tiret**. Il est enregistré chez **IONOS**,
+qui en héberge aussi le DNS et les boîtes mail (`contact@manikalab.com`).
+État relevé le 16 sept. 2026 :
 
-Une fois acheté : Cloudflare → Add a domain (plan Free) → remplacer les
-nameservers chez le registrar → SSL/TLS en **Full** + **Always Use HTTPS** →
-Pages → Custom domain, **l'apex et le www** → Redirect Rule www → apex en 301.
+| Enregistrement | Valeur actuelle |
+|---|---|
+| NS | `ns10xx.ui-dns.*` (IONOS) |
+| MX | `mx00.ionos.fr`, `mx01.ionos.fr` |
+| A | `217.160.0.207` — hébergement IONOS, **pas** le site |
+| SPF | `v=spf1 include:_spf-eu.ionos.com ~all` |
+| DMARC | CNAME `_dmarc` → `dmarc.ionos.fr` (`v=DMARC1; p=none;`) |
+| Autodiscover | CNAME `autodiscover` → `adsredir.ionos.info` (configuration auto des boîtes) |
+| www | **aucun enregistrement** |
+
+> `manika-lab.com` (avec tiret) n'a jamais été enregistré. Le site l'a affiché
+> jusqu'au 16 sept. : tout courrier écrit à cette adresse revenait en erreur.
+
+Reste à faire pointer le domaine sur Cloudflare Pages. Deux voies :
+
+- **Passer le DNS chez Cloudflare** (recommandé : redirection www → apex,
+  SSL, tout au même endroit). ⚠️ **Avant** de changer les nameservers chez
+  IONOS, vérifier que Cloudflare a bien importé les **MX, le SPF et le DMARC**
+  ci-dessus, ainsi que l'autodiscover, tous en « DNS only » (nuage gris). Un seul oublié, et les boîtes `@manikalab.com` cessent de recevoir
+  du courrier.
+- **Garder le DNS chez IONOS** : possible pour `www` (CNAME vers
+  `manika-bkh.pages.dev`), mais IONOS n'accepte pas de CNAME sur le domaine
+  nu — l'apex resterait sur l'hébergement IONOS.
+
+Puis : Pages → Custom domain, **l'apex et le www** → redirection www → apex en 301.
 
 ### Étape 2 — SPF, DKIM, DMARC · gratuit · **Indy**
 
 Sans eux, la prospection part en indésirables et le domaine se grille — un
 domaine grillé ne se répare pas, il se remplace.
 
-Resend affiche les enregistrements exacts à créer au moment où on ajoute le
-domaine (étape 3) : **les copier depuis Resend**, ne pas les inventer. Seul le
-DMARC est à composer, et il se pose en `_dmarc.<domaine>`, type TXT :
+SPF et DMARC existent déjà (posés par IONOS). **Il manque le DKIM** des outils
+d'envoi, et Resend comme Klaviyo le fournissent au moment où on ajoute le
+domaine : **copier leurs valeurs, ne pas les inventer**.
 
-```
-v=DMARC1; p=none; rua=mailto:dmarc@<domaine>; pct=100; adkim=s; aspf=s
-```
+⚠️ **Un seul enregistrement SPF par nom.** Resend et Klaviyo envoient depuis un
+sous-domaine qui porte son propre SPF : on ne touche pas à celui de l'apex. Si
+un outil demandait un jour d'ajouter un `include:` à l'apex, il faut le fusionner
+dans la ligne existante, jamais créer une seconde ligne `v=spf1` — deux lignes
+invalident les deux.
 
-On démarre en `p=none` (observation seule), puis on passe à `p=quarantine`
-quand les rapports montrent que tous les envois légitimes passent. `npm run check:outils --
---domaine=<domaine>` relit les trois enregistrements et le
-rappelle.
+Le DMARC est en `p=none` (observation seule) : le laisser ainsi pendant les
+premiers envois, puis passer à `p=quarantine` quand les rapports montrent que
+tous les envois légitimes passent. `npm run check:outils --
+--domaine=manikalab.com` relit les trois enregistrements.
 
 ### Étape 3 — Resend · gratuit au volume qui nous concerne · **Indy**
 
@@ -224,12 +249,27 @@ de 403. Ajouter `--abonner` pour tester aussi l'inscription à la liste (avec
 une adresse à soi). Tant qu'aucune clé n'est posée, les formulaires répondent
 503 avec un message explicite — ils n'affichent jamais un faux « merci ».
 
-### Étape 5 — Vérification du fichier · ~40 € une fois · **Indy**
+### Étape 5 — Vérification du fichier · MillionVerifier, 89 $ une fois · **Indy**
 
 Les 27 751 contacts n'ont jamais été nettoyés. Une base non vérifiée grille un
 domaine en quelques jours : les adresses mortes déclenchent les filtres avant
-même que le contenu soit lu. À passer dans un vérificateur (NeverBounce, ZeroBounce)
-**avant** le premier envoi, jamais après.
+même que le contenu soit lu. À passer dans un vérificateur **avant** le premier
+envoi, jamais après.
+
+Outil retenu le 16 sept. 2026 : **MillionVerifier** — société en Hongrie (UE),
+crédits sans date d'expiration, adresses non vérifiables remboursées.
+Pack **50 000 crédits à 89 $** : il couvre ce fichier et laisse ~22 000 crédits
+pour les fichiers NAYUMA à venir. Pour mémoire, trois packs de 10 000 coûteraient
+111 $.
+
+Écartés : Captain Verify (124 $, France), EmailListVerify (98 $, localisation
+non indiquée), Reoon (42 $, mais ni pays ni serveurs indiqués, aucune garantie
+de transfert hors UE — injustifiable pour un fichier dont l'origine est déjà
+en question), vérification intégrée à lemlist (~1 400 $).
+
+Avant le premier téléversement : récupérer le **DPA** de MillionVerifier pour le
+registre RGPD. Si NAYUMA est une société distincte, elle est responsable de ses
+propres fichiers : son registre doit mentionner le même sous-traitant.
 
 ⚠️ Point juridique non tranché, signalé en août et toujours ouvert : d'où vient
 ce fichier, est-il un actif de la société liquidée, quelle base légale RGPD pour
@@ -252,7 +292,72 @@ donc après le bandeau de consentement, pas avant.
 Réponses automatiques en messages privés. À brancher seulement quand il y a du
 volume : automatiser trois messages par semaine ne rapporte rien.
 
-**Total outils : environ 150 €/mois, hors budget publicitaire.**
+### Complément — Higgsfield Plus · 59 $/mois, puis 47 $ en annuel · **Indy**
+
+Génération d'images et de vidéos pour **un post tous les 3 jours** (le même
+contenu vertical 9:16 sur Instagram, Facebook et TikTok) **et les vidéos
+publicitaires**. Compte existant (plan gratuit).
+
+Dimensionnement (barèmes relevés le 16 sept. 2026) : ~20 clips utiles par mois
+(10 posts + ~10 variantes pub), trois essais par clip en moyenne → ~60
+générations.
+
+| Modèle | Crédits par clip de 8 s | Besoin mensuel |
+|---|---:|---:|
+| Kling 3.0 | ~14 | ~880 |
+| Veo 3.1 Fast (720p) | ~40 | ~2 440 |
+| Posts Kling + pubs Veo 3.1 Fast | — | ~1 660 |
+| Seedance 2.5 (720p) | ~52 | ~3 160 |
+| Seedance 2.0 (1080p) | ~72 | ~4 360 |
+
+Seedance au crédit coûte 4 à 5 fois Kling : hors de portée de Plus. Il existe
+un module **« Seedance Unlimited »** (Seedance 2.0 Fast, 480/720p, 30 jours,
+application web uniquement, une génération à la fois), vendu **en option
+payante** — prix à lire dans l'application. Usage prévu : produire en lot
+plusieurs mois de posts pendant la fenêtre illimitée. Les conditions le
+réservent à un usage « personnel et humain » : vérifier l'usage commercial
+avant de s'en servir pour des publicités.
+
+**Plus (1 200 crédits)** couvre la production sur Kling 3.0, avec les
+versions finales des pubs sur Veo. Starter (270 crédits) ne tient pas une
+semaine ; Ultra (3 000 crédits, 99 à 129 $) absorberait toute la marge du
+budget outils. Les crédits ne se reportent pas d'un mois sur l'autre, et les
+recharges expirent au bout de 90 jours.
+
+Règles d'usage pour tenir dans l'enveloppe :
+- brouillons sur Kling, Veo réservé aux versions diffusées ;
+- générer depuis l'**application web** : certains modèles y sont illimités sur
+  Plus, alors que la ligne de commande consomme toujours des crédits ;
+- un tuto filmé en vrai ne coûte aucun crédit : chacun remplace un clip généré ;
+- premier mois en mensuel pour mesurer la consommation réelle, puis annuel.
+
+⚠️ **Jamais pour montrer un résultat de coloration** : une teinte générée n'est
+pas la vraie teinte du produit — c'est une publicité trompeuse, et les
+coiffeurs le voient. Le cœur des publicités reste les tutos filmés en vrai,
+mains uniquement. Les emballages générés se déforment aussi : les vérifier
+avant diffusion. Tout visage ou corps réaliste généré doit être signalé comme
+contenu synthétique (règlement européen sur l'IA, label « Info IA » de Meta).
+
+---
+
+## Budget outils : 250 €/mois
+
+| Poste | Coût mensuel |
+|---|---:|
+| Domaine (IONOS) | ~1 € |
+| Resend, Meta Business Suite, ManyChat | 0 € |
+| Klaviyo | 0 € puis ~45 € |
+| lemlist | ~75 € |
+| Higgsfield Plus | ~50 € (≈ 40 € en annuel) |
+| **Engagé** | **~170 €** |
+| Marge | ~80 € |
+
+Achat unique le premier mois : MillionVerifier, 89 $ (~80 €).
+
+Sur les 1 300 € mensuels libérés par l'ancien local, cette enveloppe laisse
++250 € les mois 1 et 2, puis −50 € à partir du mois 3 (outils 250 € +
+prestation 800 € + publicité 300 €). Décision du 16 sept. 2026 : l'écart est
+couvert par les premières ventes, attendues d'ici là.
 
 ---
 

@@ -11,7 +11,7 @@
  * 200 à la Function sans enregistrer quoi que ce soit.
  *
  *   npm run check:outils
- *   npm run check:outils -- --domaine=manika-lab.com --site=https://manika-lab.com
+ *   npm run check:outils -- --domaine=manikalab.com --site=https://manikalab.com
  *
  * Les clés vivent dans Cloudflare Pages (Settings → Environment variables).
  * Pour un diagnostic depuis le poste, les recopier dans .env.local — voir
@@ -78,6 +78,22 @@ async function verifierDomaine(domaine: string): Promise<Ligne> {
   const a = await dns(domaine, "A");
   const cname = await dns(domaine, "CNAME");
   const resolu = a.length || cname.length;
+
+  // « Ne résout pas » cache deux situations opposées : un domaine acheté mais
+  // pas encore pointé, ou un domaine que personne n'a acheté. Le registre
+  // (RDAP) tranche — et le second cas est urgent si le site l'affiche déjà.
+  if (!resolu && domaine.endsWith(".com")) {
+    const rdap = await fetch(`https://rdap.verisign.com/com/v1/domain/${domaine}`);
+    if (rdap.status === 404) {
+      return {
+        ...base,
+        etat: "absent",
+        detail: `${domaine} N'EST PAS ENREGISTRÉ`,
+        action: "L'acheter maintenant : n'importe qui peut le prendre",
+      };
+    }
+  }
+
   return {
     ...base,
     etat: resolu ? "ok" : "absent",
@@ -217,7 +233,7 @@ async function verifierFormulaire(site: string): Promise<Ligne> {
 
 /** Outils sans API de contrôle : on rappelle seulement où on en est. */
 const MANUELS: Ligne[] = [
-  { etape: "5", outil: "Vérification du fichier", etat: "absent", detail: "27 751 contacts non nettoyés", action: "~40 € une fois — indispensable avant le premier envoi" },
+  { etape: "5", outil: "Vérification du fichier", etat: "absent", detail: "27 751 contacts non nettoyés", action: "MillionVerifier, pack 50 000 à 89 $ — avant le premier envoi" },
   { etape: "6", outil: "lemlist", etat: "absent", detail: "prospection non démarrée", action: "~75 €/mois — après les étapes 1 à 5" },
   { etape: "7", outil: "Meta Business Suite", etat: "absent", detail: "—", action: "Gratuit — publications, puis Lead Ads" },
   { etape: "8", outil: "ManyChat", etat: "absent", detail: "—", action: "Gratuit — une fois qu'il y a du volume en messages privés" },
