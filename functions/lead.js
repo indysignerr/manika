@@ -102,12 +102,16 @@ export async function onRequest(context) {
  * l'extérieur. Quand « le formulaire n'envoie rien », c'est le seul moyen de
  * savoir si la Function voit sa configuration et ce que Resend lui répond.
  *
- * Protégé par l'en-tête `x-diagnostic` = APERCU_SECRET. Sans lui : 404, comme
+ * Protégé par l'en-tête `x-diagnostic` = DIAGNOSTIC_SECRET (à défaut
+ * APERCU_SECRET). Sans lui : 404, comme
  * /apercu. Aucune valeur secrète n'est renvoyée ; l'envoi de test ne part
  * jamais ailleurs que vers LEAD_TO_EMAIL.
  */
 async function diagnostic(request, env) {
-  if (!env.APERCU_SECRET || request.headers.get("x-diagnostic") !== env.APERCU_SECRET) {
+  // DIAGNOSTIC_SECRET d'abord : le secret d'aperçu de production n'est pas
+  // relisible, et le changer casserait les liens d'aperçu déjà envoyés.
+  const secret = env.DIAGNOSTIC_SECRET || env.APERCU_SECRET;
+  if (!secret || request.headers.get("x-diagnostic") !== secret) {
     return new Response("Not found", { status: 404 });
   }
 
