@@ -48,12 +48,26 @@ await sharp(logoBuf)
   .toFile("public/images/logo-mark.png");
 console.log("ok: logo-mark.png");
 
-// Favicon depuis le monogramme
-await sharp("public/images/logo-mark.png")
-  .resize(512, 512, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-  .png()
-  .toFile("src/app/icon.png");
-console.log("ok: src/app/icon.png");
+// Favicon depuis le monogramme, sur le fond ivoire du site (#F5F3EF).
+// Fond opaque plutôt que transparent : le monogramme noir disparaissait sur
+// les onglets en thème sombre. Marge de 14 % pour qu'il respire à 16 px.
+// L'ivoire et non le beige plus soutenu : le « L » est d'un beige clair qui
+// se perdrait sur un fond trop proche.
+const IVOIRE = { r: 0xf5, g: 0xf3, b: 0xef, alpha: 1 };
+async function favicon(taille, sortie) {
+  const interieur = Math.round(taille * 0.72);
+  const monogramme = await sharp("public/images/logo-mark.png")
+    .resize(interieur, interieur, { fit: "contain", background: { ...IVOIRE, alpha: 0 } })
+    .toBuffer();
+  await sharp({ create: { width: taille, height: taille, channels: 4, background: IVOIRE } })
+    .composite([{ input: monogramme, gravity: "center" }])
+    .png()
+    .toFile(sortie);
+  console.log(`ok: ${sortie}`);
+}
+await favicon(512, "src/app/icon.png");
+// iOS exige une icône opaque pour l'écran d'accueil.
+await favicon(180, "src/app/apple-icon.png");
 
 // ── PHOTOS PRODUITS ──────────────────────────────────────────────
 // Fond crème homogène : on échantillonne le coin de chaque image et on
