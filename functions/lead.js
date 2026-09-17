@@ -29,6 +29,10 @@
 export async function onRequest(context) {
   const { request, env } = context;
 
+  if (request.method === "GET" && new URL(request.url).searchParams.has("diagnostic")) {
+    return diagnostic(request, env);
+  }
+
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: { Allow: "POST, OPTIONS" } });
   }
@@ -86,6 +90,58 @@ export async function onRequest(context) {
   // Un seul canal suffit à considérer le lead capturé.
   if (results.some((r) => r.status === "fulfilled")) return json({ ok: true });
   return json({ message: "Envoi impossible pour le moment." }, 502);
+}
+
+/* ── diagnostic ── */
+
+/**
+ * GET /lead?diagnostic            → quelles destinations la Function voit
+ * GET /lead?diagnostic=envoi      → envoie une alerte de test à LEAD_TO_EMAIL
+ *
+ * Pourquoi : Cloudflare ne laisse lire ni les variables ni les logs depuis
+ * l'extérieur. Quand « le formulaire n'envoie rien », c'est le seul moyen de
+ * savoir si la Function voit sa configuration et ce que Resend lui répond.
+ *
+ * Protégé par l'en-tête `x-diagnostic` = APERCU_SECRET. Sans lui : 404, comme
+ * /apercu. Aucune valeur secrète n'est renvoyée ; l'envoi de test ne part
+ * jamais ailleurs que vers LEAD_TO_EMAIL.
+ */
+async function diagnostic(request, env) {
+  if (!env.APERCU_SECRET || request.headers.get("x-diagnostic") !== env.APERCU_SECRET) {
+    return new Response("Not found", { status: 404 });
+  }
+
+  const config = {
+    resend: {
+      cle: Boolean(env.RESEND_API_KEY),
+      cle_format_ok: /^re_/.test(env.RESEND_API_KEY || ""),
+      destinataire: env.LEAD_TO_EMAIL || null,
+      expediteur: env.LEAD_FROM_EMAIL || null,
+    },
+    klaviyo: {
+      cle: Boolean(env.KLAVIYO_API_KEY),
+      liste: Boolean(env.KLAVIYO_LIST_ID),
+    },
+  };
+
+  if (new URL(request.url).searchParams.get("diagnostic") !== "envoi") return json(config);
+
+  if (!config.resend.cle || !config.resend.destinataire) {
+    return json({ ...config, envoi: "impossible : RESEND_API_KEY ou LEAD_TO_EMAIL absente" }, 503);
+  }
+  try {
+    const destinataire = String(env.LEAD_TO_EMAIL).split(",")[0].trim();
+    await sendEmail(env, {
+      variant: "contact",
+      email: destinataire,
+      contact: "Diagnostic du site",
+      sujet: "Test de la chaîne d'alerte",
+      message: "Alerte de test envoyée par /lead?diagnostic=envoi. Aucune action requise.",
+    });
+    return json({ ...config, envoi: "accepté par Resend" });
+  } catch (e) {
+    return json({ ...config, envoi: "refusé", erreur: String(e) }, 502);
+  }
 }
 
 /* ── validation (miroir de src/lib/lead.ts — ne jamais faire confiance au client) ── */
