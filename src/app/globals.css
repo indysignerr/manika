@@ -41,20 +41,6 @@ body::after {
   outline-offset: 3px;
 }
 
-body.custom-cursor,
-body.custom-cursor a,
-body.custom-cursor button {
-  cursor: none;
-}
-
-/* Champs de saisie : on garde le curseur natif (caret + I-beam) */
-body.custom-cursor input,
-body.custom-cursor textarea,
-body.custom-cursor select,
-body.custom-cursor label {
-  cursor: auto;
-}
-
 /* Chrome ajoute sa propre croix dans les champs `type="search"` : elle
    doublait celle que nous dessinons. */
 input[type="search"]::-webkit-search-cancel-button,

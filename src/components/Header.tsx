@@ -82,7 +82,7 @@ export default function Header({ navigation }: { navigation: Navigation }) {
             </nav>
           </div>
 
-          <Link href="/" aria-label="MANIKA.LAB — Accueil" data-cursor className="inline-flex min-h-11 items-center">
+          <Link href="/" aria-label="MANIKA.LAB — Accueil" className="inline-flex min-h-11 items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/wordmark.png" alt="MANIKA.LAB" className="h-6 w-auto md:h-7" />
           </Link>
@@ -91,7 +91,6 @@ export default function Header({ navigation }: { navigation: Navigation }) {
             <Link
               href="/devenir-client-pro/"
               className="hidden whitespace-nowrap rounded-[2px] border border-copper px-5 py-2.5 text-[10px] uppercase tracking-wide2 text-copper transition-colors hover:bg-copper hover:text-ivory lg:inline-flex"
-              data-cursor
             >
               Compte pro
             </Link>
@@ -236,7 +235,6 @@ export default function Header({ navigation }: { navigation: Navigation }) {
             <Link
               href="/commande-rapide/"
               className={`${ongletCls} flex items-center gap-2 font-medium`}
-              data-cursor
             >
               <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-rose" />
               Commande rapide

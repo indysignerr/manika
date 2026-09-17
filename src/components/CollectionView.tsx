@@ -160,7 +160,6 @@ export default function CollectionView({
                       ? "border-copper bg-copper text-ivory"
                       : "border-taupe/60 text-copper hover:border-copper"
                   }`}
-                  data-cursor
                 >
                   {c.label}
                 </Link>

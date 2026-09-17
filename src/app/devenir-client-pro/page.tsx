@@ -80,7 +80,7 @@ export default function Page() {
               <p className="mt-4 text-[12px] font-light text-taupe-deep">
                 Un seul coffret par salon — c&apos;est une offre de découverte.
               </p>
-              <a href="#formulaire" className="btn-primary mt-9" data-cursor>
+              <a href="#formulaire" className="btn-primary mt-9">
                 Ouvrir mon compte pro
               </a>
             </div>

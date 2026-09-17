@@ -92,7 +92,6 @@ export default function Page() {
                   key={r.num}
                   href={`#rituel-${r.num}`}
                   className="rounded-[2px] border border-taupe/60 px-5 py-2.5 text-[10px] uppercase tracking-wide2 text-copper transition-colors hover:border-copper"
-                  data-cursor
                 >
                   {r.num} · {r.title}
                 </a>
@@ -112,7 +111,6 @@ export default function Page() {
                 <Link
                   href={r.href}
                   aria-label={r.cta}
-                  data-cursor
                   className="relative block aspect-[4/5] overflow-hidden rounded-[3px] bg-ivory"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -142,7 +140,7 @@ export default function Page() {
                 </ol>
 
                 <div className="mt-8 flex flex-wrap items-center gap-5">
-                  <Link href={r.href} className="btn-primary" data-cursor>
+                  <Link href={r.href} className="btn-primary">
                     {r.cta}
                   </Link>
                 </div>
@@ -173,7 +171,6 @@ export default function Page() {
                   key={r.slug}
                   href={r.href}
                   aria-label={r.cta}
-                  data-cursor
                   className="aspect-[4/5] overflow-hidden rounded-[3px] transition-transform duration-500 hover:-translate-y-1.5"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}

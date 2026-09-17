@@ -154,11 +154,11 @@ export default function Page() {
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
               <Magnetic>
-                <Link href="/contact/" className="btn-primary" data-cursor>
+                <Link href="/contact/" className="btn-primary">
                   Nous écrire
                 </Link>
               </Magnetic>
-              <Link href="/ingredients/" className="btn-ghost" data-cursor>
+              <Link href="/ingredients/" className="btn-ghost">
                 Les actifs
               </Link>
             </div>
@@ -177,7 +177,7 @@ export default function Page() {
             </p>
             <div className="mt-9">
               <Magnetic>
-                <Link href="/devenir-client-pro/" className="btn-primary" data-cursor>
+                <Link href="/devenir-client-pro/" className="btn-primary">
                   Devenir client pro
                 </Link>
               </Magnetic>

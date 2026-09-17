@@ -345,7 +345,6 @@ export default function NuancierGrid({ slug, nomGamme, variantes, paliers = PALI
             disabled={totalUnites === 0 || !peutAcheter}
             title={peutAcheter ? undefined : "Réservé aux comptes professionnels validés"}
             className="btn-primary disabled:opacity-40"
-            data-cursor
           >
             {peutAcheter ? "Ajouter au panier" : "Réservé aux professionnels"}
           </button>

@@ -224,7 +224,7 @@ export default function LeadForm({ variant, cta, messageLabel, messagePlaceholde
         </p>
       )}
 
-      <button type="submit" disabled={state === "sending"} className="btn-primary w-full disabled:opacity-60" data-cursor>
+      <button type="submit" disabled={state === "sending"} className="btn-primary w-full disabled:opacity-60">
         {state === "sending" ? "Envoi…" : cta}
       </button>
     </form>

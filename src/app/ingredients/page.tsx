@@ -172,7 +172,7 @@ export default function Page() {
             </p>
             <div className="mt-9">
               <Magnetic>
-                <Link href="/boutique/" className="btn-primary" data-cursor>
+                <Link href="/boutique/" className="btn-primary">
                   Découvrir la collection
                 </Link>
               </Magnetic>

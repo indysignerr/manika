@@ -25,7 +25,7 @@ export default async function FeaturedCollection() {
         </div>
 
         <Reveal className="mt-14 text-center">
-          <Link href="/boutique/" className="btn-ghost" data-cursor>
+          <Link href="/boutique/" className="btn-ghost">
             Toute la boutique
           </Link>
         </Reveal>

@@ -30,7 +30,6 @@ export default function SisterBrands() {
               <Link
                 href="/boutique/"
                 className="mt-8 inline-flex items-center gap-2 text-[10px] uppercase tracking-wide2 text-copper transition-opacity hover:opacity-60"
-                data-cursor
               >
                 Explorer la boutique <span aria-hidden>→</span>
               </Link>
@@ -54,7 +53,6 @@ export default function SisterBrands() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-8 inline-flex items-center gap-2 text-[10px] uppercase tracking-wide2 text-bronze transition-opacity hover:opacity-60"
-                data-cursor
               >
                 Découvrir NAYUMA <span aria-hidden>↗</span>
               </a>

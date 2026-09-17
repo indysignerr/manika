@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Jost, Marcellus } from "next/font/google";
 import "./globals.css";
-import CustomCursor from "@/components/CustomCursor";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
@@ -68,7 +67,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             passerelle après chargement, et seulement pour un compte pro. */}
         <PrixProvider>
           <CartProvider>
-            <CustomCursor />
             <Header navigation={navigation} />
             <main>{children}</main>
             <Footer />

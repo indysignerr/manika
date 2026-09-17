@@ -252,7 +252,6 @@ export default function ContactView() {
                   type="submit"
                   disabled={etat === "envoi"}
                   className="btn-primary w-full disabled:opacity-60"
-                  data-cursor
                 >
                   {etat === "envoi" ? "Envoi…" : "Envoyer le message"}
                 </button>

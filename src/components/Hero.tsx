@@ -198,11 +198,11 @@ export default function Hero() {
           </p>
           <div className="hero-fade mt-9 flex flex-wrap items-center gap-4 opacity-0">
             <Magnetic>
-              <Link href="/devenir-client-pro/" className="btn-primary" data-cursor>
+              <Link href="/devenir-client-pro/" className="btn-primary">
                 Devenir client pro
               </Link>
             </Magnetic>
-            <Link href="/boutique/femme-coloration/" className="btn-ghost" data-cursor>
+            <Link href="/boutique/femme-coloration/" className="btn-ghost">
               Voir les colorations
             </Link>
           </div>
@@ -221,7 +221,7 @@ export default function Hero() {
             Coloration · Bio-Vegan
           </p>
           <Magnetic>
-            <Link href="/boutique/femme-coloration/" className="btn-primary mt-3" data-cursor>
+            <Link href="/boutique/femme-coloration/" className="btn-primary mt-3">
               <ShoppingBag size={14} strokeWidth={1.5} />
               Voir la coloration
             </Link>

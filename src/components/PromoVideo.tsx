@@ -51,7 +51,6 @@ export default function PromoVideo() {
                 onClick={toggleSound}
                 aria-label={muted ? "Activer le son" : "Couper le son"}
                 className="absolute bottom-4 right-4 flex h-11 w-11 items-center justify-center rounded-full bg-copper-deep/70 text-ivory backdrop-blur-sm transition-colors hover:bg-copper-deep"
-                data-cursor
               >
                 {muted ? <VolumeX size={17} strokeWidth={1.5} /> : <Volume2 size={17} strokeWidth={1.5} />}
               </button>

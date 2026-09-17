@@ -138,7 +138,7 @@ export default function CartDrawer() {
                       : "Calculée à l'étape suivante"}
                   </span>
                 </div>
-                <button onClick={checkout} disabled={!canCheckout || loading} className="btn-primary w-full disabled:opacity-60" data-cursor>
+                <button onClick={checkout} disabled={!canCheckout || loading} className="btn-primary w-full disabled:opacity-60">
                   <Lock size={13} strokeWidth={1.5} />
                   {loading ? "Redirection…" : "Passer commande"}
                 </button>

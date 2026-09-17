@@ -49,7 +49,6 @@ export default async function Page() {
               <Link
                 href={`/marques/${m.slug}/`}
                 className="group flex h-full flex-col justify-between rounded-[3px] border border-taupe/50 bg-ivory-2 p-7 transition-colors duration-300 hover:border-copper"
-                data-cursor
               >
                 <div>
                   <p className="heading text-xl tracking-luxe">{m.valeur}</p>
@@ -77,7 +76,6 @@ export default async function Page() {
                   key={u.slug}
                   href={`/univers/${u.slug}/`}
                   className="rounded-[2px] border border-taupe/60 px-5 py-3.5 text-[10px] uppercase tracking-wide2 text-copper transition-colors hover:border-copper"
-                  data-cursor
                 >
                   {u.valeur}
                   <span className="ml-2 text-taupe-deep">{u.n}</span>

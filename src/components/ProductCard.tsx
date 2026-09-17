@@ -25,7 +25,7 @@ export default function ProductCard({ product }: { product: Product }) {
     "absolute inset-x-0 bottom-0 z-[2] translate-y-full bg-copper py-3 text-center text-[10px] uppercase tracking-wide2 text-ivory transition-transform duration-500 group-hover:translate-y-0 focus-visible:translate-y-0";
 
   return (
-    <div className="group" data-cursor>
+    <div className="group">
       <div className="relative aspect-[4/5] overflow-hidden rounded-[3px] bg-ivory-2">
         <Link href={`/produit/${product.slug}/`} aria-label={product.name} className="absolute inset-0 z-[1]" />
         <ProductImage

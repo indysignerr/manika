@@ -183,7 +183,6 @@ export default function CatalogueView({
                         ? "border-copper bg-copper text-ivory"
                         : "border-taupe/60 text-copper hover:border-copper"
                     }`}
-                    data-cursor
                   >
                     {l.label}
                     {typeof l.n === "number" && (
@@ -286,7 +285,6 @@ export default function CatalogueView({
                                 ? "border-copper bg-copper text-ivory"
                                 : "border-taupe/60 text-copper hover:border-copper"
                             }`}
-                            data-cursor
                           >
                             {valeur}
                             <span className={actif ? "ml-2 text-ivory/85" : "ml-2 text-taupe-deep"}>{n}</span>

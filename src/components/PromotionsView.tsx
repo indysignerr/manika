@@ -54,7 +54,7 @@ export default function PromotionsView({ produits }: { produits: Product[] }) {
                 Les tarifs — et donc les remises — n&apos;apparaissent qu&apos;une fois votre
                 compte professionnel validé.
               </p>
-              <Link href="/devenir-client-pro/" className="btn-primary mt-8" data-cursor>
+              <Link href="/devenir-client-pro/" className="btn-primary mt-8">
                 Ouvrir mon compte pro
               </Link>
             </div>

@@ -33,10 +33,10 @@ export default function BoutiqueLanding({
 
         <Reveal delay={0.08}>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/commande-rapide/" className="btn-primary" data-cursor>
+            <Link href="/commande-rapide/" className="btn-primary">
               Commande rapide
             </Link>
-            <Link href="/marques/" className="btn-ghost" data-cursor>
+            <Link href="/marques/" className="btn-ghost">
               Nos marques
             </Link>
           </div>
@@ -70,7 +70,6 @@ export default function BoutiqueLanding({
                       key={r.slug}
                       href={`/rayon/${r.slug}/`}
                       className="rounded-[2px] border border-taupe/60 px-5 py-3.5 text-[11px] tracking-wide text-copper transition-colors duration-300 hover:border-copper"
-                      data-cursor
                     >
                       {r.valeur}
                       <span className="ml-2 text-[10px] text-taupe-deep">{r.n}</span>
@@ -79,7 +78,6 @@ export default function BoutiqueLanding({
                   <Link
                     href={`/univers/${u.slug}/`}
                     className="rounded-[2px] border border-copper bg-copper px-5 py-3.5 text-[11px] tracking-wide text-ivory transition-colors duration-300 hover:bg-copper-deep"
-                    data-cursor
                   >
                     Tout voir
                   </Link>
@@ -103,7 +101,6 @@ export default function BoutiqueLanding({
                   key={m.slug}
                   href={`/marques/${m.slug}/`}
                   className="rounded-[2px] border border-taupe/60 px-5 py-3.5 text-[11px] tracking-wide text-copper transition-colors duration-300 hover:border-copper"
-                  data-cursor
                 >
                   {m.valeur}
                   <span className="ml-2 text-[10px] text-taupe-deep">{m.n}</span>

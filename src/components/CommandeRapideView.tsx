@@ -293,7 +293,6 @@ export default function CommandeRapideView({ index }: { index: IndexEntry[] }) {
             onClick={toutAjouter}
             disabled={!peutCommander || totalArticles === 0}
             className="btn-primary disabled:opacity-40"
-            data-cursor
           >
             {peutCommander ? "Tout ajouter au panier" : "Réservé aux professionnels"}
           </button>

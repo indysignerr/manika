@@ -91,11 +91,11 @@ export default async function NotFound() {
           )}
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Link href="/commande-rapide/" className="btn-primary" data-cursor>
+            <Link href="/commande-rapide/" className="btn-primary">
               Commande rapide
               <ArrowRight size={14} strokeWidth={1.5} aria-hidden />
             </Link>
-            <Link href="/" className="btn-ghost min-h-[44px]" data-cursor>
+            <Link href="/" className="btn-ghost min-h-[44px]">
               Retour à l&apos;accueil
             </Link>
           </div>

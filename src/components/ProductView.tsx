@@ -189,7 +189,6 @@ export default function ProductView({ product, related = [] }: { product: Produc
                   disabled={!peutAcheter}
                   title={peutAcheter ? undefined : "Réservé aux comptes professionnels validés"}
                   className="btn-primary w-full !py-[15px] disabled:opacity-45"
-                  data-cursor
                 >
                   {peutAcheter
                     ? `Ajouter au panier${unit > 0 ? ` — ${fmt(unit * qty)}` : ""}`
@@ -313,7 +312,6 @@ export default function ProductView({ product, related = [] }: { product: Produc
               disabled={!peutAcheter}
               title={peutAcheter ? undefined : "Réservé aux comptes professionnels validés"}
               className="rounded-[2px] bg-ivory px-6 py-2.5 text-[10px] uppercase tracking-wide2 text-copper-deep transition-colors hover:bg-ivory-2 disabled:opacity-45 disabled:hover:bg-ivory"
-              data-cursor
             >
               <Lock size={11} strokeWidth={1.5} className="mr-2 inline" aria-hidden />
               {peutAcheter ? "Ajouter" : "Compte pro"}
