@@ -50,8 +50,19 @@ export async function onRequest(context) {
   if (errors.length) return json({ message: errors.join(" ") }, 422);
 
   const targets = [];
-  if (env.RESEND_API_KEY && env.LEAD_TO_EMAIL) targets.push(sendEmail(env, p));
-  if (env.KLAVIYO_API_KEY) targets.push(sendKlaviyo(env, p));
+  const noms = [];
+  if (env.RESEND_API_KEY && env.LEAD_TO_EMAIL) {
+    targets.push(sendEmail(env, p));
+    noms.push("Resend");
+  } else {
+    // Sans cette ligne, une variable mal nommée dans Cloudflare laisse les
+    // gérantes sans alerte, sans que rien ne le signale.
+    console.warn("lead: Resend non configuré (RESEND_API_KEY ou LEAD_TO_EMAIL absente)");
+  }
+  if (env.KLAVIYO_API_KEY) {
+    targets.push(sendKlaviyo(env, p));
+    noms.push("Klaviyo");
+  }
 
   if (!targets.length) {
     return json(
@@ -64,11 +75,16 @@ export async function onRequest(context) {
   }
 
   const results = await Promise.allSettled(targets);
+
+  // Chaque échec est journalisé, même quand l'autre canal a réussi : sinon
+  // une alerte Resend refusée disparaît derrière un Klaviyo qui passe, et le
+  // visiteur voit « merci » alors que personne n'est prévenu.
+  results.forEach((r, i) => {
+    if (r.status === "rejected") console.error(`lead: échec ${noms[i]}`, String(r.reason));
+  });
+
   // Un seul canal suffit à considérer le lead capturé.
   if (results.some((r) => r.status === "fulfilled")) return json({ ok: true });
-
-  const reason = results.find((r) => r.status === "rejected")?.reason;
-  console.error("lead: toutes les destinations ont échoué", reason);
   return json({ message: "Envoi impossible pour le moment." }, 502);
 }
 
