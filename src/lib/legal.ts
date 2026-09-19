@@ -47,7 +47,7 @@ export const MAISON = {
   },
 
   /* ── Identité juridique — à renseigner par les gérants ────── */
-  formeJuridique: null as string | null,
+  formeJuridique: "SAS, société par actions simplifiée",
   capital: null as string | null,
   /**
    * Adresse relevée dans les paramètres Klaviyo le 14/09/2026.
@@ -55,9 +55,16 @@ export const MAISON = {
    *    adresse qui figure au pied de tous les emails et dans les mentions
    *    légales, elle doit correspondre à l'immatriculation.
    */
-  adresse: "2405 Route des Dolines, Sophia-Antipolis, 06560 Valbonne",
+  adresse: "CS10065 — Sophia Antipolis, 2405 Route des Dolines, 06560 Valbonne",
+  /**
+   * SIREN et SIRET du siège, relevés à l'annuaire des entreprises le
+   * 19/09/2026 (société immatriculée le 25/03/2026, RNE le 10/04/2026).
+   */
+  siren: "103 533 360",
+  siret: "103 533 360 00014",
+  /** ⚠️ Ville du greffe encore inconnue — à lire sur l'extrait RNE. */
   rcs: null as string | null,
-  tvaIntracom: null as string | null,
+  tvaIntracom: "FR78 103 533 360",
   directeurPublication: null as string | null,
 
   /* ── Exploitation ─────────────────────────────────────────── */
